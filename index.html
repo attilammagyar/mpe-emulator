@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MPE Emulator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="description" content="A MIDI proxy plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:title" content="MPE Emulator" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://attilammagyar.github.io/mpe-emulator" />
+  <meta property="og:image" content="https://attilammagyar.github.io/mpe-emulator/mpe-emulator.png" />
+  <meta property="og:image:alt" content="Screenshot of MPE Emulator" />
+  <meta property="og:image:width" content="980" />
+  <meta property="og:image:height" content="600" />
+  <meta property="og:description" content="A MIDI proxy plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules." />
+
+<style>
+html, body {
+  background: #1c1c22;
+  color: #c8c8d0;
+  font-family: Verdana, Sans-Serif;
+}
+
+#content {
+  background: #0c0c12;
+  padding: 9px;
+  border-radius: 12px;
+  border: solid 3px #000;
+  max-width: 1000px;
+  margin: 48px auto;
+}
+
+a {
+  color: #80d0f8;
+}
+
+a.img {
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 12px;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 6px;
+  border-top: solid 1px #555;
+  padding-top: 18px;
+}
+
+h3 {
+  font-size: 20px;
+  margin: 6px;
+  margin-top: 12px;
+}
+
+h4 {
+  font-size: 18px;
+  margin: 6px;
+  margin-top: 12px;
+}
+
+h5 {
+  font-size: 16px;
+  margin: 6px;
+  margin-top: 12px;
+}
+
+h1, h2, h3, h4 {
+  font-family: Arial, Sans-serif;
+}
+
+#tagline {
+  font-size: 18px;
+  margin: 24px auto;
+}
+
+#download {
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+#download div.indent ul {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+div {
+  font-size: 16px;
+  line-height: 24px;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+div.center p,
+.center {
+  text-align: center;
+}
+
+div.columns {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin: 12px 0;
+  padding: 0;
+}
+
+div.column {
+  width: 48%;
+  min-width: 450px;
+  padding: 0;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  margin-left: 0;
+  margin-right: 3px;
+}
+
+pre {
+  margin: auto;
+  background-color: #1c1c22;
+  padding: 6px 12px;
+  border-radius: 12px;
+  overflow: auto;
+}
+
+div.section {
+  max-width: 960px;
+}
+
+#faq div.section {
+  padding-top: 36px;
+}
+
+div.indent {
+  padding-left: 16px;
+}
+
+p {
+  max-width: 960px;
+  margin: 6px auto;
+}
+
+video {
+  max-width: 960px;
+  max-height: 960px;
+  width: 90%;
+  margin: 12px;
+}
+
+#vst-img {
+  max-width: 23vmin;
+  max-height: 23vmin;
+}
+
+code {
+  background-color: #1c1c22;
+  padding: 6px 3px;
+  border-radius: 6px;
+}
+
+div.indent > p,
+div.section > p {
+  padding-left: 18px;
+}
+
+#menu nav ul {
+  display: block;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  min-height: 36px;
+  background-color: rgba(0, 0, 0, 0.7);
+  margin: 0 auto;
+  text-align: center;
+  filter: drop-shadow(0 6px 12px #000);
+  padding: 0;
+}
+
+#menu nav ul li {
+  display: inline-block;
+  list-style-type: none;
+  margin: 0 6px;
+  font-size: 19px;
+}
+
+#content > div {
+  padding-top: 48px;
+}
+
+#mpe-emulator-img {
+  max-width: 980px;
+  width: 90%;
+}
+
+.signal-chain-img {
+  width: 95%;
+}
+
+small {
+  font-size: 12px;
+}
+
+#readme h2,
+#readme h3,
+#readme h4,
+#readme h5,
+#readme h6 {
+  margin-top: 36px;
+}
+
+#readme h3 { margin-left: 1vmin; }
+#readme h4 { margin-left: 2vmin; }
+#readme h5 { margin-left: 3vmin; }
+#readme h6 { margin-left: 4vmin; }
+
+#readme p,
+#readme ul {
+  margin-left: 5vmin;
+  margin-right: 5vmin;
+}
+
+#readme ol {
+  margin-left: 5vmin;
+  margin-right: 5vmin;
+}
+
+#readme ol li {
+  padding: 0;
+  margin: 0;
+}
+
+#readme ol li p {
+  margin: 0.6vmin;
+}
+
+#readme ul ul,
+#readme ul p {
+  margin-left: 0.3vmin;
+}
+
+#readme pre {
+  margin-left: 6vmin;
+  margin-right: 6vmin;
+}
+
+#readme p > a[href="#toc"] {
+  display: block;
+  text-align: right;
+  margin-right: 1vmin;
+}
+
+</style>
+</head>
+<body>
+  <div id="menu">
+    <nav>
+      <ul>
+        <li><p><a href="#home">Home</a></p></li>
+        <li><p><a href="#download">Download</a></p></li>
+        <li><p><a href="#demos">Demo</a></p></li>
+        <li><p><a href="#install">Installation</a></p></li>
+        <li><p><a href="#readme">Documentation</a></p></li>
+        <li><p><a href="#bugs">Bugs</a></p></li>
+        <li><p><a href="#faq">F.A.Q.</a></p></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div id="content">
+    <div id="home" class="main-section">
+      <h1 class="center">MPE Emulator</h1>
+      <div class="center" id="tagline">
+        A <a href="https://en.wikipedia.org/wiki/Virtual_Studio_Technology">VST plugin</a>
+        for enhancing non-MPE MIDI streams with MPE
+        (<a href="https://en.wikipedia.org/wiki/MIDI#MIDI_Polyphonic_Expression">MIDI Polyphonic Expression</a>)
+        capabilities based on user-defined mappings and rules, for Linux and
+        Windows.
+      </div>
+      <div class="center">
+        <img id="mpe-emulator-img" src="mpe-emulator.png" alt="MPE Emulator screenshot" />
+      </div>
+
+      <div class="center">
+        MPE Emulator is a MIDI proxy: an intermediary plugin which turns
+        non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or
+        any MIDI Control Change (CC) message into polyphonic by applying them
+        selectively to the lowest, highest, oldest, or newest note, either across
+        the whole keyboard or restricted to a range of keys based on a configurable
+        keyboard split point. It can also remap and reshape controller data, and do
+        various other tricks to increase the expressiveness of a musical performance.
+      </div>
+
+      <p class="center">
+        <a class="img" href="mpe-emulator-signal-chain.svg" target="_blank">
+          <img class="signal-chain-img-intro" src="mpe-emulator-signal-chain.svg" alt="Signal Chain" />
+        </a>
+      </p>
+
+      <div class="center">
+        <img id="vst-img" src="vst_compatible.png" alt="MPE Emulator is VST compatible - VST&reg; is a trademark of Steinberg Media Technologies GmbH, registered in Europe and other countries." />
+      </div>
+    </div>
+
+    <div id="download">
+      <h2 class="center">Download (v0.0.1)</h2>
+      <div class="section">
+        <p class="center">
+          <a href="#install-dist">Which distribution should I download?</a>
+        </p>
+
+        <div class="columns">
+          <div class="column">
+            <div class="indent">
+              <h4>Windows and Linux, 64 bit and 32 bit</h4>
+              <ul>
+                <li>
+                  VST 3 Bundle: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-sse2-vst3_bundle.zip">Download (4.6M)</a>
+                </li>
+              </ul>
+
+              <h4>Windows</h4>
+              <ul>
+                <li>
+                  64-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-windows-x86_64-sse2-vst3_single_file.zip">Download (1.3M)</a>
+                </li>
+                <li>
+                  64-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-windows-x86_64-sse2-fst.zip">Download (1.1M)</a>
+                </li>
+                <li>
+                  32-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-windows-x86-sse2-vst3_single_file.zip">Download (1.3M)</a>
+                </li>
+                <li>
+                  32-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-windows-x86-sse2-fst.zip">Download (1.1M)</a>
+                </li>
+              </ul>
+
+              <h4>Linux</h4>
+              <ul>
+                <li>
+                  64-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-linux-x86_64-sse2-vst3_single_file.zip">Download (648K)</a>
+                </li>
+                <li>
+                  64-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-linux-x86_64-sse2-fst.zip">Download (476K)</a>
+                </li>
+                <li>
+                  32-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-linux-x86-sse2-vst3_single_file.zip">Download (668K)</a>
+                </li>
+                <li>
+                  32-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-linux-x86-sse2-fst.zip">Download (484K)</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <h3>Source Code</h3>
+        <ul>
+          <li>
+            Source: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v0.0.1/mpe-emulator-0_0_1-src.zip">Download (2.8M)</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>What's New in v0.0.1</h3>
+        <ul>
+          <li><p>Retroactively add MPE functionality to non-MPE-capable MIDI input devices.</p></li>
+          <li><p>Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and
+          vice-versa.</p></li>
+          <li><p>Invert MIDI expression and controller data, and apply various other distortions.</p></li>
+          <li><p>Use the trigger velocity of notes as release velocity for synths that
+          utilize it.</p></li>
+          <li><p>Split the keyboard and route polyphonic expressions to the two halves with
+          different rules.</p></li>
+          <li><p>Route various expressions and controllers to the lowest, highest, oldest, or
+          newest note globally, or across the split halves of the keyboard.</p></li>
+          <li><p>MIDI Learn.</p></li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <p class="center">
+          <a href="https://github.com/attilammagyar/mpe-emulator/releases/">All releases and changelog on GitHub</a>
+        </p>
+      </div>
+    </div>
+
+    <div id="demos">
+      <h2 class="center">Demo</h2>
+
+      <div class="section center">
+        <video controls>
+          <source src="demo/mpe-emulator-v001-demo.mp4" type="video/mp4">
+          <source src="demo/mpe-emulator-v001-demo.webm" type="video/webm">
+            Download demo video:
+            <a href="demo/mpe-emulator-v001-demo.mp4">MP4</a>
+            <a href="demo/mpe-emulator-v001-demo.webm">WEBM</a>
+        </video>
+        <br/>
+        Demo: MPE Emulator v0.0.1 in <a href="https://www.reaper.fm/">REAPER</a>
+        7.17, with an
+        <a href="https://www.arturia.com/products/hybrid-synths/keystep-37/overview">Arturia KeyStep 37</a> keyboard and the
+        <a href="https://www.arturia.com/products/software-instruments/cs-80v/overview">Arturia CS-80 V</a> synthesizer.
+        <br/>
+        <a href="demo/mpe-emulator-v001-demo.mid">Raw MIDI</a> |
+        <a href="demo/mpe-emulator-v001-demo.mpe">MPE Emulator settings</a>
+      </div>
+    </div>
+
+    <div id="readme">
+
+<p><a id="toc"></a></p>
+
+<h2>Table of Contents</h2>
+
+<ul>
+<li><a href="#toc">Table of Contents</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#install">Installation</a>
+<ul>
+<li><a href="#install-dist">Before Installing: Choosing a Distribution</a></li>
+<li><a href="#system-reqs">System Requirements</a>
+<ul>
+<li><a href="#windows-deps">Dependencies on Windows</a></li>
+<li><a href="#linux-deps">Dependencies on Linux</a></li>
+</ul></li>
+<li><a href="#fst-windows">FST (VST 2.4) on Windows</a></li>
+<li><a href="#fst-linux">FST (VST 2.4) on Linux</a></li>
+<li><a href="#vst3-bundle-windows">VST 3 Bundle on Windows</a></li>
+<li><a href="#vst3-bundle-linux">VST 3 Bundle on Linux</a></li>
+<li><a href="#vst3-single-windows">VST 3 Single File on Windows</a></li>
+<li><a href="#vst3-single-linux">VST 3 Single File on Linux</a></li>
+</ul></li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#usage-knobs">Knobs</a></li>
+<li><a href="#usage-zone">Zone Configuration</a></li>
+<li><a href="#usage-rule">Rules</a></li>
+</ul></li>
+<li><a href="#bugs">Bugs</a>
+<ul>
+<li><a href="#bugs-known">Known Issues and Quirks</a>
+<ul>
+<li><a href="#bugs-known-reaper-7-17">REAPER 7.17 lets raw MIDI control data pass through the VST 3 version</a></li>
+<li><a href="#bugs-known-ardour">Ardour 8.6 ignores Channel Pressure (Aftertouch) events emitted by plugins</a></li>
+<li><a href="#bugs-known-fl-studio">FL Studio does not support MPE at all (as of July 2024)</a></li>
+<li><a href="#bugs-known-vst3">VST 3 Note On and CC event ordering issues</a></li>
+<li><a href="#bugs-known-ccpoly">The mod wheel or a CC event is not handled with polyphony despite matching one of the rules</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#faq">Frequently Asked Questions</a>
+<ul>
+<li><a href="#faq-mac">Mac version?</a></li>
+<li><a href="#faq-flstudio">FL Studio: How to ...?</a></li>
+<li><a href="#faq-fst">Why do you say FST instead of VST 2?</a></li>
+</ul></li>
+<li><a href="#dev">Development</a>
+<ul>
+<li><a href="#dev-tools">Tools</a></li>
+<li><a href="#dev-dep">Dependencies</a></li>
+<li><a href="#dev-compile">Compiling</a></li>
+</ul></li>
+</ul>
+
+<p><a id="features"></a></p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Retroactively add MPE functionality to non-MPE-capable MIDI input devices.</li>
+<li>Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and
+vice-versa.</li>
+<li>Invert MIDI expression and controller data, and apply various other
+distortions.</li>
+<li>Use the trigger velocity of notes as release velocity for synths that can
+utilize it.</li>
+<li>Split the keyboard and route polyphonic expressions to the two halves with
+different rules.</li>
+<li>Route various expressions and controllers to the lowest, highest, oldest, or
+newest note globally, or across the split halves of the keyboard.</li>
+<li>MIDI Learn.</li>
+</ul>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="install"></a></p>
+
+<h2>Installation</h2>
+
+<p><a id="install-dist"></a></p>
+
+<h3>Before Installing: Choosing a Distribution</h3>
+
+<p>If your plugin host application supports VST 2.4, then you should download and
+install the FST version of MPE Emulator.</p>
+
+<p>If your plugin host only supports VST 3, or if you can live with a few quirks
+and edge case bugs due to the incomplete MIDI support in the VST 3 protocol,
+then you should try the VST 3 bundle on both Windows and Linux.</p>
+
+<p>If you are using an older VST 3 host, or if you are running a 32 bit (also
+known as "i686" or "x86") VST 3 host on a 64 bit Linux system, then it might
+not be able to load the VST 3 bundle, so you will have to go with a VST 3
+single file MPE Emulator package that matches the architecture of your host
+application.</p>
+
+<p>The 32 bit versions are usually only needed by those who deliberately use a 32
+bit plugin host application, e.g. because they want to keep using some really
+old plugins which are not available for 64 bit systems.</p>
+
+<p>If you are in doubt, then try the 64 bit FST version, and if your plugin host
+application doesn't recognize it, then try the VST 3 bundle, and if that still
+fails to load, then try the 64 bit VST 3 single file version, then the 32 bit
+FST version, then the 32 bit VST 3 single file version, and so on.</p>
+
+<h4>Packages</h4>
+
+<p>These are the file names that you will find on GitHub on the "Releases" page:</p>
+
+<ul>
+<li><p>FST editions for Windows:</p>
+
+<ul>
+<li><p><code>mpe-emulator-X_Y_Z-windows-x86_64-sse2-fst.zip</code>: for 64 bit CPUs with
+SSE2 support.</p></li>
+<li><p><code>mpe-emulator-X_Y_Z-windows-x86-sse2-fst.zip</code>: for 32 bit CPUs with
+SSE2 support.</p></li>
+</ul></li>
+<li><p>FST editions for Linux:</p>
+
+<ul>
+<li><p><code>mpe-emulator-X_Y_Z-linux-x86_64-sse2-fst.zip</code>: for 64 bit CPUs with SSE2
+support.</p></li>
+<li><p><code>mpe-emulator-X_Y_Z-linux-x86-sse2-fst.zip</code>: for 32 bit CPUs with SSE2
+support.</p></li>
+</ul></li>
+<li><p>VST 3 bundles for both Windows and Linux:</p>
+
+<ul>
+<li><code>mpe-emulator-X_Y_Z-sse2-vst3_bundle.zip</code>: for 64 or 32 bit CPUs with
+SSE2 support.</li>
+</ul></li>
+<li><p>VST 3 single file editions for Windows:</p>
+
+<ul>
+<li><p><code>mpe-emulator-X_Y_Z-windows-x86_64-sse2-vst3_single_file.zip</code>: for
+64 bit CPUs with SSE2 support.</p></li>
+<li><p><code>mpe-emulator-X_Y_Z-windows-x86-sse2-vst3_single_file.zip</code>: for
+32 bit CPUs with SSE2 support.</p></li>
+</ul></li>
+<li><p>VST 3 single file editions for Linux:</p>
+
+<ul>
+<li><p><code>mpe-emulator-X_Y_Z-linux-x86_64-sse2-vst3_single_file.zip</code>: for
+64 bit CPUs with SSE2 support.</p></li>
+<li><p><code>mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single_file.zip</code>: for
+32 bit CPUs with SSE2 support.</p></li>
+</ul></li>
+<li><p>Source:</p>
+
+<ul>
+<li><code>mpe-emulator-X_Y_Z-src.zip</code>: the source code of the plugin which you can
+compile for any CPU architecture. (See the "Development" section below.)</li>
+</ul></li>
+</ul>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="system-reqs"></a></p>
+
+<h3>System Requirements</h3>
+
+<ul>
+<li>Operating System: Windows 7 or newer, or Linux (e.g. Ubuntu 22.04)</li>
+<li>CPU: SSE2 support, 32 bit (i686) or 64 bit (x86-64)</li>
+<li>RAM: around 30 MB per instance</li>
+</ul>
+
+<p>The plugin can also be compiled for RISC-V 64 from its source code.</p>
+
+<p>Tested with <a href="https://www.reaper.fm/">REAPER</a> 7.17.</p>
+
+<p><a id="windows-deps"></a></p>
+
+<h4>Dependencies on Windows</h4>
+
+<p>Typical Windows systems usually have the MSVC library already installed, but in
+case you need it, you can download it from
+<a href="https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist">Microsoft's website</a>.</p>
+
+<p>(Most people need the <code>X64</code> version of this library. To use the 32 bit version
+of the plugin, you will need the <code>X86</code> version of the library. See the
+<a href="#install-dist">Before Installing: Choosing a Distribution</a> section below for
+more information.)</p>
+
+<p><a id="linux-deps"></a></p>
+
+<h4>Dependencies on Linux</h4>
+
+<p>On Linux, the <code>libxcb</code>, <code>libxcb-render</code>, and <code>libcairo</code> libraries, and either
+the <code>kdialog</code> or the <code>zenity</code> application are required to run MPE Emulator. To
+install them on Debian based distributions (e.g. Ubuntu), you can use the
+following command:</p>
+
+<pre><code>sudo apt-get install libxcb1 libxcb-render0 libcairo2 zenity kdialog
+</code></pre>
+
+<p>Note: if you want to run the 32 bit version of MPE Emulator on a 64 bit system,
+then you will have to install the 32 bit version of the libraries, for example:</p>
+
+<pre><code>sudo apt-get install libxcb1:i386 libxcb-render0:i386 libcairo2:i386 zenity kdialog
+</code></pre>
+
+<p><a id="fst-windows"></a></p>
+
+<h3>FST (VST 2.4) on Windows</h3>
+
+<ol>
+<li><a href="https://attilammagyar.github.io/mpe-emulator">Download MPE Emulator</a>.</li>
+<li>Extract the ZIP archive.</li>
+<li>Copy the <code>mpe-emulator.dll</code> file to the folder where you keep your VST 2.4
+plugins.</li>
+<li>Optionally, if your host application can load <code>.vstxml</code> files, it is
+recommended to copy the <code>mpe-emulator.vstxml</code> file as well to the folder
+where you keep your VST 2.4 plugins.</li>
+</ol>
+
+<p>Note: VST 2.4 plugins are usually put in the <code>C:\Program Files\VstPlugins</code>
+folder.</p>
+
+<p><a id="fst-linux"></a></p>
+
+<h3>FST (VST 2.4) on Linux</h3>
+
+<ol>
+<li><a href="https://attilammagyar.github.io/mpe-emulator">Download MPE Emulator</a>.</li>
+<li>Extract the ZIP archive.</li>
+<li>Copy the <code>mpe-emulator.so</code> file to the directory where you keep your VST 2.4
+plugins.</li>
+<li>Optionally, if your host application can load <code>.vstxml</code> files, it is
+recommended to copy the <code>mpe-emulator.vstxml</code> file as well to the directory
+where you keep your VST 2.4 plugins.</li>
+</ol>
+
+<p>Note: VST 2.4 plugins are usually put in the <code>~/.vst</code> directory.</p>
+
+<p><a id="vst3-bundle-windows"></a></p>
+
+<h3>VST 3 Bundle on Windows</h3>
+
+<ol>
+<li><a href="https://attilammagyar.github.io/mpe-emulator">Download MPE Emulator</a>.</li>
+<li>Extract the ZIP archive.</li>
+<li>Copy the entire <code>mpe-emulator.vst3</code> folder to your VST 3 folder which is
+usually <code>C:\Users\YourUserName\AppData\Local\Programs\Common\VST3</code>.</li>
+</ol>
+
+<p><a id="vst3-bundle-linux"></a></p>
+
+<h3>VST 3 Bundle on Linux</h3>
+
+<ol>
+<li><a href="https://attilammagyar.github.io/mpe-emulator">Download MPE Emulator</a>.</li>
+<li>Extract the ZIP archive.</li>
+<li>Copy the entire <code>mpe-emulator.vst3</code> directory to your VST 3 directory which
+is usually <code>~/.vst3</code>.</li>
+</ol>
+
+<p><a id="vst3-single-windows"></a></p>
+
+<h3>VST 3 Single File on Windows</h3>
+
+<ol>
+<li><a href="https://attilammagyar.github.io/mpe-emulator">Download MPE Emulator</a>.</li>
+<li>Extract the ZIP archive.</li>
+<li>Copy the <code>mpe-emulator.vst3</code> file to your VST 3 folder which is usually
+<code>C:\Users\YourUserName\AppData\Local\Programs\Common\VST3</code>.</li>
+</ol>
+
+<p><a id="vst3-single-linux"></a></p>
+
+<h3>VST 3 Single File on Linux</h3>
+
+<ol>
+<li><a href="https://attilammagyar.github.io/mpe-emulator">Download MPE Emulator</a>.</li>
+<li>Extract the ZIP archive.</li>
+<li>Copy the <code>mpe-emulator.vst3</code> file to your VST 3 directory which is usually
+<code>~/.vst3</code>.</li>
+</ol>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="usage"></a></p>
+
+<h2>Usage</h2>
+
+<p>Place MPE Emulator in the signal chain between the raw MIDI input and a
+synthesizer plugin in the plugin host application. The exact steps to set up
+MIDI routing vary between different plugin host applications, so consult the
+documentation of your one.</p>
+
+<p class="center">
+  <a class="img" href="mpe-emulator-signal-chain.svg" target="_blank">
+    <img class="signal-chain-img" src="mpe-emulator-signal-chain.svg" alt="Signal Chain" />
+  </a>
+</p>
+
+<p><a id="usage-knobs"></a></p>
+
+<h3>Knobs</h3>
+
+<p>Most of the parameters that control the settings of the MIDI signal
+transformations can be adjusted via virtual knobs on the screen:</p>
+
+<ul>
+<li><p>Move the mouse cursor over a knob, and use the mouse wheel or move the mouse
+while holding down the left mouse button for adjusting the value.</p></li>
+<li><p>Double click on a knob to reset it to its default value.</p></li>
+</ul>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="usage-zone"></a></p>
+
+<h3>Zone Configuration</h3>
+
+<p>An MPE zone is a group of MIDI channels where one channel is used for sending
+global MIDI events and controller changes which apply to all active notes
+(manager channel), and the other channels are allocated for individual
+polyphonic notes and controller events (member channels). Each controller event
+that is sent on a member channel is applied only to the note (or notes) that is
+played on that MIDI channel. One of the possible zones is called the "lower"
+zone and the other is called "upper". This has nothing to do with note pitches,
+these names actually refer to the layout of MIDI channel numbers.</p>
+
+<p>Currently, MPE Emulator uses only one zone which can be either the lower or the
+upper zone. The exact details of these are not important, what's important is
+that MPE Emulator and the MPE-capable synthesizer must agree on the manager and
+the member channel layout. This can be achieved either by manually setting up
+the same MPE configuration in both the synthesizer and in MPE Emulator, or
+alternatively, MPE Emulator can send an MPE Configuration Message (MCM), and if
+the synthesizer implements MPE properly, then it will automatically configure
+itself to match the settings in MPE Emulator. (Though in practice, even some
+widely used commercial synthesizers ignore MCM messages, so you will likely
+have to manually verify that the zone settings of MPE Emulator and the
+synthesizer match up.)</p>
+
+<h4>Import Settings, Export Settings</h4>
+
+<p>The two icons at the top left corner of the "Main" configuration section allow
+saving and loading settings as ordinary files, e.g. for transferring them
+across projects, different host applications, computers, etc.</p>
+
+<h4>Override Release Velocity With Triggered Velocity (RelVel=TrigVel, Z1ORV)</h4>
+
+<p>Most MIDI keyboards emit Note Off events with note velocity set to either 0%,
+50%, or 100%, regardless of how slow or fast the corresponding key is released.
+However, some synthesizers can utilize note release velocity, for example, to
+set the amplitude envelope release time accordingly. MPE Emulator remembers the
+note velocity for each triggered note, and can override the release velocity
+that is sent by the MIDI device to match the trigger velocity, so that softer
+notes are also release softly, and high velocity notes are also released with a
+high velocity.</p>
+
+<h4>Emit MCM on Reset (MCM)</h4>
+
+<p>This toggle switch tells MPE Emulator to emit MPE Configuration Messages (MCM),
+or don't bother, because the synthesizer would just ignore them anyways.</p>
+
+<h4>Zone Type (ZONE, Z1TYP)</h4>
+
+<p>Select the channel layout used by MPE Emulator:</p>
+
+<ul>
+<li><p><strong>Lower</strong>: channel 1 is the manager channel, channel 2-16 can be used as
+member channels.</p></li>
+<li><p><strong>Upper</strong>: channel 16 is the manager channel, channel 1-15 can be used as
+member channels.</p></li>
+</ul>
+
+<h4>Channels (CHAN, Z1CHN)</h4>
+
+<p>The number of channels to use as member channels. This determines the number of
+available polyphonic voices to use (within the limits of the synthesizer).</p>
+
+<h4>Excess Note Handling (STEAL, Z1ENH)</h4>
+
+<p>Tells MPE Emulator what to do then a new note is triggered while all polyphonic
+voices are in use:</p>
+
+<ul>
+<li><p><strong>Never</strong>: there's no voice-stealing, the new note is ignored.</p></li>
+<li><p><strong>Low</strong>: the lowest note is stopped, and the new note is played on the
+channel where it used to be.</p></li>
+<li><p><strong>High</strong>: the highest note is stopped, and the new note is played on the
+channel where it used to be.</p></li>
+<li><p><strong>Old</strong>: the oldest note is stopped, and the new note is played on the
+channel where it used to be.</p></li>
+<li><p><strong>New</strong>: the newest note is stopped (the one played before the new one), and
+the new note is played on the channel where it used to be.</p></li>
+</ul>
+
+<p><a id="usage-zone-anchor"></a></p>
+
+<h4>Anchor (ANCH, Z1ANC)</h4>
+
+<p>A split point for the keyboard. Expression and controller events can be applied
+differently to each side of the split point. For example, one may want to send
+channel pressure (aftertouch) events only to the newest or the highest note
+above A3, but not to bass notes or chords played with the left hand.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="usage-rule"></a></p>
+
+<h3>Rules</h3>
+
+<p><a id="usage-rule-in"></a></p>
+
+<h4>Input (IN, Z1RxIN)</h4>
+
+<p>The input controller (MIDI CC) type for the rule. CC events that are not
+matched by any rule's input settings are sent globally on the manager channel,
+and those that are matched by one or more rules are handled as the rules
+specify. The possible values are:</p>
+
+<ul>
+<li><p><strong>CC0</strong> - <em>CC119</em>: normal MIDI CC numbers that are usually assigned to various
+knobs and faders on a MIDI keyboard. (Note: the mod wheel is <em>CC1</em>.)</p></li>
+<li><p><strong>Pitch</strong>: the pitch wheel.</p></li>
+<li><p><strong>Ch AT</strong>: channel pressure, also known as channel aftertouch.</p></li>
+<li><p><strong>Learn</strong>: MIDI learn, which means that the first controller message that is
+received after setting this option will be assigned to the input of the
+rule.</p></li>
+<li><p><strong>none</strong>: turn off the rule entirely.</p></li>
+</ul>
+
+<p><a id="usage-rule-out"></a></p>
+
+<h4>Output (OUT, Z1RxOU)</h4>
+
+<p>The output controller (MIDI CC) type for the rule. Usually it should be the
+same as the <a href="#usage-rule-in">input</a>, but in some cases, you might want to remap
+a particular controller to another. For example, if your MIDI keyboard does not
+have channel pressure (aftertouch) functionality, but it has some special
+function in a particular synthesizer, then you can remap e.g. mod wheel events
+to be sent as channel pressure: assign the mod wheel to the input, and select
+channel aftertouch for the output, and then whenever you turn the mod wheel,
+the synthesizer will receive an aftertouch message instead of it.
+(Unfortunately, aftertouch is known to have some
+<a href="#bugs-known">bugs and quirks in some plugin type and host combinations</a>.)</p>
+
+<p><a id="usage-rule-init"></a></p>
+
+<h4>Initial Value (INIT, Z1RxIV)</h4>
+
+<p>The initial value of the rule (before distortions). See
+<a href="#usage-rule-reset">Reset</a> for the details.</p>
+
+<p><a id="usage-rule-target"></a></p>
+
+<h4>Target (TARGET, Z1RxTR)</h4>
+
+<p>Which polyphonic note (channel) to send the output of the rule:</p>
+
+<ul>
+<li><p><strong>Global</strong>: send on the manager channel, and let the synthesizer apply it to
+all active notes.</p></li>
+<li><p><strong>All BA</strong>: send to all notes below the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>All AA</strong>: send to all notes above the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>Low</strong>: send on the channel that belongs to the lowest key that is being
+pressed across the entire keyboard.</p></li>
+<li><p><strong>High</strong>: send on the channel that belongs to the highest key that is being
+pressed across the entire keyboard.</p></li>
+<li><p><strong>Old</strong>: send to the channel which belongs to the key that has been pressed
+for the longest time across the entire keyboard.</p></li>
+<li><p><strong>New</strong>: send to the channel which belongs to the key that has been pressed
+for the shortest time across the entire keyboard.</p></li>
+<li><p><strong>Low BA</strong>: send on the channel that belongs to the lowest key that is being
+pressed below the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>High BA</strong>: send on the channel that belongs to the highest key that is
+being pressed below the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>Old BA</strong>: send to the channel which belongs to the key that has been
+pressed for the longest time below the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>New BA</strong>: send to the channel which belongs to the key that has been
+pressed for the shortest time below the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>Low AA</strong>: send on the channel that belongs to the lowest key that is being
+pressed above the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>High AA</strong>: send on the channel that belongs to the highest key that is
+being pressed above the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>Old AA</strong>: send to the channel which belongs to the key that has been
+pressed for the longest time above the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+<li><p><strong>New AA</strong>: send to the channel which belongs to the key that has been
+pressed for the shortest time above the <a href="#usage-zone-anchor">anchor</a>.</p></li>
+</ul>
+
+<p><strong>Note</strong>: "above the anchor" here includes the anchor key itself.</p>
+
+<p><a href="usage-rule-dist"></a></p>
+
+<h4>Distortion Level (DIST, Z1RxDL)</h4>
+
+<p>How much to distort the flat, linear curve of the controller with the selected
+<a href="#usage-rule-dist-type">distortion function</a>.</p>
+
+<p><a id="usage-rule-invert"></a></p>
+
+<h4>Invert (Z1RxNV)</h4>
+
+<p>Flip the controller: when 0% is received on the input, send 100%, and when the
+input is at 100%, then send 0%.</p>
+
+<p><a id="usage-rule-reset"></a></p>
+
+<h4>Reset (Z1RxRS)</h4>
+
+<p>Select note initialization and reset behaviour. A reset can occur in one of two
+ways:</p>
+
+<ul>
+<li><p>When the <a href="#usage-rule-target">target</a> of a rule is "Global", then the
+output controller of the rule will be reset when the plugin is
+re-initialized by the host, and when the <a href="#usage-zone">zone configuration</a>
+is changed.</p></li>
+<li><p>When the target is anything else, then a reset can occur when a new note is
+triggered or an old one is stopped. A reset may affect the new note itself,
+and also the notes that used to be the targets of a rule before the note
+event, or which become the targets of a rule after the note event.</p>
+
+<p>(For example, when the target of a rule is the highest note and a C4 is
+being played, then a reset occurs when the C5 key is pressed, affecting both
+the C4's channel and the C5's channel, because the former used to be the
+only note and therefore also the highest note, and now the latter is the
+highest. Then if the C5 note is released, then C4 becomes the highest again,
+and it also triggers a reset.)</p></li>
+</ul>
+
+<p>The options for performing resets are:</p>
+
+<ul>
+<li><p><strong>INI</strong>: send the <a href="#usage-rule-init">initial value</a> of the rule to the
+affected notes.</p></li>
+<li><p><strong>LST</strong>: send the value that was received most recently for this rule to the
+affected notes.</p></li>
+<li><p><strong>OFF</strong>: no reset is sent to any channels, everything stays as it is until
+a new control event happens.</p></li>
+</ul>
+
+<h4>Midpoint (Z1RxMP)</h4>
+
+<p>Move the mouse cursor over the first function graph icon at the top right
+corner of a rule, and start moving it while holding the left mouse button
+down, or start using the mouse wheel to adjust the midpoint of the rule's
+<a href="#usage-rule-in">input</a>. For example, if the midpoint is at 75%, then when the
+rule's input controller is at 50%, MPE Emulator will send 75%. Moving the
+controller between 0% and 50% will make MPE Emulator emit values between 0% and
+75%, and moving the controller between 50% and 100% will make MPE Emulator emit
+values between 75% and 100%.</p>
+
+<p>Together with the <a href="#usage-rule-invert">Invert</a> toggle, this makes it possible
+to create a pair of rules which turn the two halves of the pitch bend wheel
+into different controllers, and to misuse it in various creative ways.</p>
+
+<p><a id="usage-rule-dist-type"></a></p>
+
+<h4>Distortion Type (Z1RxDT)</h4>
+
+<p>Click on the second function graph icon at the top right corner of a rule, or
+use the mouse wheel while holding the mouse cursor over it to select the
+non-linearity shape that the rule will use when its
+<a href="#usage-rule-dist">distortion level</a> parameter is set to a value above 0%.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="bugs"></a></p>
+
+<h2>Bugs</h2>
+
+<p>If you find bugs that are not mentioned in the
+"<a href="#bugs-known">Known Issues and Quirks</a>" section, please report them at
+<a href="https://github.com/attilammagyar/mpe-emulator/issues">https://github.com/attilammagyar/mpe-emulator/issues</a>.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="bugs-known"></a></p>
+
+<h3>Known Issues and Quirks</h3>
+
+<p><a id="bugs-known-reaper-7-17"></a></p>
+
+<h4>REAPER 7.17 lets raw MIDI control data pass through the VST 3 version</h4>
+
+<p>When a VST 3 plugin outputs MIDI controller messages in
+<a href="https://www.reaper.fm/">REAPER</a> 7.17 and below versions, they get merged with
+the raw MIDI input regardless of whether the "<em>Replaces MIDI bus</em>" or the
+"<em>Merges with MIDI bus</em>" setting is selected. This makes the VST 3 version of
+MPE Emulator unusable in REAPER. This is a
+<a href="https://forum.cockos.com/showthread.php?t=292338">bug in REAPER</a> which
+might get fixed in 7.18.</p>
+
+<p>The FST (VST 2.4) version of MPE Emulator works fine in all versions of REAPER.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="bugs-known-ardour"></a></p>
+
+<h4>Ardour 8.6 ignores Channel Pressure (Aftertouch) events emitted by plugins</h4>
+
+<p>There's a bug in both the VST 2 and the VST 3 implementation in
+<a href="https://ardour.org/">Ardour</a> which makes it drop Channel Pressure (Aftertouch)
+events (and Program Change events in case of VST 2).
+<a href="https://github.com/Ardour/ardour/pull/899">The status of the fix can be tracked here</a>.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="bugs-known-fl-studio"></a></p>
+
+<h4>FL Studio does not support MPE at all (as of July 2024)</h4>
+
+<p>In fact, MIDI is not a first-class citizen in <a href="https://www.image-line.com/">FL Studio</a>,
+and getting even basic MIDI to work with plugins (e.g. using controllers other
+than the mod wheel and the pitch bend wheel) requires digging through various
+settings dialogs and manually setting up controller links to plugin parameters.
+By the way, those MIDI CC helper parameters that many plugin developers and
+even the VST 3 standard use are not MIDI CC support, they are just workarounds
+to mimic MIDI CC support.</p>
+
+<p>As of July 2024, MPE in FL Studio seems hopeless.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="bugs-known-vst3"></a></p>
+
+<h4>VST 3 Note On and CC event ordering issues</h4>
+
+<p>A VST 3 plugin has no way to know the exact order of MIDI note events and
+controller events on its input, and has no way to communicate it on its output,
+because MIDI support is fundamentally broken in the VST 3 protocol.</p>
+
+<p>MPE Emulator does what can be done to work around this, but since the
+protocol's design makes it impossible to ensure the sequentiality between note
+events and controller events, there might be cases where the VST 3 version of
+MPE Emulator cannot fully satisfy the requirements of a synthesizer which
+expects CC and note events to come in a particular well defined order. Note
+that the FST (VST 2.4) version does not suffer from this problem.</p>
+
+<p>The reason for this is that the VST 3 protocol separates the continuous and
+consistent MIDI stream that comes out of MIDI input devices into separate
+streams of note-related events and controller events, and passes the latter to
+plugins as parameter automation.</p>
+
+<p>While VST 2 has full support for MIDI (and extensions like MPE), the developers
+of VST 3 decided to take several steps backward and break MIDI by implementing
+controller handling based on a workaround that was used by VST 2 plugin
+developers to mimic MIDI CC support for host applications that don't implement
+it properly (like, for example, <a href="#bugs-known-fl-studio">FL Studio</a>). Then when
+both plugin developers and MIDI plugin users pushed them, they added another
+workaround (named <code>LegacyMIDICCOutEvent</code>) to the protocol, which makes it
+possible for VST 3 plugins to output MIDI CC events, but now the sequentiality
+of MIDI events is broken for VST 3 plugins both on the input and consequently
+on the output side.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="bugs-known-ccpoly"></a></p>
+
+<h4>The mod wheel or a CC event is not handled with polyphony despite matching one of the rules</h4>
+
+<p>Though the MPE specification allows basically any controller event to be sent
+on the polyphonic channels (member channels) and to be handled individually for
+each note, many commercial synthesizers use only the pitch wheel, the channel
+pressure, and CC 74 (a.k.a. Brightness, Timbre, Sound 5, etc.) with polyphony,
+because these are the ones that are mandated by the standard. If you set up a
+rule in MPE Emulator to make e.g. the mod wheel polyphonic and the synthesizer
+ignores it or still applies it globally, then MPE Emulator has no influence on
+it, and the synthesizer is doing nothing wrong with respect to the
+standard.</p>
+
+<p>Most DAW applications have a plugin or a special tool which lets you peek into
+the raw MIDI messages that are sent and received by each plugin, bus, and MIDI
+track. If you see something there that is clearly wrong on MPE Emulator's side, 
+and it's not a <a href="#bugs-known">known quirk with a particular host and plugin type combination</a>
+then please <a href="https://github.com/attilammagyar/mpe-emulator/issues">report it as a bug</a>.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="faq"></a></p>
+
+<h2>Frequently Asked Questions</h2>
+
+<p><a id="faq-mac"></a></p>
+
+<h3>Mac version?</h3>
+
+<p>Sorry, it's not likely to happen anytime soon, unless someone is willing to
+create and maintain a Mac fork of MPE Emulator. For me to do it, it would
+require quite a large investment, both in terms of effort and financially. If
+MacOS would be available (at a reasonable price) for installing it in a virtual
+machine that could be used for testing, I'd consider that. But as long as it
+cannot be obtained (legally) without also buying a Mac, and I'm happy with my
+current computer, I'm not going to invest in a new one.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="faq-flstudio"></a></p>
+
+<h3>FL Studio: How to ...?</h3>
+
+<p>As of July 2024, <a href="#bugs-known-fl-studio">MPE in FL Studio is not supported</a>.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="faq-fst"></a></p>
+
+<h3>Why do you say FST instead of VST 2?</h3>
+
+<blockquote>
+  <p>VST® is a trademark of Steinberg Media Technologies GmbH, registered in
+Europe and other countries.</p>
+</blockquote>
+
+<p>I'm not a lawyer, so I have no idea if it would count as trademark infringement
+if I claimed VST 2.4 compatibility for MPE Emulator without obtaining a license
+from Steinberg Media Technologies GmbH, so I don't do it, especially since they
+no longer issue new licenses for VST 2 to anybody. Instead, I use the name of
+an open source programming library which makes it possible to build plugins
+that can be loaded into VST 2.4 hosts without that license:
+<a href="https://git.iem.at/zmoelnig/FST">FST</a>.</p>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+<p><a id="dev"></a></p>
+
+<h2>Development</h2>
+
+<p>This section contains information for those who downloaded the source code of
+MPE Emulator and want to compile it themselves.</p>
+
+<p><a id="dev-tools"></a></p>
+
+<h3>Tools</h3>
+
+<h4>Linux</h4>
+
+<ul>
+<li><a href="https://www.gnu.org/software/make/">GNU Make 4.3+</a></li>
+<li><a href="https://gcc.gnu.org/">G++ 11.4.0+</a></li>
+<li><a href="https://www.mingw-w64.org/">MinGW-w64 10+</a></li>
+<li><a href="https://valgrind.org/">Valgrind 3.18.1+</a></li>
+<li><a href="https://github.com/danmar/cppcheck">Cppcheck 2.7</a></li>
+<li><a href="https://www.doxygen.nl/">Doxygen 1.9.1+</a></li>
+</ul>
+
+<h4>Windows</h4>
+
+<ul>
+<li><a href="https://winlibs.com/">WinLibs MinGW-w64 13.1.0+ (MSVCRT)</a></li>
+<li><a href="https://www.doxygen.nl/">Doxygen 1.9.6+</a></li>
+</ul>
+
+<p><a id="dev-dep"></a></p>
+
+<h3>Dependencies</h3>
+
+<p>The <code>lib/</code> directory contains code from the following projects:</p>
+
+<ul>
+<li><a href="https://git.iem.at/zmoelnig/FST">FST</a></li>
+<li><a href="https://github.com/steinbergmedia/vst3sdk">VST 3 SDK</a></li>
+</ul>
+
+<p><strong>Note</strong>: the <code>lib/</code> directory does not include the whole SDK packages, it only
+contains what's required for compiling MPE Emulator.</p>
+
+<h4>Linux</h4>
+
+<p>To compile MPE Emulator on e.g. Ubuntu Linux 22.04 for all supported platforms,
+the following packages need to be installed:</p>
+
+<pre><code>apt-get install \
+    binutils \
+    build-essential \
+    g++ \
+    gcc-multilib \
+    g++-multilib \
+    libcairo2-dev \
+    libcairo2-dev:i386 \
+    libx11-dev \
+    libx11-dev:i386 \
+    libxcb1-dev \
+    libxcb1-dev:i386 \
+    libxcb-render0-dev \
+    libxcb-render0-dev:i386 \
+    mingw-w64
+</code></pre>
+
+<p><a id="dev-compile"></a></p>
+
+<h3>Compiling</h3>
+
+<h4>Windows</h4>
+
+<p>Assuming that you have installed MinGW-w64 to <code>C:\mingw64</code>, you can use the
+following commands to run tests and compile MPE Emulator for Windows:</p>
+
+<pre><code>SET PATH=C:\mingw64\bin;%PATH%
+SET TARGET_PLATFORM=x86_64-w64-mingw32
+SET DEV_OS=windows
+
+mingw32-make.exe check
+mingw32-make.exe all
+</code></pre>
+
+<h4>Linux</h4>
+
+<p>Run <code>make check</code> for running tests.</p>
+
+<p>The following commands (on a 64 bit Linux environment) will compile MPE
+Emulator for 64 bit Windows, 32 bit Windows, <code>x86_64</code> Linux, <code>x86</code> Linux, and
+<code>RISC-V 64</code> Linux respectively:</p>
+
+<pre><code>TARGET_PLATFORM=x86_64-w64-mingw32 make all
+TARGET_PLATFORM=i686-w64-mingw32 make all
+TARGET_PLATFORM=x86_64-gpp make all
+TARGET_PLATFORM=i686-gpp make all
+TARGET_PLATFORM=riscv64-gpp make all
+</code></pre>
+
+<p><a href="#toc">Table of Contents</a></p>
+
+    </div>
+  </div>
+
+  <div>
+    <p class="center">
+      <small>This website does not use any cookies.</small><br/>
+      <small>Copyright &copy; 2024 Attila M. Magyar and contributors</small>
+    </p>
+  </div>
+</body>
+</html>
