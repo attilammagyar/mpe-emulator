@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -24,9 +24,9 @@
 #include <string>
 #include <vector>
 
-#include "js80p.hpp"
+#include "common.hpp"
 #include "midi.hpp"
-#include "synth.hpp"
+#include "proxy.hpp"
 
 #include "gui/gui.hpp"
 
@@ -39,12 +39,12 @@ XML schema as parsed by JUCE in
 */
 
 
-using namespace JS80P;
+using namespace MpeEmulator;
 
 
 void usage(char const* name)
 {
-    fprintf(stderr, "Usage: %s out_dir/js80p.vstxml\n", name);
+    fprintf(stderr, "Usage: %s out_dir/mpe-emulator.vstxml\n", name);
 }
 
 
@@ -76,22 +76,15 @@ void write_param(
 
 void generate_xml(std::ofstream& out_file)
 {
-    Synth synth;
+    Proxy proxy;
     FstPlugin::Parameters parameters;
 
-    FstPlugin::populate_parameters(synth, parameters);
-
-    FstPlugin::Parameter const& program = parameters[0];
+    FstPlugin::populate_parameters(proxy, parameters);
 
     write_line(out_file, "<VSTParametersStructure>");
-    write_param(out_file, 0, program.get_name(), program.get_name());
 
-    for (size_t i = 1; i != FstPlugin::NUMBER_OF_PARAMETERS; ++i) {
+    for (size_t i = 0; i != FstPlugin::NUMBER_OF_PARAMETERS; ++i) {
         FstPlugin::Parameter const& parameter = parameters[i];
-        Midi::Controller const controller_id = parameter.get_controller_id();
-        GUI::Controller const& controller = *GUI::get_controller(
-            (Synth::ControllerId)controller_id
-        );
 
         if (i == FstPlugin::PATCH_CHANGED_PARAMETER_INDEX) {
             write_param(
@@ -102,7 +95,7 @@ void generate_xml(std::ofstream& out_file)
             );
         } else {
             write_param(
-                out_file, i, controller.long_name, controller.short_name
+                out_file, i, parameter.get_long_name(), parameter.get_short_name()
             );
         }
     }

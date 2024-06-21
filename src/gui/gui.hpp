@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,24 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__GUI__GUI_HPP
-#define JS80P__GUI__GUI_HPP
+#ifndef MPE_EMULATOR__GUI__GUI_HPP
+#define MPE_EMULATOR__GUI__GUI_HPP
 
 #include <cstddef>
 #include <vector>
 
-#include "js80p.hpp"
-#include "synth.hpp"
+#include "common.hpp"
+#include "proxy.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class Background;
-class ControllerSelector;
-class ExportPatchButton;
+class ExportSettingsButton;
 class ExternallyCreatedWindow;
-class ImportPatchButton;
+class ImportSettingsButton;
 class ParamStateImages;
 class KnobParamEditor;
 class StatusLine;
@@ -62,79 +61,32 @@ class GUI
         typedef unsigned int Color;
         typedef unsigned char ColorComponent;
 
-        enum ControllerCapability {
-            NONE                = 0,
-            MIDI_CONTROLLER     = 1 << 0,
-            MACRO               = 1 << 1,
-            LFO                 = 1 << 2,
-            ENVELOPE            = 1 << 3,
-            CHANNEL_PRESSURE    = 1 << 4,
-        };
-
-        class Controller
-        {
-            public:
-                Controller(
-                    int const index,
-                    ControllerCapability const required_capability,
-                    Synth::ControllerId const id,
-                    char const* const long_name,
-                    char const* const short_name
-                );
-
-                char const* const long_name;
-                char const* const short_name;
-                ControllerCapability const required_capability;
-                int const index;
-                Synth::ControllerId const id;
-        };
-
         static constexpr long int WIDTH = 980;
         static constexpr long int HEIGHT = 600;
 
-        static constexpr Frequency REFRESH_RATE = 18.0;
-        static constexpr Seconds REFRESH_RATE_SECONDS = 1.0 / REFRESH_RATE;
+        static constexpr double REFRESH_RATE = 18.0;
+        static constexpr double REFRESH_RATE_SECONDS = 1.0 / REFRESH_RATE;
 
-        static constexpr int CONTROLLERS_COUNT = 134;
+        static char const* const CONTROLLERS_SHORT[];
+        static char const* const CONTROLLERS_LONG[];
+        static size_t const CONTROLLERS_COUNT;
 
-        static char const* const MODES[];
-        static int const MODES_COUNT;
+        static char const* const ZONE_TYPES[];
+        static size_t const ZONE_TYPES_COUNT;
 
-        static char const* const TUNINGS[];
-        static int const TUNINGS_COUNT;
+        static char const* const CHANNELS[];
+        static size_t const CHANNELS_COUNT;
 
-        static char const* const OSCILLATOR_INACCURACY_LEVELS[OscillatorInaccuracy::MAX_LEVEL + 1];
-        static int const OSCILLATOR_INACCURACY_LEVELS_COUNT;
+        static char const* const ANCHORS[];
+        static size_t const ANCHORS_COUNT;
 
-        static char const* const WAVEFORMS[];
-        static int const WAVEFORMS_COUNT;
+        static char const* const EXCESS_NOTE_HANDLINGS[];
+        static size_t const EXCESS_NOTE_HANDLINGS_COUNT;
 
-        static char const* const BIQUAD_FILTER_TYPES[];
-        static int const BIQUAD_FILTER_TYPES_COUNT;
+        static char const* const TARGETS[];
+        static size_t const TARGETS_COUNT;
 
-        static char const* const CHORUS_TYPES[];
-        static int const CHORUS_TYPES_COUNT;
-
-        static char const* const REVERB_TYPES[];
-        static int const REVERB_TYPES_COUNT;
-
-        static char const* const LFO_AMOUNT_ENVELOPES[];
-        static int const LFO_AMOUNT_ENVELOPES_COUNT;
-
-        static char const* const ENVELOPE_UPDATE_TYPES[];
-        static int const ENVELOPE_UPDATE_TYPES_COUNT;
-
-        static char const* const NOTE_HANDLING_MODES[];
-        static int const NOTE_HANDLING_MODES_COUNT;
-
-        static char const* const DISTORTION_TYPES[];
-        static int const DISTORTION_TYPES_COUNT;
-
-        static char const* const PARAMS[Synth::ParamId::PARAM_ID_COUNT];
-
-        static Controller const CONTROLLERS[];
-
-        static Controller const* get_controller(Synth::ControllerId const controller_id);
+        static char const* const PARAMS[Proxy::ParamId::PARAM_ID_COUNT];
 
         static constexpr Color rgb(
             ColorComponent const red,
@@ -153,28 +105,11 @@ class GUI
         static Color const TOGGLE_OFF_COLOR;
         static Color const TOGGLE_ON_COLOR;
 
-        static Color const CTL_COLOR_NONE_TEXT;
-        static Color const CTL_COLOR_NONE_BG;
-        static Color const CTL_COLOR_MIDI_CC_TEXT;
-        static Color const CTL_COLOR_MIDI_CC_BG;
-        static Color const CTL_COLOR_MIDI_SPECIAL_TEXT;
-        static Color const CTL_COLOR_MIDI_SPECIAL_BG;
-        static Color const CTL_COLOR_MIDI_LEARN_TEXT;
-        static Color const CTL_COLOR_MIDI_LEARN_BG;
-        static Color const CTL_COLOR_AFTERTOUCH_TEXT;
-        static Color const CTL_COLOR_AFTERTOUCH_BG;
-        static Color const CTL_COLOR_MACRO_TEXT;
-        static Color const CTL_COLOR_MACRO_BG;
-        static Color const CTL_COLOR_LFO_TEXT;
-        static Color const CTL_COLOR_LFO_BG;
-        static Color const CTL_COLOR_ENVELOPE_TEXT;
-        static Color const CTL_COLOR_ENVELOPE_BG;
-
         static void param_ratio_to_str(
-            Synth const& synth,
-            Synth::ParamId const param_id,
-            Number const ratio,
-            Number const scale,
+            Proxy const& synth,
+            Proxy::ParamId const param_id,
+            double const ratio,
+            double const scale,
             char const* const format,
             char const* const* const options,
             size_t const number_of_options,
@@ -182,17 +117,13 @@ class GUI
             size_t const buffer_size
         );
 
-        static Number clamp_ratio(Number const ratio);
-
-        static Color controller_id_to_text_color(Synth::ControllerId const controller_id);
-
-        static Color controller_id_to_bg_color(Synth::ControllerId const controller_id);
+        static double clamp_ratio(double const ratio);
 
         GUI(
             char const* sdk_version,
             PlatformData platform_data,
             PlatformWidget parent_window,
-            Synth& synth,
+            Proxy& synth,
             bool const show_vst_logo
         );
 
@@ -206,29 +137,25 @@ class GUI
         void set_status_line(char const* text);
         void redraw_status_line();
 
-        bool is_mts_esp_connected() const;
-
         PlatformData get_platform_data() const;
 
     private:
         static constexpr size_t DEFAULT_STATUS_LINE_MAX_LENGTH = 32;
 
-        static void initialize_controllers_by_id();
-
         static void param_ratio_to_str_float(
-            Synth const& synth,
-            Synth::ParamId const param_id,
-            Number const ratio,
-            Number const scale,
+            Proxy const& synth,
+            Proxy::ParamId const param_id,
+            double const ratio,
+            double const scale,
             char const* const format,
             char* const buffer,
             size_t const buffer_size
         );
 
         static void param_ratio_to_str_options(
-            Synth const& synth,
-            Synth::ParamId const param_id,
-            Number const ratio,
+            Proxy const& synth,
+            Proxy::ParamId const param_id,
+            double const ratio,
             char const* const* const options,
             size_t const number_of_options,
             char* const buffer,
@@ -236,60 +163,22 @@ class GUI
         );
 
         static void param_ratio_to_str_int(
-            Synth const& synth,
-            Synth::ParamId const param_id,
-            Number const ratio,
+            Proxy const& synth,
+            Proxy::ParamId const param_id,
+            double const ratio,
             char* const buffer,
             size_t const buffer_size
         );
-
-        static Controller const* controllers_by_id[Synth::ControllerId::CONTROLLER_ID_COUNT];
-        static bool controllers_by_id_initialized;
 
         void initialize();
         void destroy();
 
         void build_about_body(char const* sdk_version);
 
-        void build_macros_1_body(
+        void build_zone_1_body(
             ParamStateImages const* knob_states,
-            ParamStateImages const* macro_distortions,
-            ParamStateImages const* macro_midpoint_states
-        );
-
-        void build_macros_2_body(
-            ParamStateImages const* knob_states,
-            ParamStateImages const* macro_distortions,
-            ParamStateImages const* macro_midpoint_states
-        );
-
-        void build_macros_3_body(
-            ParamStateImages const* knob_states,
-            ParamStateImages const* macro_distortions,
-            ParamStateImages const* macro_midpoint_states
-        );
-
-        void build_effects_body(ParamStateImages const* knob_states);
-
-        void build_envelopes_1_body(
-            ParamStateImages const* knob_states,
-            ParamStateImages const* screw_states,
-            ParamStateImages const* envelope_shapes_01,
-            ParamStateImages const* envelope_shapes_10
-        );
-
-        void build_envelopes_2_body(
-            ParamStateImages const* knob_states,
-            ParamStateImages const* screw_states,
-            ParamStateImages const* envelope_shapes_01,
-            ParamStateImages const* envelope_shapes_10
-        );
-
-        void build_lfos_body(ParamStateImages const* knob_states);
-
-        void build_synth_body(
-            ParamStateImages const* knob_states,
-            ParamStateImages const* screw_states
+            ParamStateImages const* distortions,
+            ParamStateImages const* midpoint_states
         );
 
         bool const show_vst_logo;
@@ -299,39 +188,23 @@ class GUI
         Widget* dummy_widget;
 
         Image about_image;
-        Image macros_1_image;
-        Image macros_2_image;
-        Image macros_3_image;
-        Image effects_image;
-        Image envelopes_1_image;
-        Image envelopes_2_image;
-        Image lfos_image;
-        Image synth_image;
+        Image zone_1_image;
         Image vst_logo_image;
 
         ParamStateImages const* knob_states;
-        ParamStateImages const* screw_states;
-        ParamStateImages const* envelope_shapes_01;
-        ParamStateImages const* envelope_shapes_10;
-        ParamStateImages const* macro_distortions;
-        ParamStateImages const* macro_midpoint_states;
-        ControllerSelector* controller_selector;
+        ParamStateImages const* distortions;
+        ParamStateImages const* midpoint_states;
         Background* background;
         TabBody* about_body;
-        TabBody* macros_1_body;
-        TabBody* macros_2_body;
-        TabBody* macros_3_body;
-        TabBody* effects_body;
-        TabBody* envelopes_1_body;
-        TabBody* envelopes_2_body;
-        TabBody* lfos_body;
-        TabBody* synth_body;
+        TabBody* zone_1_body;
         StatusLine* status_line;
-        Integer active_voices_count;
 
-        Synth& synth;
-        JS80P::GUI::PlatformData platform_data;
+        Proxy& proxy;
+        MpeEmulator::GUI::PlatformData platform_data;
         ExternallyCreatedWindow* parent_window;
+
+        unsigned int active_voices_count;
+        unsigned int polyphony;
 };
 
 
@@ -343,19 +216,17 @@ class WidgetBase
     public:
         enum Type {
             BACKGROUND = 1 << 0,
-            CONTROLLER = 1 << 1,
-            CONTROLLER_SELECTOR = 1 << 2,
-            EXPORT_PATCH_BUTTON = 1 << 3,
-            EXTERNALLY_CREATED_WINDOW = 1 << 4,
-            IMPORT_PATCH_BUTTON = 1 << 5,
-            KNOB = 1 << 6,
-            KNOB_PARAM_EDITOR = 1 << 7,
-            TAB_BODY = 1 << 8,
-            TAB_SELECTOR = 1 << 9,
-            ABOUT_TEXT = 1 << 10,
-            STATUS_LINE = 1 << 11,
-            TOGGLE_SWITCH = 1 << 12,
-            DISCRETE_PARAM_EDITOR = 1 << 13,
+            EXPORT_SETTINGS_BUTTON = 1 << 1,
+            EXTERNALLY_CREATED_WINDOW = 1 << 2,
+            IMPORT_SETTINGS_BUTTON = 1 << 3,
+            KNOB = 1 << 4,
+            KNOB_PARAM_EDITOR = 1 << 5,
+            TAB_BODY = 1 << 6,
+            TAB_SELECTOR = 1 << 7,
+            ABOUT_TEXT = 1 << 8,
+            STATUS_LINE = 1 << 9,
+            TOGGLE_SWITCH = 1 << 10,
+            DISCRETE_PARAM_EDITOR = 1 << 11,
         };
 
         enum TextAlignment {
@@ -529,7 +400,7 @@ class WidgetBase
          *                      \c false if the platform's default event handler
          *                      needs to be run.
          */
-        virtual bool mouse_wheel(Number const delta, bool const modifier);
+        virtual bool mouse_wheel(double const delta, bool const modifier);
 
         virtual void fill_rectangle(
             int const left,

@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__GUI__XCB_HPP
-#define JS80P__GUI__XCB_HPP
+#ifndef MPE_EMULATOR__GUI__XCB_HPP
+#define MPE_EMULATOR__GUI__XCB_HPP
 
 #include <map>
 #include <string>
@@ -27,14 +27,14 @@
 #include <X11/Xlib.h>
 #include <cairo/cairo-xcb.h>
 
-#include "js80p.hpp"
+#include "common.hpp"
 #include "serializer.hpp"
-#include "synth.hpp"
+#include "proxy.hpp"
 
 #include "gui/gui.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class Widget;
@@ -65,15 +65,14 @@ class XcbPlatform
         Widget* find_widget(xcb_window_t window_id) const;
         void unregister_widget(xcb_window_t window_id);
 
-        void export_patch(std::string const& patch);
-        void import_patch(ImportPatchButton* import_patch_button);
+        void export_settings(std::string const& settings);
+        void import_settings(ImportSettingsButton* import_settings_button);
         void handle_file_selector_dialog();
         void cancel_file_selector_dialog();
         bool is_file_selector_dialog_open() const;
 
     private:
-        enum FileSelectorDialogType
-        {
+        enum FileSelectorDialogType {
             NONE = 0,
             EXPORT = 1,
             IMPORT = 2,
@@ -139,8 +138,8 @@ class XcbPlatform
 
         void read_file_selector_output();
         bool has_file_selector_exited(int* exit_code) const;
-        void finish_exporting_patch();
-        void finish_importing_patch();
+        void finish_exporting_settings();
+        void finish_importing_settings();
 
         WindowIdToWidgetMap widgets;
         std::string file_path;
@@ -150,7 +149,7 @@ class XcbPlatform
         xcb_visualtype_t* screen_root_visual;
         cairo_font_face_t* font_face_normal;
         cairo_font_face_t* font_face_bold;
-        ImportPatchButton* import_patch_button;
+        ImportSettingsButton* import_settings_button;
         Pipe* active_file_selector_dialog_pipe;
         FileSelectorDialogType active_file_selector_dialog_type;
         pid_t active_file_selector_dialog_pid;
@@ -250,8 +249,8 @@ class Widget : public WidgetBase
         static constexpr double COLOR_COMPONENT_SCALE = 1.0 / 255.0;
         static constexpr unsigned int TRANSPARENT_WIDGETS = (
             0
-            | Type::EXPORT_PATCH_BUTTON
-            | Type::IMPORT_PATCH_BUTTON
+            | Type::EXPORT_SETTINGS_BUTTON
+            | Type::IMPORT_SETTINGS_BUTTON
             | Type::KNOB_PARAM_EDITOR
             | Type::TAB_BODY
             | Type::TAB_SELECTOR

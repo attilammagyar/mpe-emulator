@@ -1,5 +1,0 @@
-LIBRARY js80p.dll
-EXPORTS
-    GetPluginFactory    @1
-    InitDll             @2
-    ExitDll             @3

@@ -1,15 +1,15 @@
 #!/bin/bash
 
 ###############################################################################
-# This file is part of JS80P, a synthesizer plugin.
+# This file is part of MPE Emulator.
 # Copyright (C) 2023, 2024  Attila M. Magyar
 #
-# JS80P is free software: you can redistribute it and/or modify
+# MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JS80P is distributed in the hope that it will be useful,
+# MPE Emulator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-DOWNLOAD_URL="https://github.com/attilammagyar/js80p/releases/download"
+DOWNLOAD_URL="https://github.com/attilammagyar/mpe-emulator/releases/download"
 
 main()
 {
@@ -27,17 +27,17 @@ main()
     local arch
     local plugin_type
 
-    for instruction_set in "avx" "sse2"
+    for instruction_set in "sse2"
     do
-        find dist -name "js80p-*-$instruction_set-vst3_bundle.zip" \
+        find dist -name "mpe-emulator-*-$instruction_set-vst3_bundle.zip" \
           | while read
             do
                 print_link "$REPLY" "VST 3 Bundle"
             done
 
-        find dist -name "js80p-*-$instruction_set-*.zip" \
-          | grep -v "js80p-.*-src\\.zip" \
-          | grep -v "js80p-.*-vst3_bundle\\.zip" \
+        find dist -name "mpe-emulator-*-$instruction_set-*.zip" \
+          | grep -v "mpe-emulator-.*-src\\.zip" \
+          | grep -v "mpe-emulator-.*-vst3_bundle\\.zip" \
           | sort -r \
           | while read
             do
@@ -47,7 +47,7 @@ main()
             done
     done
 
-    find dist -name "js80p-*-src.zip" \
+    find dist -name "mpe-emulator-*-src.zip" \
       | while read
         do
             print_link "$REPLY" "Source"

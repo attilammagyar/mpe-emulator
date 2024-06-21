@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-This file is part of JS80P, a synthesizer plugin.
+This file is part of MPE Emulator.
 Copyright (C) 2023, 2024  Attila M. Magyar
 
-JS80P is free software: you can redistribute it and/or modify
+MPE Emulator is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-JS80P is distributed in the hope that it will be useful,
+MPE Emulator is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -18,9 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <head>
-  <title>JS80P plugin GUI mockup</title>
+  <title>MPE Emulator plugin GUI mockup</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="description" content="JS80P plugin GUI mockup" />
+  <meta name="description" content="MPE Emulator plugin GUI mockup" />
 
 <style>
 * {
@@ -54,68 +54,9 @@ html, body {
   text-align: center;
 }
 
-#lfos .main-block {
-  margin: 2px 2px;
+#zone1 .main-block {
+  margin: 9px 9px;
   padding: 1px 2px;
-}
-
-#controllers-1 .main-block,
-#controllers-2 .main-block,
-#controllers-3 .main-block {
-  margin: 12px 2px;
-  padding: 1px 2px;
-}
-
-#envelopes-1 .main-block,
-#envelopes-2 .main-block {
-  margin: 11px 2px;
-  padding: 1px 2px;
-}
-
-#controllers-1 .main-block,
-#controllers-2 .main-block,
-#controllers-3 .main-block {
-  width: 180px;
-}
-
-#controllers-1 .block .group:nth-child(2),
-#controllers-2 .block .group:nth-child(2),
-#controllers-3 .block .group:nth-child(2),
-#envelopes-1 .block .group:nth-child(2),
-#envelopes-2 .block .group:nth-child(2) {
-  margin-top: 20px;
-}
-
-#distortion-params,
-#overdrive-params,
-#input-params,
-#volume-1-params,
-#volume-2-params,
-#volume-3-params {
-  width: 64px;
-  text-align: center;
-}
-
-#volume-1, #overdrive, #distortion, #filter-1, #filter-2, #volume-2 {
-  margin-top: 1px;
-}
-
-#effects .main-block {
-  padding: 2px 2px 1px 2px;
-}
-
-#main {
-  width: 64px;
-  margin: 1px;
-  margin-top: 0;
-  margin-bottom: 0;
-  height: 553px;
-  float: left;
-  text-align: center;
-}
-
-#main .knob {
-  margin-top: 1px;
 }
 
 .block {
@@ -141,377 +82,51 @@ html, body {
   padding: 2px;
 }
 
-.osc {
-  width: 888px;
-  height: 268px;
+#zone1 .main-block h1 label {
+  height: 25px;
+  line-height: 25px;
 }
 
-#osc-2 {
-  margin-top: -4px;
-}
-
-#osc-2 > h1 {
-  margin-bottom: 2px;
-}
-
-#osc-1-tuning,
-#osc-2-tuning {
-  font-size: 14px;
-  line-height: 23px;
-  background: #000000;
-  border: inset 1px #9090b0;
-  width: 136px;
-  height: 23px;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  top: 2px;
-  left: 148px;
-  border-radius: 3px;
-}
-
-#osc-1-tuning span,
-#osc-2-tuning span {
-  padding-left: 10px;
-}
-
-#osc-2-dist-type {
-  line-height: 23px;
-  width: 58px;
-  height: 23px;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  top: 2px;
-  left: 336px;
-}
-
-#osc-1-fin-x4 label span,
-#osc-2-fin-x4 label span,
-h1 span {
-  filter: drop-shadow(2px 2px 1px #000000);
-}
-
-.effect.main-block h1 span {
-  display: inline-block;
-  height: 20px;
-  line-height: 20px;
-}
-
-.effect.main-block h1 label span {
-  padding-right: 3px;
-  padding-left: 2px;
-}
-
-#lfos .main-block h1 label {
-  height: 20px;
-  line-height: 20px;
-}
-
-.effect.main-block h1 label.sync,
-.effect.main-block h1 label {
-  height: 20px;
-  line-height: 20px;
-  margin-top: 1px;
-}
-
-#lfos .main-block h1,
-.effect.main-block h1 {
+#zone1 .main-block h1 {
   padding-top: 0;
   padding-bottom: 0;
-}
-
-#lfos .main-block h1 {
-  height: 22px;
-  line-height: 22px;
-}
-
-.effect.main-block h1 {
-  padding-top: 1px;
-  height: 20px;
-  line-height: 20px;
-}
-
-.main-block h1 {
 }
 
 .main-block .block {
   margin: 2px 0;
 }
 
-.main-block > .block.osc-main {
-  text-align: center;
-  position: relative;
-  top: -20px;
-  width: 638px;
-  margin-left: 2px;
-  margin-right: -2px;
-}
-
-#osc-1-main > div.knob:nth-child(7),
-#osc-1-main > div.knob:nth-child(8),
-#osc-1-main > div.knob:nth-child(10),
-#osc-2-main > div.knob:nth-child(6),
-#osc-2-main > div.knob:nth-child(8) {
-  border-left: solid 1px #445;
-  width: 57px;
-}
-
-.main-block > .block.osc-main > h1 {
-  text-align: left;
-  width: 500px;
-  color: #b8b8c0;
-}
-
 .main-block > h1 {
   color: #d0d0e0;
 }
 
-.osc-filter {
-  position: relative;
-  top: -20px;
-  right: 0;
-  padding: 2px;
-  margin-right: 2px;
-}
-
-#osc-2-filter-1 {
-  margin-top: -20px;
-}
-
-#osc-2-wave,
-#osc-2-main {
-  top: 0;
-}
-
 .block h1 {
-  padding: 2px 2px;
+  padding: 1px 2px;
   font-size: 14px;
   font-weight: bold;
+  height: 25px;
+  line-height: 25px;
 }
 
-#main div label,
-#osc-1-fin-x4 label,
-#osc-2-fin-x4 label,
 .block h1 label {
   display: inline-block;
-  height: 16px;
+  height: 25px;
+  line-height: 25px;
   overflow: hidden;
   font-size: 12px;
   font-weight: normal;
   vertical-align: bottom;
 }
 
-.block h1.macro label,
-.block h1.envelope label {
-  overflow: initial;
-}
-
-.block h1.macro span.title {
-  width: 89px;
-  display: inline-block;
-}
-
-.block h1.envelope span.title {
-  display: inline-block;
-  width: 56px;
-}
-
-.block h1 label.log-q,
-.block h1 label.freq {
-  position: relative;
-  left: 2px;
-}
-
-.block h1 label.q {
-  position: relative;
-  left: 2px;
-}
-
-#chorus h1 label.lfo-freq {
-  position: relative;
-  left: 115px;
-  width: 140px;
-}
-
-#chorus h1 label.freq {
-  left: 145px;
-}
-
-#chorus h1 label.log-q {
-  left: 18px;
-  width: 72px;
-}
-
-#echo h1 label.freq {
-  left: 266px;
-}
-
-#echo h1 label.log-q {
-  left: 94px;
-}
-
-#reverb h1 label.freq {
-  left: 247px;
-}
-
-#reverb h1 label.log-q {
-  left: 18px;
-}
-
-
-
-#osc-2-dist-type label.dist-type,
-#dist-1-type,
-#dist-2-type {
-  margin-left: 1px;
-}
-
-.block h1 label.update {
-  margin-left: 3px;
-}
-
-#dist-1-type,
-#dist-2-type {
-  top: 0;
-  height: 24px;
-  margin-top: -3px;
-}
-
-#dist-1-type input,
-#dist-2-type input {
-  top: 0;
-  margin-top: 0;
-  height: 23px;
-  border: inset 1px #9090b0;
-}
-
-#osc-2-dist-type label.dist-type input,
-.block h1 label.update input {
-  width: 50px;
-  height: 23px;
-  margin-top: -3px;
-  border: inset 1px #9090b0;
-}
-
-#osc-2-dist-type label.dist-type input,
-#dist-1-type input,
-#dist-2-type input {
-  width: 62px;
-}
-
-#main div label.note-handling {
-  height: 23px;
-  margin-bottom: -2px;
-}
-
-#main div label.note-handling input {
-  border: inset 1px #9090b0;
-  width: 58px;
-  height: 21px;
-  top: 0;
-  border-radius: 3px;
-}
-
-.block h1 label.inaccuracy,
-.block h1 label.sync {
+.block h1 label.toggle {
   margin-right: 3px;
   float: right;
-  margin-top: 2px;
 }
 
-.block h1.envelope label.sync {
-  margin-right: 3px;
+.block h1 label.toggle input {
+  top: 1px;
 }
 
-.block h1 label.inaccuracy {
-  margin-top: -2px;
-  margin-right: 0;
-  height: 24px;
-}
-
-.block h1 label.inaccuracy input {
-  margin-top: 1px;
-  height: 20px;
-  width: 46px;
-}
-
-.block h1 label.center {
-  margin-left: 3px;
-  margin-top: 2px;
-}
-
-.block h1 label.log-freq {
-  margin-left: 16px;
-  width: 114px;
-}
-
-.block h1 label.envelope {
-  margin-left: 15px;
-  line-height: 15px;
-  height: 20px;
-  overflow: visible;
-}
-
-.block h1 label.envelope input {
-  width: 27px;
-  height: 23px;
-  margin-top: -3px;
-  border: inset 1px #9090b0;
-}
-
-.block h1 label.shape {
-  margin-right: 2px;
-}
-
-.block h1 label.shape input {
-  width: 23px;
-  height: 23px;
-  margin-top: -3px;
-  border: inset 1px #9090b0;
-}
-
-.block h1.macro label.shape input {
-  width: 46px;
-}
-
-#osc-1-fin-x4 label {
-  line-height: 17px;
-}
-
-#osc-2-fin-x4 label {
-  line-height: 18px;
-}
-
-#osc-1-fin-x4 label span,
-#osc-2-fin-x4 label span {
-  display: inline-block;
-  top: -2px;
-  position: relative;
-}
-
-#osc-1-fin-x4 input,
-#osc-2-fin-x4 input {
-  margin-left: 3px;
-}
-
-#osc-1-fin-x4,
-#osc-2-fin-x4 {
-  width: 90px;
-  height: 24px;
-  position: absolute;
-}
-
-#osc-1-fin-x4,
-#osc-2-fin-x4 {
-  top: 2px;
-  left: 549px;
-}
-
-#main div input,
-#osc-1-fin-x4 input,
-#osc-2-fin-x4 input,
-#osc-2-dist-type input,
 .block h1 input {
   position: relative;
   background-color: black;
@@ -519,40 +134,30 @@ h1 span {
   width: 17px;
   height: 12px;
   border-radius: 5px;
-  top: -1px;
+  top: 0;
   filter: none;
 }
 
-#osc-2 .block h1 input {
-  top: 0px;
+.block h1 label.rule {
+  margin-left: 6px;
+}
+
+.block h1 label.dist {
+  float: right;
+}
+
+.block h1 label.dist input {
+  width: 46px;
+  height: 23px;
+  margin-top: -3px;
+  border: inset 1px #9090b0;
 }
 
 .knob {
   display: inline-block;
   width: 58px;
-  height: 100px;
+  height: 81px;
   text-align: center;
-}
-
-#main .knob.without_ctl {
-  height: 72px;
-}
-
-#main .knob:nth-child(2) {
-  margin-top: 3px;
-}
-
-.knob select {
-  background: #000000;
-  border: inset 1px #5c5c60;
-  color: #b8b8c0;
-  font-family: Arial, Sans-Serif;
-  font-size: 12px;
-  text-align: center;
-  line-height: 18px;
-  width: 54px;
-  height: 18px;
-  padding: 0;
 }
 
 .knob div {
@@ -586,9 +191,7 @@ h1 span {
 
 body.hide-objects .knob select,
 body.hide-objects .knob div,
-body.hide-objects .knob span:nth-child(4),
-body.hide-objects #osc-1-tuning span,
-body.hide-objects #osc-2-tuning span {
+body.hide-objects .knob span:nth-child(3) {
   opacity: 0.0;
 }
 
@@ -635,8 +238,9 @@ body.hide-objects #osc-2-tuning span {
 }
 
 #export-import {
-  height: 25px;
-  text-align: center;
+  width: 25px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 svg.icon {
@@ -656,103 +260,18 @@ svg.icon {
   line-height: 20px;
 }
 
-.effect {
-  text-align: center;
-  margin: 1.5px 3px;
-  padding: 2px 6px;
-}
-
-#reverb,
-#volume-3 {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.effect h1 {
-  text-align: left;
-}
-
 .border > span {
   font-size: 12px;
   z-index: 2000;
   filter: drop-shadow(2px 2px 1px #030408);
 }
 
-.sc11 {
-  position: absolute;
-  top: 57px;
-  left: 435px;
-  display: block;
+#mcm {
+  margin-left: 20px;
 }
 
-.sc12 {
-  position: absolute;
-  top: 53px;
-  left: 968px;
-  display: block;
-}
-
-.sc13 {
-  position: absolute;
-  top: 57px;
-  left: 493px;
-  display: block;
-}
-
-.sc14 {
-  position: absolute;
-  top: 186px;
-  left: 968px;
-  display: block;
-}
-
-.sc15 {
-  position: absolute;
-  top: 57px;
-  left: 536px;
-  display: block;
-}
-
-.sc16 {
-  position: absolute;
-  top: 57px;
-  left: 725px;
-  display: block;
-}
-
-.sc21 {
-  position: absolute;
-  top: 337px;
-  left: 379px;
-  display: block;
-}
-
-.sc22 {
-  position: absolute;
-  top: 333px;
-  left: 968px;
-  display: block;
-}
-
-.sc23 {
-  position: absolute;
-  top: 337px;
-  left: 493px;
-  display: block;
-}
-
-.sc24 {
-  position: absolute;
-  top: 466px;
-  left: 968px;
-  display: block;
-}
-
-.sc25 {
-  position: absolute;
-  top: 337px;
-  left: 725px;
-  display: block;
+h1 span {
+  filter: drop-shadow(2px 2px 1px #000000);
 }
 
 </style>
@@ -764,14 +283,7 @@ svg.icon {
 function make_tabs(active)
 {
     var tabs = [
-            "Synth",
-            "Effects",
-            "MC 1-10",
-            "MC 11-20",
-            "MC 21-30",
-            "ENV 1-6",
-            "ENV 7-12",
-            "LFOs",
+            "Settings",
             "About"
         ],
         i, l;
@@ -782,7 +294,7 @@ function make_tabs(active)
         );
     }
 
-    document.write('<div class="last-tab"><strong>JS80P</strong> (GPLv3)</div>');;
+    document.write('<div class="last-tab"><strong>MPE Emulator</strong> (GPLv3)</div>');;
 }
 //-->
 </script>
@@ -791,227 +303,51 @@ function make_tabs(active)
     <div class="tabs">
       <script type="text/javascript">make_tabs(0);</script>
     </div>
-    <div class="border">
-      <span class="sc11">1</span>
-      <span class="sc12">2</span>
-      <span class="sc13">3</span>
-      <span class="sc14">4</span>
-      <span class="sc15">(mod out)&nbsp;&nbsp;&nbsp;5</span>
-      <span class="sc16">6</span>
-      <span class="sc21">1</span>
-      <span class="sc22">2</span>
-      <span class="sc23">3</span>
-      <span class="sc24">4</span>
-      <span class="sc25">5</span>
-      <div id="main" class="block">
-        <div id="export-import">
-          <svg class="icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-           <g>
-            <title>Open</title>
-            <path
-              d="M50,120 L150,120 L200,170 L380,170 L380,250 M350,450 L50,450 L50,120 M50,450 L150,250 L450,250 L350,450"
-              opacity="1"
-              stroke-width="50"
-              stroke-linecap="round" stroke-linejoin="round"
-              stroke="#b8b8c0" fill="none"/>
-           </g>
-          </svg>
-          <svg class="icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-           <g>
-            <title>Save</title>
-            <path
-              d="M250,120 L250,320 M140,220 L250,350 M360,220 L250,350 M80,350 L80,450 L420,450 L420,350"
-              opacity="1"
-              stroke-width="50"
-              stroke-linecap="round" stroke-linejoin="round"
-              stroke="#b8b8c0" fill="none"/>
-           </g>
-          </svg>
-        </div>
-        <div>
-          <label class="note-handling"><input type="text" /></label>
+    <div class="border" id="zone1">
+      <div id="main" class="main-block block">
+        <h1>
+          <span>Main</span>
+          <label id="mcm" class="toggle">
+            <span>MCM </span><input type="text" />
+          </label>
+          <label class="toggle">
+            <span>RelVel=TrigVel </span><input type="text" />
+          </label>
+        </h1>
+        <div id="main-body" class="block">
+          <div id="export-import">
+            <svg class="icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+             <g>
+              <title>Open</title>
+              <path
+                d="M50,120 L150,120 L200,170 L380,170 L380,250 M350,450 L50,450 L50,120 M50,450 L150,250 L450,250 L350,450"
+                opacity="1"
+                stroke-width="50"
+                stroke-linecap="round" stroke-linejoin="round"
+                stroke="#b8b8c0" fill="none"/>
+             </g>
+            </svg>
+            <svg class="icon" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+             <g>
+              <title>Save</title>
+              <path
+                d="M250,120 L250,320 M140,220 L250,350 M360,220 L250,350 M80,350 L80,450 L420,450 L420,350"
+                opacity="1"
+                stroke-width="50"
+                stroke-linecap="round" stroke-linejoin="round"
+                stroke="#b8b8c0" fill="none"/>
+             </g>
+            </svg>
+          </div>
         </div>
       </div>
-      <div id="osc-1" class="osc main-block block">
-        <h1><span>Osc 1 (modulator)</span></h1>
-        <div id="osc-1-tuning"><span>440 12TET</span></div>
-        <div id="osc-1-fin-x4">
-          <label><span>FIN x4</span><input type="text" /></label>
-        </div>
-        <div id="osc-1-main" class="osc-main block"></div>
-        <div id="osc-1-filter-1" class="block osc-filter">
-          <h1>
-            Filter 1
-            <label class="freq"><input type="text" /> LG F</label>
-            <label class="q"><input type="text" /> LG Q</label>
-          </h1>
-        </div>
-        <div id="osc-1-wave" class="osc-main block">
-          <h1>Waveform &amp; harmonics for the Custom waveform</h1>
-        </div>
-        <div id="osc-1-filter-2" class="block osc-filter">
-          <h1>
-            Filter 2
-            <label class="freq"><input type="text" /> LG F</label>
-            <label class="q"><input type="text" /> LG Q</label>
-          </h1>
-        </div>
-      </div>
-      <div id="osc-2" class="osc main-block block">
-        <h1><span>Osc 2 (carrier)</span></h1>
-        <div id="osc-2-tuning"><span>C MTS-ESP on</span></div>
-        <div id="osc-2-dist-type"><label class="dist-type"><input type="text" /></label></div>
-        <div id="osc-2-fin-x4">
-          <label><span>FIN x4</span><input type="text" /></label>
-        </div>
-        <div id="osc-2-main" class="osc-main block"></div>
-        <div id="osc-2-filter-1" class="block">
-          <h1>
-            Filter 1
-            <label class="freq"><input type="text" /> LG F</label>
-            <label class="q"><input type="text" /> LG Q</label>
-          </h1>
-        </div>
-        <div id="osc-2-wave" class="osc-main block">
-          <h1>Waveform &amp; harmonics for the Custom waveform</h1>
-        </div>
-        <div id="osc-2-filter-2" class="block">
-          <h1>
-            Filter 2
-            <label class="freq"><input type="text" /> LG F</label>
-            <label class="q"><input type="text" /> LG Q</label>
-          </h1>
-        </div>
-      </div>
+      <br />
     </div>
   </div>
 
   <div class="background">
     <div class="tabs">
       <script type="text/javascript">make_tabs(1);</script>
-    </div>
-    <div class="border" id="effects">
-      <div id="input" class="effect main-block block">
-        <h1><span>Aux In</span></h1>
-        <div id="input-params" class="block"></div>
-      </div>
-      <div id="volume-1" class="effect main-block block">
-        <h1><span>Vol 1</span></h1>
-        <div id="volume-1-params" class="block"></div>
-      </div>
-      <div id="overdrive" class="effect main-block block">
-        <h1><label id="dist-1-type"><input type="text" /></label></h1>
-        <div id="overdrive-params" class="block"></div>
-      </div>
-      <div id="distortion" class="effect main-block block">
-        <h1><label id="dist-2-type"><input type="text" /></label></h1>
-        <div id="distortion-params" class="block"></div>
-      </div>
-      <div id="filter-1" class="effect main-block block">
-        <h1>
-          <span>Filter 1</span>
-          <label class="freq"><input type="text" /><span> LG F</span></label>
-          <label class="q"><input type="text" /><span> LG Q</span></label>
-        </h1>
-        <div id="filter-1-params" class="block"></div>
-      </div>
-      <div id="filter-2" class="effect main-block block">
-        <h1>
-          <span>Filter 2</span>
-          <label class="freq"><input type="text" /><span> LG F</span></label>
-          <label class="q"><input type="text" /><span> LG Q</span></label>
-        </h1>
-        <div id="filter-2-params" class="block"></div>
-      </div>
-      <div id="volume-2" class="effect main-block block">
-        <h1><span>Vol 2</span></h1>
-        <div id="volume-2-params" class="block"></div>
-      </div>
-      <div id="chorus" class="effect main-block block">
-        <h1>
-          <span>Chorus</span>
-          <label class="log-q"><input type="text" /><span> LG Q</span></label>
-          <label class="lfo-freq"><input type="text" /><span> LG LFO FREQ</span></label>
-          <label class="freq"><input type="text" /><span> LG FILTER FREQS</span></label>
-          <label class="sync"><span>BPM SYNC </span><input type="text" /></label>
-        </h1>
-        <div id="chorus-params" class="block"></div>
-      </div>
-      <div id="echo" class="effect main-block block">
-        <h1>
-          <span>Echo</span>
-          <label class="log-q"><input type="text" /><span> LG Q</span></label>
-          <label class="freq"><input type="text" /><span> LG FILTER FREQS</span></label>
-          <label class="sync"><span>BPM SYNC </span><input type="text" /></label>
-        </h1>
-        <div id="echo-params" class="block"></div>
-      </div>
-      <div id="reverb" class="effect main-block block">
-        <h1>
-          <span>Reverb</span>
-          <label class="log-q"><input type="text" /><span> LG Q</span></label>
-          <label class="freq"><input type="text" /><span> LG FILTER FREQS</span></label>
-        </h1>
-        <div id="reverb-params" class="block"></div>
-      </div>
-      <div id="volume-3" class="effect main-block block">
-        <h1><span>Vol 3</span></h1>
-        <div id="volume-3-params" class="block"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(2);</script>
-    </div>
-    <div class="border" id="controllers-1">
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(3);</script>
-    </div>
-    <div class="border" id="controllers-2">
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(4);</script>
-    </div>
-    <div class="border" id="controllers-3">
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(5);</script>
-    </div>
-    <div class="border" id="envelopes-1">
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(6);</script>
-    </div>
-    <div class="border" id="envelopes-2">
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(7);</script>
-    </div>
-    <div class="border" id="lfos">
-    </div>
-  </div>
-
-  <div class="background">
-    <div class="tabs">
-      <script type="text/javascript">make_tabs(8);</script>
     </div>
     <div class="border" id="about">
     </div>
@@ -1028,11 +364,10 @@ function $(obj)
     return (typeof(obj) === "string") ? document.getElementById(obj) : obj;
 }
 
-function create_knob(container, label_text, value_text, controller_text, without_ctl)
+function create_knob(container, label_text, value_text)
 {
     var knob_container = document.createElement("div"),
         knob = document.createElement("div"),
-        controller, option,
         label = document.createElement("span"),
         value = document.createElement("span");
 
@@ -1044,21 +379,8 @@ function create_knob(container, label_text, value_text, controller_text, without
     knob_container.appendChild(label);
     knob_container.appendChild(knob);
 
-    if (without_ctl) {
-        knob_container.setAttribute("class", "knob without_ctl");
-        controller = document.createElement("span");
-    } else {
-        knob_container.setAttribute("class", "knob");
+    knob_container.setAttribute("class", "knob");
 
-        option = document.createElement("option");
-        option.textContent = controller_text || "modwheel";
-        option.setAttribute("value", "x");
-
-        controller = document.createElement("select");
-        controller.appendChild(option);
-    }
-
-    knob_container.appendChild(controller);
     knob_container.appendChild(value);
 
     $(container).appendChild(knob_container);
@@ -1072,251 +394,40 @@ window.onload = function ()
         document.getElementsByTagName("body")[0].setAttribute("class", "hide-objects");
     }
 
-    create_knob("main", "MODE", "split F#3");
-    create_knob("main", "MIX %", "100");
-    create_knob("main", "PM %", "50");
-    create_knob("main", "FM %", "0");
-    create_knob("main", "AM %", "100");
+    create_knob("main-body", "ZONE", "lower");
+    create_knob("main-body", "CHAN", "15");
+    create_knob("main-body", "STEAL", "oldest");
+    create_knob("main-body", "ANCH", "C4");
 
-    for (o = 1; o <= 2; ++o) {
-        create_knob("osc-" + String(o) + "-main", "PRT s", "0.01");
-        create_knob("osc-" + String(o) + "-main", "PRD c", "2400");
-        create_knob("osc-" + String(o) + "-main", "DTN st", "-48");
-        create_knob("osc-" + String(o) + "-main", "FIN c", "-1200");
-        create_knob("osc-" + String(o) + "-main", "AMP %", "50", "E7");
-
-        if (o === 1) {
-          create_knob("osc-" + String(o) + "-main", "SUB %", "10", "E8");
-        }
-
-        create_knob("osc-" + String(o) + "-main", "FOLD %", "10", "E8");
-
-        if (o === 2) {
-          create_knob("osc-" + String(o) + "-main", "DIST %", "10", "E8");
-        }
-
-        create_knob("osc-" + String(o) + "-main", "VEL S %", "50");
-        create_knob("osc-" + String(o) + "-main", "VOL %", "50", "C12");
-        create_knob("osc-" + String(o) + "-main", "WID %", "-100");
-        create_knob("osc-" + String(o) + "-main", "PAN %", "-100");
-
-        create_knob("osc-" + String(o) + "-filter-1", "TYPE", "high-pass");
-        create_knob("osc-" + String(o) + "-filter-1", "FREQ Hz", "50");
-        create_knob("osc-" + String(o) + "-filter-1", "Q", "1.0");
-        create_knob("osc-" + String(o) + "-filter-1", "GAIN dB", "0.0");
-
-        create_knob("osc-" + String(o) + "-filter-2", "TYPE", "low-pass");
-        create_knob("osc-" + String(o) + "-filter-2", "FREQ Hz", "11025");
-        create_knob("osc-" + String(o) + "-filter-2", "Q", "5.5");
-        create_knob("osc-" + String(o) + "-filter-2", "GAIN dB", "0.0");
-
-        create_knob("osc-" + String(o) + "-wave", "WAV", "triangle");
-
-        for (i = 1; i <= 10; ++i) {
-            s = "th";
-
-            if (i === 1) {
-                s = "st";
-            } else if (i === 2) {
-                s = "nd";
-            } else if (i === 3) {
-                s = "rd";
-            }
-
-            create_knob("osc-" + String(o) + "-wave", String(i) + s + " %", String(i * 5));
-        }
-    }
-
-    create_knob("input-params", "VOL %", "1.0");
-
-    create_knob("volume-1-params", "VOL %", "1.0");
-
-    create_knob("overdrive-params", "DIST %", "50");
-
-    create_knob("distortion-params", "DIST %", "50");
-
-    create_knob("filter-1-params", "TYPE", "low-shelf");
-    create_knob("filter-1-params", "FREQ Hz", "2000");
-    create_knob("filter-1-params", "Q", "1.0");
-    create_knob("filter-1-params", "GAIN dB", "-12.0");
-
-    create_knob("filter-2-params", "TYPE", "high-shelf");
-    create_knob("filter-2-params", "FREQ Hz", "200");
-    create_knob("filter-2-params", "Q", "1.0");
-    create_knob("filter-2-params", "GAIN dB", "0.0");
-
-    create_knob("volume-2-params", "VOL %", "1.0");
-
-    create_knob("chorus-params", "HP F Hz", "100");
-    create_knob("chorus-params", "HP Q", "1");
-    create_knob("chorus-params", "TYPE", "0");
-    create_knob("chorus-params", "DEL s", "0.5");
-    create_knob("chorus-params", "FREQ Hz", "1.5");
-    create_knob("chorus-params", "DPT %", "0.5");
-    create_knob("chorus-params", "DF Hz", "6000");
-    create_knob("chorus-params", "DG dB", "-6");
-    create_knob("chorus-params", "FB %", "70");
-    create_knob("chorus-params", "WID %", "-100");
-    create_knob("chorus-params", "WET %", "50");
-    create_knob("chorus-params", "DRY %", "60");
-
-    create_knob("echo-params", "IN V %", "70");
-    create_knob("echo-params", "HP F Hz", "100");
-    create_knob("echo-params", "HP Q", "1");
-    create_knob("echo-params", "DEL s", "0.5");
-    create_knob("echo-params", "DIST %", "70");
-    create_knob("echo-params", "DF Hz", "6000");
-    create_knob("echo-params", "DG dB", "-6");
-    create_knob("echo-params", "FB %", "70");
-    create_knob("echo-params", "WID %", "-100");
-    create_knob("echo-params", "CTH dB", "-30");
-    create_knob("echo-params", "CATK s", "0.0");
-    create_knob("echo-params", "CREL s", "0.0");
-    create_knob("echo-params", "CR 1:x", "-6.0");
-    create_knob("echo-params", "WET %", "50");
-    create_knob("echo-params", "DRY %", "60");
-
-    create_knob("reverb-params", "HP F Hz", "100");
-    create_knob("reverb-params", "HP Q", "1");
-    create_knob("reverb-params", "TYPE", "0");
-    create_knob("reverb-params", "SIZE %", "90");
-    create_knob("reverb-params", "REFL %", "90");
-    create_knob("reverb-params", "DIST %", "70");
-    create_knob("reverb-params", "DF Hz", "6000");
-    create_knob("reverb-params", "DG dB", "-6");
-    create_knob("reverb-params", "WID %", "-100");
-    create_knob("reverb-params", "CTH db", "-30");
-    create_knob("reverb-params", "CATK s", "0.0");
-    create_knob("reverb-params", "CREL s", "0.0");
-    create_knob("reverb-params", "CR 1:x", "-6.0");
-    create_knob("reverb-params", "WET %", "50");
-    create_knob("reverb-params", "DRY %", "60");
-
-    create_knob("volume-3-params", "VOL %", "1.0");
-
-    for (o = 0; o <= 2; ++o) {
-        for (i = 1; i <= 10; ++i) {
-            d = document.createElement("div");
-            d.setAttribute("class", "main-block block");
-            k1 = document.createElement("div");
-            k1.setAttribute("class", "block");
-            k2 = document.createElement("div");
-            k2.setAttribute("class", "group");
-            k3 = document.createElement("div");
-            k3.setAttribute("class", "group");
-            h = document.createElement("h1");
-            h.setAttribute("class", "macro");
-            h.innerHTML = [
-              '<span class="title">Macro ' + String(o * 10 + i) + '</span>',
-              '<label class="shape">',
-                '<span>DIST </span><input type="text" />',
-              '</label>',
-            ].join("");
-
-            d.appendChild(h);
-            k1.appendChild(k2);
-            k1.appendChild(k3);
-            d.appendChild(k1);
-
-            create_knob(k2, "IN %", "50");
-            create_knob(k2, "MIN %", "50");
-            create_knob(k2, "MAX %", "50");
-            create_knob(k3, "AMT %", "50");
-            create_knob(k3, "DIST %", "50");
-            create_knob(k3, "RAND %", "50");
-
-            $("controllers-" + String(o + 1)).appendChild(d);
-        }
-    }
-
-    for (o = 0; o <= 1; ++o) {
-      for (i = o * 6 + 1; i <= (o * 6 + 6); ++i) {
-          d = document.createElement("div");
-          d.setAttribute("class", "block main-block");
-          h = document.createElement("h1");
-          h.setAttribute("class", "envelope");
-          h.innerHTML = [
-            '<span class="title">Env ' + String(i) + '</span>',
-            '<label class="shape">',
-              '<input type="text" />',
-              '<input type="text" />',
-              '<input type="text" />',
-            '</label>',
-            '<label class="update">',
-              '<input type="text" />',
-            '</label>',
-            '<label class="inaccuracy"><input type="text" /></label>',
-            '<label class="sync">',
-              '<span>BPM</span><input type="text" />',
-            '</label>'
-          ].join("");
-
-          d.appendChild(h);
-
-          k3 = document.createElement("div");
-          k3.setAttribute("class", "block");
-
-          k1 = document.createElement("div");
-          k1.setAttribute("class", "group");
-          k2 = document.createElement("div");
-          k2.setAttribute("class", "group");
-
-          k3.appendChild(k1);
-          k3.appendChild(k2);
-
-          d.appendChild(k3);
-
-          create_knob(k1, "AMT %", "75");
-          create_knob(k1, "INI %", "0");
-          create_knob(k1, "PEAK %", "100");
-          create_knob(k1, "SUS %", "50");
-          create_knob(k1, "FIN %", "0");
-
-          create_knob(k2, "DEL s", "0.0");
-          create_knob(k2, "ATK s", "0.001");
-          create_knob(k2, "HOLD s", "0.3");
-          create_knob(k2, "DEC s", "1.0");
-          create_knob(k2, "REL s", "0.2");
-
-          $("envelopes-" + String(o + 1)).appendChild(d);
-      }
-    }
-
-    for (i = 1; i <= 8; ++i) {
+    for (i = 1; i <= 9; ++i) {
         d = document.createElement("div");
         d.setAttribute("class", "main-block block");
         k1 = document.createElement("div");
         k1.setAttribute("class", "block");
         h = document.createElement("h1");
         h.innerHTML = [
-          '<span>LFO ' + String(i) + '</span>',
-          '<label class="log-freq">',
-            '<input type="text" /><span> LG FREQ</span>',
+          '<span>Rule ' + String(i) + '</span>',
+          '<label class="dist rule">',
+            '<span>Dist </span><input type="text" />',
           '</label>',
-          '<label class="center">',
-            '<span>CENTER </span><input type="text" />',
+          '<label class="toggle rule">',
+            '<span>Reset </span><input type="text" />',
           '</label>',
-          '<label class="envelope">',
-            '<span>AMT ENV </span><input type="text" />',
-          '</label>',
-          '<label class="sync">',
-            '<span>BPM SYNC </span><input type="text" />',
+          '<label class="toggle rule">',
+            '<span>Invert </span><input type="text" />',
           '</label>',
         ].join("");
 
         d.appendChild(h);
         d.appendChild(k1);
 
-        create_knob(k1, "WAV", "triangle");
-        create_knob(k1, "FREQ Hz", "0.01");
-        create_knob(k1, "PHS deg", "50");
-        create_knob(k1, "MIN %", "50");
-        create_knob(k1, "MAX %", "50");
-        create_knob(k1, "AMT %", "50");
-        create_knob(k1, "DIST %", "50");
-        create_knob(k1, "RAND %", "50");
+        create_knob(k1, "IN", "CC 74");
+        create_knob(k1, "OUT", "CC 74");
+        create_knob(k1, "INIT %", "63");
+        create_knob(k1, "TARGET", "HI BA");
+        create_knob(k1, "DIST %", "10.00");
 
-        $("lfos").appendChild(d);
+        $("zone1").appendChild(d);
     }
 };
 

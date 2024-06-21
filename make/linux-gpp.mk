@@ -1,13 +1,13 @@
 ###############################################################################
-# This file is part of JS80P, a synthesizer plugin.
+# This file is part of MPE Emulator.
 # Copyright (C) 2023, 2024  Attila M. Magyar
 #
-# JS80P is free software: you can redistribute it and/or modify
+# MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JS80P is distributed in the hope that it will be useful,
+# MPE Emulator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -19,11 +19,11 @@
 TARGET_OS = linux
 DIR_SEP = /
 
-FST = $(FST_DIR)/js80p.so
+FST = $(FST_DIR)/mpe-emulator.so
 FST_MAIN_SOURCES = src/plugin/fst/so.cpp
 FST_EXTRA =
 
-VST3 = $(VST3_DIR)/js80p.vst3
+VST3 = $(VST3_DIR)/mpe-emulator.vst3
 VST3_MAIN_SOURCES = src/plugin/vst3/so.cpp
 VST3_GUI_PLATFORM = kPlatformTypeX11EmbedWindowID
 VST3_EXTRA =
@@ -42,7 +42,7 @@ vst3moduleinfo: $(VST3_MODULE_INFO_TOOL)
 
 $(VST3_MODULE_INFO_TOOL): src/plugin/vst3/moduleinfo.cpp | $(BUILD_DIR)
 	$(CPP_TARGET_PLATFORM) \
-		$(JS80P_CXXINCS) $(VST3_CXXINCS) $(VST3_CXXFLAGS) $(JS80P_CXXFLAGS) \
+		$(MPE_EMULATOR_CXXINCS) $(VST3_CXXINCS) $(VST3_CXXFLAGS) $(MPE_EMULATOR_CXXFLAGS) \
 		$(VST3_MODULE_INFO_LFLAGS) \
 		$< -o $@
 
@@ -56,24 +56,11 @@ OBJ_TARGET_GUI_EXTRA = \
 	$(LIB_PATH)/libxcb.so \
 	$(LIB_PATH)/libxcb-render.so \
 	$(BUILD_DIR)/img_about.o \
-	$(BUILD_DIR)/img_effects.o \
-	$(BUILD_DIR)/img_envelopes1.o \
-	$(BUILD_DIR)/img_envelopes2.o \
-	$(BUILD_DIR)/img_env_shapes-01.o \
-	$(BUILD_DIR)/img_env_shapes-10.o \
-	$(BUILD_DIR)/img_knob_states-controlled.o \
-	$(BUILD_DIR)/img_knob_states-free.o \
-	$(BUILD_DIR)/img_knob_states-none.o \
-	$(BUILD_DIR)/img_lfos.o \
-	$(BUILD_DIR)/img_macro_distortions.o \
-	$(BUILD_DIR)/img_macro_midpoint_states.o \
-	$(BUILD_DIR)/img_macros1.o \
-	$(BUILD_DIR)/img_macros2.o \
-	$(BUILD_DIR)/img_macros3.o \
-	$(BUILD_DIR)/img_screw_states.o \
-	$(BUILD_DIR)/img_screw_states_synced.o \
-	$(BUILD_DIR)/img_synth.o \
-	$(BUILD_DIR)/img_vst_logo.o
+	$(BUILD_DIR)/img_distortions.o \
+	$(BUILD_DIR)/img_midpoint_states.o \
+	$(BUILD_DIR)/img_knob_states.o \
+	$(BUILD_DIR)/img_vst_logo.o \
+	$(BUILD_DIR)/img_zone1.o
 
 $(BUILD_DIR)/img_%.o: gui/img/%.png | $(BUILD_DIR)
 	/usr/bin/objcopy \

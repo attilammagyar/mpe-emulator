@@ -1,16 +1,16 @@
 #!/bin/bash
 
 ###############################################################################
-# This file is part of JS80P, a synthesizer plugin.
+# This file is part of MPE Emulator.
 # Copyright (C) 2023, 2024  Attila M. Magyar
 # Copyright (C) 2023  @aimixsaka (https://github.com/aimixsaka/)
 #
-# JS80P is free software: you can redistribute it and/or modify
+# MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JS80P is distributed in the hope that it will be useful,
+# MPE Emulator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -24,7 +24,7 @@ set -e
 set -u
 set -o pipefail
 
-TARGET_PLATFORMS="x86_64-w64-mingw32:avx x86_64-w64-mingw32:sse2 i686-w64-mingw32:sse2 x86_64-gpp:avx x86_64-gpp:sse2 i686-gpp:sse2 riscv64-gpp:none"
+TARGET_PLATFORMS="x86_64-w64-mingw32:sse2 i686-w64-mingw32:sse2 x86_64-gpp:sse2 i686-gpp:sse2 riscv64-gpp:none"
 PLUGIN_TYPES="fst vst3"
 TEXT_FILES="LICENSE.txt README.txt NEWS.txt"
 DIST_DIR_BASE="dist"
@@ -46,7 +46,7 @@ main()
 
     log "Verifying repository"
 
-    if [[ ! -d "src" ]] || [[ ! -d "presets" ]]
+    if [[ ! -d "src" ]]
     then
         error "This script must be run in the root directory of the repository."
     fi
@@ -80,7 +80,7 @@ main()
 
     version_as_file_name="$(version_str_to_file_name "$version_str")"
 
-    source_dir="js80p-$version_as_file_name-src"
+    source_dir="mpe-emulator-$version_as_file_name-src"
     source_archive="$source_dir.zip"
 
     log "Cleaning up"
@@ -99,13 +99,12 @@ main()
         build.sh \
         Doxyfile \
         gui \
-        js80p.png \
+        mpe-emulator.png \
         lib \
         LICENSE.txt \
         make \
         Makefile \
         pm-fm-equivalence.md \
-        presets \
         README.md \
         README.txt \
         scripts \
@@ -133,7 +132,7 @@ main()
 
     build_platform="$(uname -m)"
 
-    log "Generating js80p.vstxml ($build_platform)"
+    log "Generating mpe-emulator.vstxml ($build_platform)"
 
     call_make_for_build_platform \
         "$build_platform" \
@@ -179,14 +178,6 @@ main()
         package_vst3_bundle "$version_as_file_name" "sse2"
     else
         log "Skipping VST 3 bundle for SSE 2"
-    fi
-
-    if [[ "$target_platforms" =~ :avx ]]
-    then
-        log "Bulding VST 3 bundle for AVX"
-        package_vst3_bundle "$version_as_file_name" "avx"
-    else
-        log "Skipping VST 3 bundle for AVX"
     fi
 
     if [[ "$target_platforms" =~ riscv64-gpp:none ]]
@@ -264,7 +255,7 @@ call_make_for_build_platform()
     shift
 
     case "$build_platform" in
-        "x86_64")   call_make "x86_64-w64-mingw32" "avx" "$@" ;;
+        "x86_64")   call_make "x86_64-w64-mingw32" "sse2" "$@" ;;
         "riscv64")  call_make "riscv64-gpp" "none" "$@" ;;
         *) error "Unsupported build platform: $uname" ;;
     esac
@@ -310,9 +301,9 @@ package_fst()
 
     if [[ "$target_platform" =~ "-mingw32" ]]
     then
-        finalize_package "$dist_dir" "convert" "$DIST_DIR_BASE/js80p.vstxml"
+        finalize_package "$dist_dir" "convert" "$DIST_DIR_BASE/mpe-emulator.vstxml"
     else
-        finalize_package "$dist_dir" "" "$DIST_DIR_BASE/js80p.vstxml"
+        finalize_package "$dist_dir" "" "$DIST_DIR_BASE/mpe-emulator.vstxml"
     fi
 }
 
@@ -337,10 +328,9 @@ finalize_package()
     local src_file
     local dst_file
 
-    log "Copying presets, etc. to $DIST_DIR_BASE/$dist_dir"
+    log "Copying docs, etc. to $DIST_DIR_BASE/$dist_dir"
 
     cp --verbose "$README_HTML" "$DIST_DIR_BASE/$dist_dir/"
-    cp --verbose --recursive presets "$DIST_DIR_BASE/$dist_dir/"
 
     if [[ ! -z "$extra_file" ]]
     then
@@ -404,35 +394,31 @@ package_vst3_bundle()
 {
     local version_as_file_name="$1"
     local instruction_set="$2"
-    local dist_dir="js80p-$version_as_file_name-$instruction_set-vst3_bundle"
+    local dist_dir="mpe-emulator-$version_as_file_name-$instruction_set-vst3_bundle"
     local vst3_base_dir="$DIST_DIR_BASE/$dist_dir"
     local proc_id
-    local doc_dir="$vst3_base_dir/js80p.vst3/Resources/Documentation"
+    local doc_dir="$vst3_base_dir/mpe-emulator.vst3/Resources/Documentation"
 
     proc_id="$(get_vst3_snapshot_id)"
 
-    mkdir --verbose --parents "$vst3_base_dir/js80p.vst3/Contents"
-    mkdir --verbose --parents "$vst3_base_dir/js80p.vst3/Resources/Snapshots"
+    mkdir --verbose --parents "$vst3_base_dir/mpe-emulator.vst3/Contents"
+    mkdir --verbose --parents "$vst3_base_dir/mpe-emulator.vst3/Resources/Snapshots"
     mkdir --verbose --parents "$doc_dir"
 
-    cp --verbose "js80p.png" "$vst3_base_dir/js80p.vst3/Resources/Snapshots/${proc_id}_snapshot.png"
+    cp --verbose "mpe-emulator.png" "$vst3_base_dir/mpe-emulator.vst3/Resources/Snapshots/${proc_id}_snapshot.png"
 
     cp --verbose "$README_HTML" "$doc_dir/README.html"
 
     case "$instruction_set" in
         "sse2")
-            copy_vst3 "$version_as_file_name" "linux-x86-sse2" "$vst3_base_dir" "i386-linux" "js80p.so"
-            copy_vst3 "$version_as_file_name" "linux-x86-sse2" "$vst3_base_dir" "i686-linux" "js80p.so"
-            copy_vst3 "$version_as_file_name" "windows-x86-sse2" "$vst3_base_dir" "x86-win" "js80p.vst3"
-            copy_vst3 "$version_as_file_name" "linux-x86_64-sse2" "$vst3_base_dir" "x86_64-linux" "js80p.so"
-            copy_vst3 "$version_as_file_name" "windows-x86_64-sse2" "$vst3_base_dir" "x86_64-win" "js80p.vst3"
-            ;;
-        "avx")
-            copy_vst3 "$version_as_file_name" "linux-x86_64-avx" "$vst3_base_dir" "x86_64-linux" "js80p.so"
-            copy_vst3 "$version_as_file_name" "windows-x86_64-avx" "$vst3_base_dir" "x86_64-win" "js80p.vst3"
+            copy_vst3 "$version_as_file_name" "linux-x86-sse2" "$vst3_base_dir" "i386-linux" "mpe-emulator.so"
+            copy_vst3 "$version_as_file_name" "linux-x86-sse2" "$vst3_base_dir" "i686-linux" "mpe-emulator.so"
+            copy_vst3 "$version_as_file_name" "windows-x86-sse2" "$vst3_base_dir" "x86-win" "mpe-emulator.vst3"
+            copy_vst3 "$version_as_file_name" "linux-x86_64-sse2" "$vst3_base_dir" "x86_64-linux" "mpe-emulator.so"
+            copy_vst3 "$version_as_file_name" "windows-x86_64-sse2" "$vst3_base_dir" "x86_64-win" "mpe-emulator.vst3"
             ;;
         "none")
-            copy_vst3 "$version_as_file_name" "linux-riscv64-none" "$vst3_base_dir" "riscv64-linux" "js80p.so"
+            copy_vst3 "$version_as_file_name" "linux-riscv64-none" "$vst3_base_dir" "riscv64-linux" "mpe-emulator.so"
             ;;
         *)
             error "Unknown instruction_set: $instruction_set."
@@ -463,11 +449,11 @@ copy_vst3()
     local base_dir="$3"
     local dst_dir="$4"
     local dst_file="$5"
-    local dir="$base_dir/js80p.vst3/Contents/$dst_dir"
+    local dir="$base_dir/mpe-emulator.vst3/Contents/$dst_dir"
 
     mkdir --verbose --parents "$dir"
     cp --verbose \
-        "$DIST_DIR_BASE/js80p-$version_as_file_name-$src_dir-vst3_single_file/js80p.vst3" \
+        "$DIST_DIR_BASE/mpe-emulator-$version_as_file_name-$src_dir-vst3_single_file/mpe-emulator.vst3" \
         "$dir/$dst_file"
 }
 

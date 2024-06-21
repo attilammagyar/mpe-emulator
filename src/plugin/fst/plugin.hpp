@@ -1,14 +1,14 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  * Copyright (C) 2023  Patrik Ehringer
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__PLUGIN__FST__PLUGIN_HPP
-#define JS80P__PLUGIN__FST__PLUGIN_HPP
+#ifndef MPE_EMULATOR__PLUGIN__FST__PLUGIN_HPP
+#define MPE_EMULATOR__PLUGIN__FST__PLUGIN_HPP
 
 #include <string>
 #include <bitset>
@@ -28,15 +28,13 @@
 #include "gui/gui.hpp"
 
 #include "bank.hpp"
-#include "js80p.hpp"
+#include "common.hpp"
 #include "midi.hpp"
-#include "mtsesp.hpp"
-#include "renderer.hpp"
 #include "spscqueue.hpp"
-#include "synth.hpp"
+#include "proxy.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class FstPlugin : public Midi::EventHandler
@@ -46,54 +44,72 @@ class FstPlugin : public Midi::EventHandler
         {
             public:
                 Parameter();
+
                 Parameter(
-                    char const* name,
-                    MidiController* midi_controller,
-                    Midi::Controller const controller_id
+                    char const* short_name,
+                    char const* long_name,
+                    Proxy::ParamId const param_id = Proxy::ParamId::INVALID_PARAM_ID,
+                    Proxy::ControllerId const controller_id = Proxy::ControllerId::INVALID_CONTROLLER_ID
                 );
+
                 Parameter(Parameter const& parameter) = default;
                 Parameter(Parameter&& parameter) = default;
 
                 Parameter& operator=(Parameter const& parameter) noexcept = default;
                 Parameter& operator=(Parameter&& parameter) noexcept = default;
 
-                char const* get_name() const noexcept;
-                MidiController* get_midi_controller() const noexcept;
-                Midi::Controller get_controller_id() const noexcept;
+                char const* get_short_name() const noexcept;
+                char const* get_long_name() const noexcept;
+                Proxy::ParamId get_param_id() const noexcept;
+                Proxy::ControllerId get_controller_id() const noexcept;
+                bool is_midi_cc_helper() const noexcept;
+                bool is_exported_param() const noexcept;
 
                 // bool needs_host_update() const noexcept; /* See FstPlugin::generate_samples() */
 
-                float get_value() noexcept;
+                float get_value(Proxy const& proxy) const noexcept;
                 float get_last_set_value() const noexcept;
                 void set_value(float const value) noexcept;
 
             private:
-                MidiController* midi_controller;
-                char const* name;
-                Midi::Controller controller_id;
-                // Integer change_index; /* See FstPlugin::generate_samples() */
+                char const* short_name;
+                char const* long_name;
+                Proxy::ParamId param_id;
+                Proxy::ControllerId controller_id;
+                // int change_index; /* See FstPlugin::generate_samples() */
                 float value;
         };
 
-        static constexpr size_t NUMBER_OF_PARAMETERS = 74;
+        static constexpr size_t NUMBER_OF_PARAMETERS = (
+            + (size_t)Proxy::ControllerId::MAX_MIDI_CC
+            + 1                                         /* Pitch Wheel */
+            + 1                                         /* Channel Pressure */
+            + (size_t)Proxy::ParamId::PARAM_ID_COUNT
+            + 1                                         /* Dummy Parameter */
+        );
 
-        static constexpr size_t PATCH_CHANGED_PARAMETER_INDEX = 72;
+        static constexpr size_t PATCH_CHANGED_PARAMETER_INDEX = NUMBER_OF_PARAMETERS - 1;
         static constexpr char const* PATCH_CHANGED_PARAMETER_SHORT_NAME = "Changed";
-        static constexpr char const* PATCH_CHANGED_PARAMETER_LONG_NAME = "Patch Changed";
+        static constexpr char const* PATCH_CHANGED_PARAMETER_LONG_NAME = "Settings Changed";
 
         typedef Parameter Parameters[NUMBER_OF_PARAMETERS];
 
-        static constexpr VstInt32 IN_CHANNELS = (VstInt32)Synth::IN_CHANNELS;
-        static constexpr VstInt32 OUT_CHANNELS = (VstInt32)Synth::OUT_CHANNELS;
-        static constexpr VstInt32 VERSION = JS80P::Constants::PLUGIN_VERSION_INT;
+        /*
+        Audio inputs and outputs are not actually used, but some hosts are known
+        to not run plugins properly that have 0 audio channels.
+        */
+        static constexpr VstInt32 IN_CHANNELS = 2;
+        static constexpr VstInt32 OUT_CHANNELS = 2;
+
+        static constexpr VstInt32 VERSION = MpeEmulator::Constants::PLUGIN_VERSION_INT;
 
         static constexpr char const* FST_H_VERSION = (
             "FST "
-            JS80P_TO_STRING(FST_MAJOR_VERSION)
+            MPE_EMULATOR_TO_STRING(FST_MAJOR_VERSION)
             "."
-            JS80P_TO_STRING(FST_MINOR_VERSION)
+            MPE_EMULATOR_TO_STRING(FST_MINOR_VERSION)
             "."
-            JS80P_TO_STRING(FST_MICRO_VERSION)
+            MPE_EMULATOR_TO_STRING(FST_MICRO_VERSION)
         );
 
         static AEffect* create_instance(
@@ -143,7 +159,7 @@ class FstPlugin : public Midi::EventHandler
         );
 
         static void populate_parameters(
-            Synth& synth,
+            Proxy& proxy,
             Parameters& parameters
         ) noexcept;
 
@@ -159,7 +175,7 @@ class FstPlugin : public Midi::EventHandler
         void initialize() noexcept;
         void need_idle() noexcept;
         VstIntPtr idle() noexcept;
-        void set_sample_rate(float const new_sample_rate) noexcept;
+        void set_sample_rate(double const new_sample_rate) noexcept;
         void set_block_size(VstIntPtr const new_block_size) noexcept;
         void suspend() noexcept;
         void resume() noexcept;
@@ -169,7 +185,6 @@ class FstPlugin : public Midi::EventHandler
         template<typename NumberType>
         void generate_samples(
             VstInt32 const sample_count,
-            NumberType const* const* const in_samples,
             NumberType** out_samples
         ) noexcept;
 
@@ -183,33 +198,33 @@ class FstPlugin : public Midi::EventHandler
         void set_chunk(void const* chunk, VstIntPtr const size, bool is_preset) noexcept;
 
         void note_on(
-            Seconds const time_offset,
+            double const time_offset,
             Midi::Channel const channel,
             Midi::Note const note,
             Midi::Byte const velocity
         ) noexcept;
 
         void control_change(
-            Seconds const time_offset,
+            double const time_offset,
             Midi::Channel const channel,
             Midi::Controller const controller,
             Midi::Byte const new_value
         ) noexcept;
 
         void program_change(
-            Seconds const time_offset,
+            double const time_offset,
             Midi::Channel const channel,
             Midi::Byte const new_program
         ) noexcept;
 
         void channel_pressure(
-            Seconds const time_offset,
+            double const time_offset,
             Midi::Channel const channel,
             Midi::Byte const pressure
         ) noexcept;
 
         void pitch_wheel_change(
-            Seconds const time_offset,
+            double const time_offset,
             Midi::Channel const channel,
             Midi::Word const new_value
         ) noexcept;
@@ -233,18 +248,20 @@ class FstPlugin : public Midi::EventHandler
         void gui_idle();
         void close_gui();
 
-        Synth synth;
+        Proxy proxy;
 
     private:
-        static constexpr Frequency HOST_CC_UI_UPDATE_FREQUENCY = 6.0;
-        static constexpr Seconds HOST_CC_UI_UPDATE_FREQUENCY_INV = (
+        static constexpr double HOST_CC_UI_UPDATE_FREQUENCY = 6.0;
+        static constexpr double HOST_CC_UI_UPDATE_FREQUENCY_INV = (
             1.0 / HOST_CC_UI_UPDATE_FREQUENCY
         );
 
-        static constexpr Frequency BANK_UPDATE_FREQUENCY = 3.0;
-        static constexpr Seconds BANK_UPDATE_FREQUENCY_INV = (
+        static constexpr double BANK_UPDATE_FREQUENCY = 3.0;
+        static constexpr double BANK_UPDATE_FREQUENCY_INV = (
             1.0 / BANK_UPDATE_FREQUENCY
         );
+
+        static constexpr size_t OUT_EVENTS_BUFFER_SIZE = 16384;
 
         enum MessageType {
             NONE = 0,
@@ -260,7 +277,7 @@ class FstPlugin : public Midi::EventHandler
             PROGRAM_CHANGED = 6,
             BANK_CHANGED = 7,
             PARAMS_CHANGED = 8,
-            SYNTH_WAS_DIRTY = 9,
+            PROXY_WAS_DIRTY = 9,
         };
 
         class Message
@@ -274,11 +291,7 @@ class FstPlugin : public Midi::EventHandler
                     std::string const& serialized_data = ""
                 );
 
-                Message(
-                    Midi::Controller const controller_id,
-                    Number const new_value,
-                    MidiController* const midi_controller
-                );
+                Message(size_t const index, double const new_value);
 
                 Message(Message const& message) = default;
                 Message(Message&& message) = default;
@@ -291,24 +304,21 @@ class FstPlugin : public Midi::EventHandler
                 size_t get_index() const noexcept;
                 std::string const& get_serialized_data() const noexcept;
 
-                Midi::Controller get_controller_id() const noexcept;
-                Number get_new_value() const noexcept;
-                MidiController* get_midi_controller() const noexcept;
+                double get_new_value() const noexcept;
 
             private:
                 std::string serialized_data;
-                MidiController* midi_controller;
-                Number new_value;
+                double new_value;
                 size_t index;
                 MessageType type;
-                Midi::Controller controller_id;
         };
 
-        static Parameter create_midi_ctl_param(
-            Synth::ControllerId const controller_id,
-            MidiController* midi_controller,
-            Synth& synth
-        ) noexcept;
+        struct VstEvents_
+        {
+            int numEvents;
+            VstIntPtr _pad;
+            VstMidiEvent* events[OUT_EVENTS_BUFFER_SIZE];
+        };
 
         VstIntPtr host_callback(
             VstInt32 op_code,
@@ -320,10 +330,15 @@ class FstPlugin : public Midi::EventHandler
 
         void clear_received_midi_cc() noexcept;
 
-        void prepare_rendering(Integer const sample_count) noexcept;
-        void finalize_rendering(Integer const sample_count) noexcept;
+        void prepare_processing(VstInt32 const sample_count) noexcept;
+        void finalize_processing(VstInt32 const sample_count) noexcept;
+        void send_out_events(VstInt32 const last_sample_offset) noexcept;
 
-        void update_bpm() noexcept;
+        template<typename SampleType>
+        void render_silence(
+            VstInt32 const sample_count,
+            SampleType** out_samples
+        ) noexcept;
 
         void update_host_display() noexcept;
 
@@ -337,9 +352,8 @@ class FstPlugin : public Midi::EventHandler
         void handle_rename_program(std::string const& name) noexcept;
 
         void handle_change_param(
-            Midi::Controller const controller_id,
-            Number const new_value,
-            MidiController* const midi_controller
+            size_t const index,
+            double const new_value
         ) noexcept;
 
         void handle_import_patch(std::string const& patch) noexcept;
@@ -352,9 +366,7 @@ class FstPlugin : public Midi::EventHandler
 
         void handle_bank_changed(std::string const& serialized_bank) noexcept;
         void handle_params_changed() noexcept;
-        void handle_synth_was_dirty() noexcept;
-
-        Midi::Byte float_to_midi_byte(float const value) const noexcept;
+        void handle_proxy_was_dirty() noexcept;
 
         Parameters parameters;
 
@@ -363,22 +375,23 @@ class FstPlugin : public Midi::EventHandler
         GUI::PlatformData const platform_data;
 
         ERect window_rect;
-        std::bitset<Midi::MAX_CONTROLLER_ID + 1> midi_cc_received;
+        std::bitset<Proxy::ControllerId::CONTROLLER_ID_COUNT> midi_cc_received;
         GUI* gui;
-        Renderer renderer;
         SPSCQueue<Message> to_audio_messages;
         SPSCQueue<Message> to_audio_string_messages;
         SPSCQueue<Message> to_gui_messages;
         Bank bank;
         Bank program_names;
-        MtsEsp mts_esp;
+        VstEvents_ out_events;
+        VstMidiEvent out_event_buffer[OUT_EVENTS_BUFFER_SIZE];
         std::string serialized_bank;
         std::string current_patch;
+        double sample_rate;
         size_t current_program_index;
-        Integer min_samples_before_next_cc_ui_update;
-        Integer remaining_samples_before_next_cc_ui_update;
-        Integer min_samples_before_next_bank_update;
-        Integer remaining_samples_before_next_bank_update;
+        VstInt32 min_samples_before_next_cc_ui_update;
+        VstInt32 remaining_samples_before_next_cc_ui_update;
+        VstInt32 min_samples_before_next_bank_update;
+        VstInt32 remaining_samples_before_next_bank_update;
         VstInt32 prev_logged_op_code;
         char program_name[kVstMaxProgNameLen];
         bool had_midi_cc_event;

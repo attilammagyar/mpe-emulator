@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,40 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__NOTE_STACK_CPP
-#define JS80P__NOTE_STACK_CPP
+#ifndef MPE_EMULATOR__NOTE_STACK_CPP
+#define MPE_EMULATOR__NOTE_STACK_CPP
 
 #include <algorithm>
+
+#ifdef MPE_EMULATOR_ASSERTIONS
+#include <cstring>
+#endif
 
 #include "note_stack.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
-
-Midi::Word NoteStack::encode(
-    Midi::Channel const channel,
-    Midi::Note const note
-) noexcept {
-    return ((Midi::Word)(channel & 0x0f) << 8) | (Midi::Word)note;
-}
-
-
-void NoteStack::decode(
-    Midi::Word const word,
-    Midi::Channel& channel,
-    Midi::Note& note
-) noexcept {
-    channel = (Midi::Channel)(word >> 8) & 0x0f;
-    note = get_note(word);
-}
-
-
-Midi::Note NoteStack::get_note(Midi::Word const word) noexcept
-{
-    return word & 0xff;
-}
-
 
 NoteStack::NoteStack() noexcept
 {
@@ -61,7 +41,8 @@ void NoteStack::clear() noexcept
 {
     std::fill_n(next, ITEMS, INVALID_ITEM);
     std::fill_n(previous, ITEMS, INVALID_ITEM);
-    std::fill_n(velocities, ITEMS, 0.0);
+    std::fill_n(channels, ITEMS, Midi::INVALID_CHANNEL);
+    std::fill_n(velocities, ITEMS, 0);
 
     head = INVALID_ITEM;
     oldest_ = INVALID_ITEM;
@@ -76,53 +57,121 @@ bool NoteStack::is_empty() const noexcept
 }
 
 
-bool NoteStack::is_top(Midi::Channel const channel, Midi::Note const note) const noexcept
+bool NoteStack::is_top(Midi::Note const note) const noexcept
 {
-    return head == encode(channel, note);
+    return head == note;
 }
 
 
-void NoteStack::top(Midi::Channel& channel, Midi::Note& note, Number& velocity) const noexcept
-{
-    top(channel, note);
-    velocity = is_empty() ? 0.0 : velocities[head];
+bool NoteStack::find(
+        Midi::Note const note,
+        Midi::Channel& channel,
+        Midi::Byte& velocity
+) const noexcept {
+    if (MPE_EMULATOR_UNLIKELY(is_invalid(note))) {
+        return false;
+    }
+
+    Midi::Byte const item = note;
+
+    if (!is_already_pushed(item)) {
+        channel = Midi::INVALID_CHANNEL;
+        velocity = 0;
+
+        return false;
+    }
+
+    velocity = velocities[item];
+    channel = channels[item];
+
+    return true;
 }
 
 
-void NoteStack::top(Midi::Channel& channel, Midi::Note& note) const noexcept
-{
-    decode(head, channel, note);
+void NoteStack::top(
+        Midi::Note& note,
+        Midi::Channel& channel,
+        Midi::Byte& velocity
+) const noexcept {
+    top(note, channel);
+    velocity = is_empty() ? 0 : velocities[head];
 }
 
 
-void NoteStack::oldest(Midi::Channel& channel, Midi::Note& note) const noexcept
+void NoteStack::top(Midi::Note& note, Midi::Channel& channel) const noexcept
 {
-    decode(oldest_, channel, note);
+    note = head;
+    channel = is_empty() ? Midi::INVALID_CHANNEL : channels[head];
 }
 
 
-void NoteStack::lowest(Midi::Channel& channel, Midi::Note& note) const noexcept
-{
-    decode(lowest_, channel, note);
+void NoteStack::oldest(
+        Midi::Note& note,
+        Midi::Channel& channel,
+        Midi::Byte& velocity
+) const noexcept {
+    oldest(note, channel);
+    velocity = oldest_ == INVALID_ITEM ? 0 : velocities[oldest_];
 }
 
 
-void NoteStack::highest(Midi::Channel& channel, Midi::Note& note) const noexcept
+void NoteStack::oldest(Midi::Note& note, Midi::Channel& channel) const noexcept
 {
-    decode(highest_, channel, note);
+    note = oldest_;
+    channel = (
+        oldest_ == INVALID_ITEM ? Midi::INVALID_CHANNEL : channels[oldest_]
+    );
+}
+
+
+void NoteStack::lowest(
+        Midi::Note& note,
+        Midi::Channel& channel,
+        Midi::Byte& velocity
+) const noexcept {
+    lowest(note, channel);
+    velocity = lowest_ == INVALID_ITEM ? 0 : velocities[lowest_];
+}
+
+
+void NoteStack::lowest(Midi::Note& note, Midi::Channel& channel) const noexcept
+{
+    note = lowest_;
+    channel = (
+        lowest_ == INVALID_ITEM ? Midi::INVALID_CHANNEL : channels[lowest_]
+    );
+}
+
+
+void NoteStack::highest(
+        Midi::Note& note,
+        Midi::Channel& channel,
+        Midi::Byte& velocity
+) const noexcept {
+    highest(note, channel);
+    velocity = highest_ == INVALID_ITEM ? 0 : velocities[highest_];
+}
+
+
+void NoteStack::highest(Midi::Note& note, Midi::Channel& channel) const noexcept
+{
+    note = highest_;
+    channel = (
+        highest_ == INVALID_ITEM ? Midi::INVALID_CHANNEL : channels[highest_]
+    );
 }
 
 
 void NoteStack::push(
-        Midi::Channel const channel,
         Midi::Note const note,
-        Number const velocity
+        Midi::Channel const channel,
+        Midi::Byte const velocity
 ) noexcept {
-    if (JS80P_UNLIKELY(is_invalid(channel, note))) {
+    if (MPE_EMULATOR_UNLIKELY(is_invalid(note))) {
         return;
     }
 
-    Midi::Word const item = encode(channel, note);
+    Midi::Byte const item = note;
 
     if (oldest_ == INVALID_ITEM) {
         oldest_ = item;
@@ -139,41 +188,44 @@ void NoteStack::push(
     next[item] = head;
     head = item;
     velocities[item] = velocity;
+    channels[item] = channel;
 
-    if (lowest_ == INVALID_ITEM || note < get_note(lowest_)) {
+    if (lowest_ == INVALID_ITEM || note < lowest_) {
         lowest_ = item;
     }
 
-    if (highest_ == INVALID_ITEM || note > get_note(highest_)) {
+    if (highest_ == INVALID_ITEM || note > highest_) {
         highest_ = item;
     }
 }
 
 
-bool NoteStack::is_invalid(
-        Midi::Channel const channel,
-        Midi::Note const note
-) const noexcept {
-    return channel > Midi::CHANNEL_MAX || note > Midi::NOTE_MAX;
+bool NoteStack::is_invalid(Midi::Note const note) const noexcept
+{
+    return note > Midi::NOTE_MAX;
 }
 
 
-bool NoteStack::is_already_pushed(Midi::Word const word) const noexcept
+bool NoteStack::is_already_pushed(Midi::Byte const item) const noexcept
 {
-    return head == word || previous[word] != INVALID_ITEM;
+    return head == item || previous[item] != INVALID_ITEM;
 }
 
 
-void NoteStack::pop(Midi::Channel& channel, Midi::Note& note, Number& velocity) noexcept
-{
+void NoteStack::pop(
+        Midi::Note& note,
+        Midi::Channel& channel,
+        Midi::Byte& velocity
+) noexcept {
     if (is_empty()) {
-        decode(INVALID_ITEM, channel, note);
-        velocity = 0.0;
+        note = Midi::INVALID_NOTE;
+        channel = Midi::INVALID_CHANNEL;
+        velocity = 0;
 
         return;
     }
 
-    Midi::Word const item = head;
+    Midi::Byte const item = head;
 
     head = next[item];
 
@@ -184,13 +236,14 @@ void NoteStack::pop(Midi::Channel& channel, Midi::Note& note, Number& velocity) 
     next[item] = INVALID_ITEM;
 
     velocity = velocities[item];
-    decode(item, channel, note);
+    channel = channels[item];
+    note = item;
 
     update_extremes(item);
 }
 
 
-void NoteStack::update_extremes(Midi::Word const changed_item) noexcept
+void NoteStack::update_extremes(Midi::Byte const changed_item) noexcept
 {
     if (is_empty()) {
         lowest_ = INVALID_ITEM;
@@ -207,21 +260,14 @@ void NoteStack::update_extremes(Midi::Word const changed_item) noexcept
         highest_ = INVALID_ITEM;
     }
 
-    Midi::Word item = head;
-    Midi::Note lowest_note = get_note(lowest_);
-    Midi::Note highest_note = get_note(highest_);
-    Midi::Note note;
+    Midi::Byte item = head;
 
     for (size_t i = 0; item != INVALID_ITEM && i != ITEMS; ++i) {
-        note = get_note(item);
-
-        if (lowest_ == INVALID_ITEM || note < lowest_note) {
-            lowest_note = note;
+        if (lowest_ == INVALID_ITEM || item < lowest_) {
             lowest_ = item;
         }
 
-        if (highest_ == INVALID_ITEM || note > highest_note) {
-            highest_note = note;
+        if (highest_ == INVALID_ITEM || item > highest_) {
             highest_ = item;
         }
 
@@ -230,23 +276,23 @@ void NoteStack::update_extremes(Midi::Word const changed_item) noexcept
 }
 
 
-void NoteStack::remove(Midi::Channel const channel, Midi::Note const note) noexcept
+void NoteStack::remove(Midi::Note const note) noexcept
 {
-    if (JS80P_UNLIKELY(is_invalid(channel, note))) {
+    if (MPE_EMULATOR_UNLIKELY(is_invalid(note))) {
         return;
     }
 
-    remove<true>(encode(channel, note));
+    remove<true>(note);
 }
 
 
 template<bool should_update_extremes>
-void NoteStack::remove(Midi::Word const word) noexcept
+void NoteStack::remove(Midi::Byte const item) noexcept
 {
-    Midi::Word const next_item = next[word];
-    Midi::Word const previous_item = previous[word];
+    Midi::Byte const next_item = next[item];
+    Midi::Byte const previous_item = previous[item];
 
-    if (word == oldest_) {
+    if (item == oldest_) {
         oldest_ = previous_item;
     }
 
@@ -254,42 +300,102 @@ void NoteStack::remove(Midi::Word const word) noexcept
         previous[next_item] = previous_item;
     }
 
-    if (word == head) {
+    if (item == head) {
         head = next_item;
     } else {
         if (previous_item != INVALID_ITEM) {
             next[previous_item] = next_item;
         }
 
-        next[word] = INVALID_ITEM;
-        previous[word] = INVALID_ITEM;
+        next[item] = INVALID_ITEM;
+        previous[item] = INVALID_ITEM;
     }
 
     if constexpr (should_update_extremes) {
-        update_extremes(word);
+        update_extremes(item);
     }
 }
 
 
+Midi::Word NoteStack::get_active_channels() const noexcept
+{
+    Midi::Word active_channels = 0;
+    Midi::Byte item = head;
+
+    for (size_t i = 0; item != INVALID_ITEM && i != ITEMS; ++i) {
+        active_channels |= (1 << channels[item]);
+        item = next[item];
+    }
+
+    return active_channels;
+}
+
+
+void NoteStack::make_stats(ChannelStats& stats) const noexcept
+{
+    if (is_empty()) {
+        stats.lowest = Midi::INVALID_CHANNEL;
+        stats.highest = Midi::INVALID_CHANNEL;
+        stats.oldest = Midi::INVALID_CHANNEL;
+        stats.newest = Midi::INVALID_CHANNEL;
+    } else {
+        stats.lowest =  channels[lowest_];
+        stats.highest = channels[highest_];
+        stats.oldest = channels[oldest_];
+        stats.newest = channels[head];
+    }
+}
+
+
+NoteStack::ChannelStats::ChannelStats() noexcept
+    : lowest(Midi::INVALID_CHANNEL),
+    highest(Midi::INVALID_CHANNEL),
+    oldest(Midi::INVALID_CHANNEL),
+    newest(Midi::INVALID_CHANNEL)
+{
+}
+
+
+#ifdef MPE_EMULATOR_ASSERTIONS
+std::string NoteStack::ChannelStats::to_string() const noexcept
+{
+    constexpr size_t buffer_size = 64;
+    char buffer[buffer_size];
+
+    snprintf(
+        buffer,
+        buffer_size,
+        "lo=0x%02hhx hi=0x%02hhx old=0x%02hhx new=0x%02hhx",
+        lowest,
+        highest,
+        oldest,
+        newest
+    );
+
+    return std::string(buffer);
+}
+#endif
+
+
 // void NoteStack::dump() const noexcept
 // {
-    // fprintf(stderr, "  top=\t%hx\n", head);
-    // fprintf(stderr, "  lowest=\t%hx\n", lowest_);
-    // fprintf(stderr, "  highest=\t%hx\n", highest_);
+    // fprintf(stderr, "  top=\t%hhx\n", head);
+    // fprintf(stderr, "  lowest=\t%hhx\n", lowest_);
+    // fprintf(stderr, "  highest=\t%hhx\n", highest_);
 
     // fprintf(stderr, "  next=\t[");
 
-    // for (Midi::Word i = 0; i != ITEMS; ++i) {
+    // for (Midi::Byte i = 0; i != ITEMS; ++i) {
         // if (next[i] != INVALID_ITEM) {
-            // fprintf(stderr, "%hx-->%hx, ", i, next[i]);
+            // fprintf(stderr, "%hhx-->%hhx, ", i, next[i]);
         // }
     // }
 
     // fprintf(stderr, "]\n  prev=\t[");
 
-    // for (Midi::Word i = 0; i != ITEMS; ++i) {
+    // for (Midi::Byte i = 0; i != ITEMS; ++i) {
         // if (previous[i] != INVALID_ITEM) {
-            // fprintf(stderr, "%hx-->%hx, ", i, previous[i]);
+            // fprintf(stderr, "%hhx-->%hhx, ", i, previous[i]);
         // }
     // }
 

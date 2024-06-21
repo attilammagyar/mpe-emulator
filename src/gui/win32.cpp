@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__GUI__WIN32_CPP
-#define JS80P__GUI__WIN32_CPP
+#ifndef MPE_EMULATOR__GUI__WIN32_CPP
+#define MPE_EMULATOR__GUI__WIN32_CPP
 
 #include <cstdio>
 
@@ -29,7 +29,7 @@
 #include "gui/gui.cpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 void GUI::idle()
@@ -48,7 +48,7 @@ void GUI::destroy()
 
 
 std::string const Widget::FILTER_STR(
-    "JS80P Patches (*.js80p)\x00*.js80p\x00"
+    "MPE Emulator Settings (*.mpe)\x00*.mpe\x00"
     "All Files (*.*)\x00*.*\x00",
     53
 );
@@ -283,8 +283,8 @@ LRESULT Widget::process_message(
             break;
 
         case WM_MOUSEWHEEL: {
-            Number const delta = (
-                (Number)GET_WHEEL_DELTA_WPARAM(wParam) * MOUSE_WHEEL_SCALE
+            double const delta = (
+                (double)GET_WHEEL_DELTA_WPARAM(wParam) * MOUSE_WHEEL_SCALE
             );
 
             is_handled = widget->mouse_wheel(delta, 0 != (wParam & MK_CONTROL));
@@ -653,10 +653,10 @@ GUI::PlatformWidget Widget::get_platform_widget() const
 }
 
 
-void ImportPatchButton::click()
+void ImportSettingsButton::click()
 {
     Widget::Text filter(FILTER_STR);
-    Widget::Text ext("js80p");
+    Widget::Text ext("mpe");
     TCHAR file_name[MAX_PATH];
     OPENFILENAME ofn;
 
@@ -723,16 +723,16 @@ void ImportPatchButton::click()
 
     CloseHandle(file);
 
-    import_patch(buffer, (Integer)read);
+    import_settings(buffer, (int)read);
 
     delete[] buffer;
 }
 
 
-void ExportPatchButton::click()
+void ExportSettingsButton::click()
 {
-    Widget::Text filter(ImportPatchButton::FILTER_STR);
-    Widget::Text ext("js80p");
+    Widget::Text filter(ImportSettingsButton::FILTER_STR);
+    Widget::Text ext("mpe");
     TCHAR file_name[MAX_PATH];
     OPENFILENAME ofn;
 
@@ -774,12 +774,12 @@ void ExportPatchButton::click()
         return;
     }
 
-    std::string const& patch = Serializer::serialize(synth);
+    std::string const& settings = Serializer::serialize(proxy);
     DWORD written;
 
     if (
         !WriteFile(
-            file, (LPCVOID)patch.c_str(), (DWORD)patch.length(), &written, NULL
+            file, (LPCVOID)settings.c_str(), (DWORD)settings.length(), &written, NULL
         )
     ) {
         // TODO: GetLastError

@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -21,9 +21,8 @@
 #include "gui/win32.hpp"
 
 
-JS80P::GUI* gui;
-JS80P::Synth synth;
-JS80P::Integer rendering_round = 0;
+MpeEmulator::GUI* gui;
+MpeEmulator::Proxy proxy;
 
 
 LRESULT window_procedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -35,10 +34,7 @@ LRESULT window_procedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return 0;
 
         case WM_TIMER:
-            ++rendering_round;
-            rendering_round = rendering_round & 0x7fff;
-            synth.generate_samples(rendering_round, 1);
-
+            proxy.process_messages();
             gui->idle();
 
             return 0;
@@ -55,7 +51,7 @@ int WINAPI wWinMain(
         int nCmdShow
 ) {
     WNDCLASS window_class;
-    LPCTSTR class_name = TEXT("JS80PGUIPlayground");
+    LPCTSTR class_name = TEXT("MPEEmulatorGUIPlayground");
 
     window_class.style = CS_DBLCLKS;
     window_class.lpfnWndProc = window_procedure;
@@ -77,12 +73,12 @@ int WINAPI wWinMain(
 
     HWND main_window = CreateWindow(
         class_name,
-        TEXT("JS80P GUI Playground"),
+        TEXT("MPE Emulator GUI Playground"),
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        JS80P::GUI::WIDTH + 32,
-        JS80P::GUI::HEIGHT + 32,
+        MpeEmulator::GUI::WIDTH + 32,
+        MpeEmulator::GUI::HEIGHT + 32,
         NULL,
         NULL,
         hInstance,
@@ -99,11 +95,11 @@ int WINAPI wWinMain(
     UINT_PTR timer_id = 12345;
     SetTimer(main_window, timer_id, 100, NULL);
 
-    gui = new JS80P::GUI(
+    gui = new MpeEmulator::GUI(
         NULL,
-        (JS80P::GUI::PlatformData)hInstance,
-        (JS80P::GUI::PlatformWidget)main_window,
-        synth,
+        (MpeEmulator::GUI::PlatformData)hInstance,
+        (MpeEmulator::GUI::PlatformWidget)main_window,
+        proxy,
         true
     );
     gui->show();

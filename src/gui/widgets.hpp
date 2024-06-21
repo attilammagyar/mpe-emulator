@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,21 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__GUI__WIDGETS_HPP
-#define JS80P__GUI__WIDGETS_HPP
+#ifndef MPE_EMULATOR__GUI__WIDGETS_HPP
+#define MPE_EMULATOR__GUI__WIDGETS_HPP
 
 #include <cstddef>
 #include <string>
 #include <vector>
 
-#include "js80p.hpp"
+#include "common.hpp"
+#include "proxy.hpp"
 #include "serializer.hpp"
-#include "synth.hpp"
+#include "strings.hpp"
 
 #include "gui/gui.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class ExternallyCreatedWindow : public Widget
@@ -61,20 +62,20 @@ class TransparentWidget : public Widget
 };
 
 
-class ImportPatchButton : public TransparentWidget
+class ImportSettingsButton : public TransparentWidget
 {
     public:
-        ImportPatchButton(
+        ImportSettingsButton(
             GUI& gui,
             int const left,
             int const top,
             int const width,
             int const height,
-            Synth& synth,
+            Proxy& proxy,
             TabBody* const tab_body
         );
 
-        void import_patch(char const* buffer, Integer const size) const;
+        void import_settings(char const* buffer, int const size) const;
 
     protected:
         virtual void click() override;
@@ -84,20 +85,20 @@ class ImportPatchButton : public TransparentWidget
     private:
         TabBody* const tab_body;
 
-        Synth& synth;
+        Proxy& proxy;
 };
 
 
-class ExportPatchButton : public TransparentWidget
+class ExportSettingsButton : public TransparentWidget
 {
     public:
-        ExportPatchButton(
+        ExportSettingsButton(
             GUI& gui,
             int const left,
             int const top,
             int const width,
             int const height,
-            Synth& synth
+            Proxy& proxy
         );
 
     protected:
@@ -106,7 +107,7 @@ class ExportPatchButton : public TransparentWidget
         virtual bool mouse_leave(int const x, int const y) override;
 
     private:
-        Synth& synth;
+        Proxy& proxy;
 };
 
 
@@ -128,7 +129,6 @@ class TabBody : public TransparentWidget
 
         void stop_editing();
 
-        void refresh_controlled_knob_param_editors();
         void refresh_all_params();
 
     private:
@@ -150,10 +150,10 @@ class Background : public Widget
         void refresh();
 
     private:
-        static constexpr Integer FULL_REFRESH_TICKS = 3;
+        static constexpr int FULL_REFRESH_TICKS = 3;
 
         TabBody* body;
-        Integer next_full_refresh;
+        int next_full_refresh;
 };
 
 
@@ -184,91 +184,12 @@ class TabSelector : public TransparentWidget
 };
 
 
-class ControllerSelector : public Widget
-{
-    public:
-        static constexpr int LEFT = 0;
-        static constexpr int TOP = 0;
-        static constexpr int WIDTH = GUI::WIDTH;
-        static constexpr int HEIGHT = GUI::HEIGHT;
-        static constexpr int TITLE_HEIGHT = 30;
-
-        ControllerSelector(Background& background, Synth& synth);
-
-        void select_controller(
-            Synth::ParamId const param_id,
-            int const controller_choices,
-            KnobParamEditor* knob_param_editor
-        );
-
-        virtual void hide() override;
-
-        void handle_selection_change(Synth::ControllerId const new_controller_id);
-
-    protected:
-        virtual void set_up(
-            GUI::PlatformData platform_data,
-            WidgetBase* parent
-        ) override;
-
-        virtual bool paint() override;
-
-    private:
-        static constexpr int TITLE_SIZE = 128;
-
-        class Controller : public Widget
-        {
-            public:
-                static constexpr int HEIGHT = 18;
-
-                Controller(
-                    ControllerSelector& controller_selector,
-                    GUI::ControllerCapability const required_capability,
-                    char const* const text,
-                    int const left,
-                    int const top,
-                    int const width,
-                    Synth::ControllerId const controller_id
-                );
-
-                void select();
-                void unselect();
-
-                GUI::ControllerCapability const required_capability;
-
-            protected:
-                virtual bool paint() override;
-                virtual bool mouse_up(int const x, int const y) override;
-                virtual bool mouse_move(int const x, int const y, bool const modifier) override;
-                virtual bool mouse_leave(int const x, int const y) override;
-
-            private:
-                Synth::ControllerId const controller_id;
-
-                ControllerSelector& controller_selector;
-                bool is_selected;
-                bool is_mouse_over;
-        };
-
-        char title[TITLE_SIZE];
-        Background& background;
-        Synth& synth;
-        KnobParamEditor* knob_param_editor;
-        Controller* controllers[GUI::CONTROLLERS_COUNT];
-        Synth::ParamId param_id;
-        Synth::ControllerId selected_controller_id;
-};
-
-
 class ParamStateImages
 {
     public:
         ParamStateImages(
             WidgetBase* widget,
-            GUI::Image free_image,
-            GUI::Image controlled_image,
-            GUI::Image synced_image,
-            GUI::Image none_image,
+            GUI::Image image,
             size_t const count,
             int const width,
             int const height
@@ -276,7 +197,7 @@ class ParamStateImages
 
         ~ParamStateImages();
 
-        size_t ratio_to_index(Number const ratio) const;
+        size_t ratio_to_index(double const ratio) const;
 
         size_t const count;
         int const width;
@@ -284,89 +205,53 @@ class ParamStateImages
 
         WidgetBase* widget;
 
-        GUI::Image free_image;
-        GUI::Image controlled_image;
-        GUI::Image synced_image;
-        GUI::Image none_image;
+        GUI::Image image;
 
-        GUI::Image* free_images;
-        GUI::Image* controlled_images;
-        GUI::Image* synced_images;
+        GUI::Image* images;
 
     private:
         GUI::Image* split_image(GUI::Image image) const;
-        GUI::Image* free_images_(GUI::Image* images) const;
+        GUI::Image* free_images(GUI::Image* images) const;
 
         size_t const last_index;
-        Number const last_index_float;
+        double const last_index_float;
 };
 
 
 class KnobParamEditor : public TransparentWidget
 {
     public:
+        enum KnobType {
+            DISCRETE = 0,
+            CONTINUOUS = 1,
+        };
+
         KnobParamEditor(
             GUI& gui,
-            char const* const text,
             int const left,
             int const top,
             int const width,
             int const height,
             int const knob_top,
-            ControllerSelector& controller_selector,
-            Synth& synth,
-            Synth::ParamId const param_id,
-            int const controller_choices,
-            char const* format,
-            double const scale,
+            Proxy& proxy,
+            Proxy::ParamId const param_id,
             ParamStateImages const* knob_states,
-            Synth::ParamId const scale_x4_toggle_param_id = Synth::ParamId::INVALID_PARAM_ID
+            KnobType const type
         );
 
-        KnobParamEditor(
-            GUI& gui,
-            char const* const text,
-            int const left,
-            int const top,
-            int const width,
-            int const height,
-            int const knob_top,
-            ControllerSelector& controller_selector,
-            Synth& synth,
-            Synth::ParamId const param_id,
-            int const controller_choices,
-            char const* const* const options,
-            size_t const number_of_options,
-            ParamStateImages const* knob_states,
-            Synth::ParamId const scale_x4_toggle_param_id = Synth::ParamId::INVALID_PARAM_ID
-        );
-
-        void set_sync_param_id(Synth::ParamId const param_id);
-
-        bool has_controller() const;
-
-        void adjust_ratio(Number const ratio);
-        void handle_ratio_change(Number const new_ratio);
-        void handle_controller_change(Synth::ControllerId const new_controller_id);
+        void adjust_ratio(double const ratio);
+        void handle_ratio_change(double const new_ratio);
 
         void refresh();
 
-        void update_editor(
-            Number const new_ratio,
-            Synth::ControllerId const new_controller_id,
-            bool const new_is_scaled_x4
-        );
-
-        void update_editor(Number const new_ratio);
-        void update_editor(Synth::ControllerId const new_controller_id);
+        void update_editor(double const new_ratio);
         void update_editor();
 
         void reset_default();
 
         void stop_editing();
 
-        Synth::ParamId const param_id;
-        Synth::ParamId const scale_x4_toggle_param_id;
+        Proxy::ParamId const param_id;
         bool const is_continuous;
 
     protected:
@@ -376,7 +261,6 @@ class KnobParamEditor : public TransparentWidget
         ) override;
 
         virtual bool paint() override;
-        virtual bool mouse_up(int const x, int const y) override;
         virtual bool mouse_move(int const x, int const y, bool const modifier) override;
         virtual bool mouse_leave(int const x, int const y) override;
 
@@ -385,21 +269,19 @@ class KnobParamEditor : public TransparentWidget
         static constexpr size_t TITLE_MAX_LENGTH = 64;
 
         static constexpr int VALUE_TEXT_HEIGHT = 20;
-        static constexpr int CONTROLLER_TEXT_HEIGHT = 16;
-        static constexpr int TEXTS_HEIGHT = VALUE_TEXT_HEIGHT + CONTROLLER_TEXT_HEIGHT;
 
         class Knob : public Widget
         {
             public:
-                static constexpr Number MOUSE_WHEEL_COARSE_SCALE = 1.0 / 200.0;
+                static constexpr double MOUSE_WHEEL_COARSE_SCALE = 1.0 / 200.0;
 
-                static constexpr Number MOUSE_WHEEL_FINE_SCALE = (
+                static constexpr double MOUSE_WHEEL_FINE_SCALE = (
                     MOUSE_WHEEL_COARSE_SCALE / 50.0
                 );
 
-                static constexpr Number MOUSE_MOVE_COARSE_SCALE = 1.0 / 240.0;
+                static constexpr double MOUSE_MOVE_COARSE_SCALE = 1.0 / 240.0;
 
-                static constexpr Number MOUSE_MOVE_FINE_SCALE = (
+                static constexpr double MOUSE_MOVE_FINE_SCALE = (
                     MOUSE_MOVE_COARSE_SCALE / 50.0
                 );
 
@@ -409,19 +291,14 @@ class KnobParamEditor : public TransparentWidget
                     char const* const text,
                     int const left,
                     int const top,
-                    Number const steps,
+                    double const steps,
                     ParamStateImages const* knob_states
                 );
 
                 virtual ~Knob();
 
-                void set_sync_param_id(Synth::ParamId const param_id);
-
-                void update(Number const ratio);
+                void update(double const ratio);
                 void update();
-                bool update_sync_status();
-                void make_free();
-                void make_controlled(Synth::ControllerId const controller_id);
 
                 bool is_editing() const;
                 void start_editing();
@@ -438,57 +315,38 @@ class KnobParamEditor : public TransparentWidget
                 virtual bool mouse_up(int const x, int const y) override;
                 virtual bool mouse_move(int const x, int const y, bool const modifier) override;
                 virtual bool mouse_leave(int const x, int const y) override;
-                virtual bool mouse_wheel(Number const delta, bool const modifier) override;
+                virtual bool mouse_wheel(double const delta, bool const modifier) override;
 
             private:
-                Number const steps;
+                double const steps;
 
                 ParamStateImages const* const knob_states;
 
                 KnobParamEditor& editor;
                 GUI::Image knob_state;
-                Number prev_x;
-                Number prev_y;
-                Number ratio;
-                Number mouse_move_delta;
-                Synth::ParamId sync_param_id;
-                bool is_controlled;
-                bool is_controller_polyphonic;
+                double prev_x;
+                double prev_y;
+                double ratio;
+                double mouse_move_delta;
                 bool is_editing_;
-                bool is_synced;
         };
 
         void update_value_str();
-        void update_controller_str();
 
-        bool should_be_scaled_x4() const;
-
-        char const* const format;
-        double const scale;
-
-        Number const discrete_step_size;
+        double const discrete_step_size;
 
         ParamStateImages const* knob_states;
 
-        char const* const* const options;
-        size_t const number_of_options;
         int const value_font_size;
-        int const controller_choices;
 
         int const knob_top;
-        bool const has_room_for_texts;
-        bool const can_scale_x4;
+        bool const has_room_for_text;
 
-        ControllerSelector& controller_selector;
-        Synth& synth;
-        Number ratio;
+        Proxy& proxy;
+        double ratio;
         Knob* knob;
         char value_str[TEXT_MAX_LENGTH];
-        char controller_str[TEXT_MAX_LENGTH];
         char title[TITLE_MAX_LENGTH];
-        Synth::ControllerId controller_id;
-        bool has_controller_;
-        bool is_scaled_x4;
 };
 
 
@@ -509,18 +367,21 @@ class AboutText : public Widget
         static constexpr int EMPTY_LINE_HEIGHT = 12;
         static constexpr int PADDING = 10;
 
-        static constexpr char const* NAME = "JS80P";
+        static constexpr char const* NAME = "MPE Emulator";
 
         static constexpr char const* VERSION = (
-            JS80P_TO_STRING(JS80P_VERSION_STR) ", "
-            JS80P_TO_STRING(JS80P_TARGET_PLATFORM) ", "
-            JS80P_TO_STRING(JS80P_INSTRUCTION_SET)
+            MPE_EMULATOR_TO_STRING(MPE_EMULATOR_VERSION_STR) ", "
+            MPE_EMULATOR_TO_STRING(MPE_EMULATOR_TARGET_PLATFORM) ", "
+            MPE_EMULATOR_TO_STRING(MPE_EMULATOR_INSTRUCTION_SET)
         );
 
         static constexpr char const* TEXT = (
-            "A MIDI driven, performance oriented, versatile synthesizer\n"
+            "\n"
+            "MIDI Polyphonic Expression (MPE)\n"
+            "for non-MPE-capable keyboards.\n"
+            "\n"
             "Copyright (C) 2023, 2024 Attila M. Magyar and contributors\n"
-            "https://attilammagyar.github.io/js80p\n"
+            "https://attilammagyar.github.io/mpe-emulator\n"
             "\n"
             "License: GNU General Public License Version 3\n"
             "https://www.gnu.org/licenses/gpl-3.0.en.html\n"
@@ -535,11 +396,6 @@ class AboutText : public Widget
             "for fine grained adjustments.\n"
             "\n"
             "Double click on a knob to reset it to its default value.\n"
-            "\n"
-            "Click on the area below a knob to assign a controller to it.\n"
-            "\n"
-            "A buffer size of around 6 ms (256 samples at 44.1 kHz sample\n"
-            "rate) usually gives good performance and low latency.\n"
         );
 
         AboutText(char const* sdk_version, GUI::Image logo);
@@ -575,21 +431,20 @@ class ToggleSwitchParamEditor: public TransparentWidget
     public:
         ToggleSwitchParamEditor(
             GUI& gui,
-            char const* const text,
             int const left,
             int const top,
             int const width,
             int const height,
             int const box_left,
-            Synth& synth,
-            Synth::ParamId const param_id
+            Proxy& proxy,
+            Proxy::ParamId const param_id
         );
 
         void refresh();
 
         bool is_on() const;
 
-        Synth::ParamId const param_id;
+        Proxy::ParamId const param_id;
 
     protected:
         virtual void set_up(
@@ -603,6 +458,7 @@ class ToggleSwitchParamEditor: public TransparentWidget
         virtual bool mouse_leave(int const x, int const y) override;
 
     private:
+        static constexpr size_t TEXT_MAX_LENGTH = 16;
         static constexpr size_t TITLE_MAX_LENGTH = 64;
 
         void update_title();
@@ -612,11 +468,12 @@ class ToggleSwitchParamEditor: public TransparentWidget
 
         int const box_left;
 
-        Synth& synth;
+        Proxy& proxy;
 
+        char value_str[TEXT_MAX_LENGTH];
         char title[TITLE_MAX_LENGTH];
-        Number default_ratio;
-        Number ratio;
+        double default_ratio;
+        double ratio;
         bool is_editing_;
 };
 
@@ -626,36 +483,20 @@ class DiscreteParamEditor : public TransparentWidget
     public:
         DiscreteParamEditor(
             GUI& gui,
-            char const* const text,
             int const left,
             int const top,
             int const width,
             int const height,
             int const value_left,
             int const value_width,
-            Synth& synth,
-            Synth::ParamId const param_id,
-            char const* const* const options,
-            size_t const number_of_options
-        );
-
-        DiscreteParamEditor(
-            GUI& gui,
-            char const* const text,
-            int const left,
-            int const top,
-            int const width,
-            int const height,
-            int const value_left,
-            int const value_width,
-            Synth& synth,
-            Synth::ParamId const param_id,
-            ParamStateImages const* state_images
+            Proxy& proxy,
+            Proxy::ParamId const param_id,
+            ParamStateImages const* state_images = NULL
         );
 
         virtual void refresh();
 
-        Synth::ParamId const param_id;
+        Proxy::ParamId const param_id;
 
     protected:
         static constexpr size_t TEXT_MAX_LENGTH = 24;
@@ -667,78 +508,34 @@ class DiscreteParamEditor : public TransparentWidget
         virtual bool mouse_up(int const x, int const y) override;
         virtual bool mouse_move(int const x, int const y, bool const modifier) override;
         virtual bool mouse_leave(int const x, int const y) override;
-        virtual bool mouse_wheel(Number const delta, bool const modifier) override;
+        virtual bool mouse_wheel(double const delta, bool const modifier) override;
 
-        void set_ratio(Number const new_ratio);
+        void set_ratio(double const new_ratio);
 
         virtual void update();
-        void update_value_str(Byte const value);
+        void update_value_str(unsigned char const value);
 
         void update_title();
 
         bool is_editing() const;
 
-        Synth& synth;
+        Proxy& proxy;
         char value_str[TEXT_MAX_LENGTH];
         char title[TITLE_MAX_LENGTH];
-        Number ratio;
+        double ratio;
 
     private:
-        DiscreteParamEditor(
-            GUI& gui,
-            char const* const text,
-            int const left,
-            int const top,
-            int const width,
-            int const height,
-            int const value_left,
-            int const value_width,
-            Synth& synth,
-            Synth::ParamId const param_id,
-            char const* const* const options,
-            size_t const number_of_options,
-            ParamStateImages const* state_images
-        );
-
         void start_editing();
         void stop_editing();
 
-        Number const step_size;
+        double const step_size;
 
         ParamStateImages const* const state_images;
-
-        char const* const* const options;
-        size_t const number_of_options;
 
         int const value_left;
         int const value_width;
 
         bool is_editing_;
-};
-
-
-class TuningSelector : public DiscreteParamEditor
-{
-    public:
-        static constexpr int WIDTH = 93;
-        static constexpr int HEIGHT = 23;
-
-        TuningSelector(
-            GUI& gui,
-            char const* const text,
-            int const left,
-            int const top,
-            Synth& synth,
-            Synth::ParamId const param_id
-        );
-
-        virtual void refresh() override;
-
-    protected:
-        virtual void update() override;
-
-    private:
-        bool is_mts_esp_connected;
 };
 
 }

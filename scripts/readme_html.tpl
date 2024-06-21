@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>JS80P</title>
+  <title>MPE Emulator</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="description" content="A MIDI driven, performance oriented, versatile synthesizer." />
+  <meta name="description" content="TODO" />
 
 <style>
 html, body {

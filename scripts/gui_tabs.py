@@ -1,13 +1,13 @@
 ###############################################################################
-# This file is part of JS80P, a synthesizer plugin.
+# This file is part of MPE Emulator.
 # Copyright (C) 2024  Attila M. Magyar
 #
-# JS80P is free software: you can redistribute it and/or modify
+# MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JS80P is distributed in the hope that it will be useful,
+# MPE Emulator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -54,15 +54,8 @@ def main(argv):
     mockup = Image.open(os.path.join(argv[1]))
 
     tabs = (
-        ("synth", 11),
-        ("effects", 623),
-        ("macros1", 1235),
-        ("macros2", 1847),
-        ("macros3", 2459),
-        ("envelopes1", 3071),
-        ("envelopes2", 3683),
-        ("lfos", 4295),
-        ("about", 4907),
+        ("zone1", 11),
+        ("about", 623),
     )
 
     for file_name, top in tabs:

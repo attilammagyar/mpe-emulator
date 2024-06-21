@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -22,7 +22,7 @@
 using namespace Steinberg;
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 extern GUI::PlatformData* platform_data;
@@ -30,11 +30,11 @@ extern GUI::PlatformData* platform_data;
 
 void Vst3Plugin::GUI::initialize()
 {
-    gui = new JS80P::GUI(
+    gui = new MpeEmulator::GUI(
         kVstVersionString,
         *platform_data,
-        (JS80P::GUI::PlatformWidget)systemWindow,
-        synth,
+        (MpeEmulator::GUI::PlatformWidget)systemWindow,
+        proxy,
         true
     );
     gui->show();

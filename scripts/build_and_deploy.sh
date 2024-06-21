@@ -1,16 +1,16 @@
 #!/bin/bash
 
 ###############################################################################
-# This file is part of JS80P, a synthesizer plugin.
+# This file is part of MPE Emulator.
 # Copyright (C) 2023, 2024  Attila M. Magyar
 # Copyright (C) 2023  @aimixsaka (https://github.com/aimixsaka/)
 #
-# JS80P is free software: you can redistribute it and/or modify
+# MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JS80P is distributed in the hope that it will be useful,
+# MPE Emulator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -41,21 +41,27 @@ main()
     local plugin_type="$1"
     local target_os="$2"
     local arch="$3"
-    local instruction_set="$4"
+    local instruction_set=""
     local target_platform=""
     local built_plugin=""
     local suffix=""
 
     if [[ "$plugin_type$target_os$arch" = "" ]]
     then
-        echo "Usage: $0 fst|vst3 linux|windows x86|x86_64|riscv64 [avx|sse2|none]" >&2
+        echo "Usage: $0 fst|vst3 linux|windows x86|x86_64|riscv64" >&2
         return 1
     fi
 
     if [[ "$plugin_type" = "" ]]; then plugin_type="fst"; fi
     if [[ "$target_os" = "" ]]; then target_os="linux"; fi
     if [[ "$arch" = "" ]]; then arch="64bit"; fi
-    if [[ "$instruction_set" = "" ]]; then instruction_set="avx"; fi
+
+    if [[ "$arch" = "riscv64" ]]
+    then
+        instruction_set="none"
+    else
+        instruction_set="sse2"
+    fi
 
     if [[ "$plugin_type" = "vst3" ]]; then suffix="_single_file" ; fi
 
@@ -77,12 +83,12 @@ main()
             ;;
     esac
 
-    built_plugin="dist/js80p-dev-$target_os-$arch-$instruction_set-$plugin_type$suffix"
+    built_plugin="dist/mpe-emulator-dev-$target_os-$arch-$instruction_set-$plugin_type$suffix"
 
     case "$target_os-$plugin_type" in
-        "linux-fst") built_plugin="$built_plugin/js80p.so" ;;
-        "windows-fst") built_plugin="$built_plugin/js80p.dll" ;;
-        "linux-vst3"|"windows-vst3") built_plugin="$built_plugin/js80p.vst3" ;;
+        "linux-fst") built_plugin="$built_plugin/mpe-emulator.so" ;;
+        "windows-fst") built_plugin="$built_plugin/mpe-emulator.dll" ;;
+        "linux-vst3"|"windows-vst3") built_plugin="$built_plugin/mpe-emulator.vst3" ;;
         *)
             echo "Unknown plugin type: \"$plugin_type\" - should be either \"fst\" or \"vst3\"" >&2
             return 1
@@ -123,8 +129,8 @@ replace_in_dir()
     do
         dir="$1"
         echo ""
-        echo "Replacing JS80P; dir=\"$dir\""
-        rm -rfv "$dir"/js80p.*
+        echo "Replacing MPE Emulator; dir=\"$dir\""
+        rm -rfv "$dir"/mpe-emulator.*
         cp -v "$built_plugin" "$dir/"
         shift
     done

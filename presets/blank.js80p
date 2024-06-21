@@ -1,8 +1,0 @@
-; The default, empty patch, a blank canvas.
-[js80p]
-MF1LOG = 1.0
-MF2LOG = 1.0
-CF1LOG = 1.0
-CF2LOG = 1.0
-EF1LOG = 1.0
-EF2LOG = 1.0

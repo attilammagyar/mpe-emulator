@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -25,7 +25,7 @@
 using namespace Steinberg;
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class GUIEventHandler : public Linux::IEventHandler, public FObject
@@ -79,7 +79,7 @@ class GUITimerHandler : public Linux::ITimerHandler, public FObject
 void Vst3Plugin::GUI::initialize()
 {
     /*
-    Must be destroyed by the platform-specific implementation of JS80P::GUI::destroy().
+    Must be destroyed by the platform-specific implementation of MpeEmulator::GUI::destroy().
     */
     XcbPlatform* xcb = new XcbPlatform();
 
@@ -88,7 +88,7 @@ void Vst3Plugin::GUI::initialize()
     Linux::IRunLoop* run_loop = NULL;
     Linux::FileDescriptor xcb_fd = xcb->get_fd();
     Linux::TimerInterval milliseconds = (
-        (Linux::TimerInterval)std::ceil(JS80P::GUI::REFRESH_RATE_SECONDS)
+        (Linux::TimerInterval)std::ceil(MpeEmulator::GUI::REFRESH_RATE_SECONDS)
     );
 
     GUIEventHandler* event_handler = new GUIEventHandler();
@@ -103,11 +103,11 @@ void Vst3Plugin::GUI::initialize()
         this->run_loop = (void*)run_loop;
     }
 
-    gui = new JS80P::GUI(
+    gui = new MpeEmulator::GUI(
         kVstVersionString,
-        (JS80P::GUI::PlatformData)xcb,
-        (JS80P::GUI::PlatformWidget)systemWindow,
-        synth,
+        (MpeEmulator::GUI::PlatformData)xcb,
+        (MpeEmulator::GUI::PlatformWidget)systemWindow,
+        proxy,
         true
     );
 

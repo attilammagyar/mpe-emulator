@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -22,125 +22,84 @@
 #include <string>
 
 #include "test.cpp"
-#include "utils.cpp"
 
-#include "js80p.hpp"
+#include "common.hpp"
 #include "midi.hpp"
 
 
-using namespace JS80P;
+using namespace MpeEmulator;
 
 
 class MidiEventLogger : public Midi::EventHandler
 {
     public:
         void note_off(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Note const note,
                 Midi::Byte const velocity
         ) noexcept {
-            log_event(
-                "NOTE_OFF", time_offset, channel, (Byte)note, (Byte)velocity
-            );
+            log_event("NOTE_OFF", time_offset, channel, note, velocity);
         }
 
         void note_on(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Note const note,
                 Midi::Byte const velocity
         ) noexcept {
-            log_event(
-                "NOTE_ON", time_offset, channel, (Byte)note, (Byte)velocity
-            );
+            log_event("NOTE_ON", time_offset, channel, note, velocity);
         }
 
         void aftertouch(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Note const note,
                 Midi::Byte const pressure
         ) noexcept {
-            log_event(
-                "AFTERTOUCH", time_offset, channel, (Byte)note, (Byte)pressure
-            );
+            log_event("AFTERTOUCH", time_offset, channel, note, pressure);
         }
 
         void control_change(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Controller const controller,
                 Midi::Byte const new_value
         ) noexcept {
-            log_event(
-                "CONTROL_CHANGE",
-                time_offset,
-                channel,
-                (Byte)controller,
-                (Byte)new_value
-            );
+            log_event("CONTROL_CHANGE", time_offset, channel, controller, new_value);
         }
 
         void program_change(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Byte const new_program
         ) noexcept {
-            log_event(
-                "PROGRAM_CHANGE", time_offset, channel, (Byte)new_program
-            );
+            log_event("PROGRAM_CHANGE", time_offset, channel, new_program);
         }
 
         void channel_pressure(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Byte const pressure
         ) noexcept {
-            log_event("CHANNEL_PRESSURE", time_offset, channel, (Byte)pressure);
+            log_event("CHANNEL_PRESSURE", time_offset, channel, pressure);
         }
 
         void pitch_wheel_change(
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Word const new_value
         ) noexcept {
             log_event("PITCH_WHEEL", time_offset, channel, new_value);
         }
 
-        void all_sound_off(
-                Seconds const time_offset,
-                Midi::Channel const channel
+        void channel_mode(
+                double const time_offset,
+                Midi::Channel const channel,
+                Midi::Byte const message,
+                Midi::Byte const data
         ) noexcept {
-            log_event("ALL_SOUND_OFF", time_offset, channel);
-        }
-
-        void reset_all_controllers(
-                Seconds const time_offset,
-                Midi::Channel const channel
-        ) noexcept {
-            log_event("RESET_ALL_CONTROLLERS", time_offset, channel);
-        }
-
-        void all_notes_off(
-                Seconds const time_offset,
-                Midi::Channel const channel
-        ) noexcept {
-            log_event("ALL_NOTES_OFF", time_offset, channel);
-        }
-
-        void mono_mode_on(
-                Seconds const time_offset,
-                Midi::Channel const channel
-        ) noexcept {
-            log_event("MONO_MODE_ON", time_offset, channel);
-        }
-
-        void mono_mode_off(
-                Seconds const time_offset,
-                Midi::Channel const channel
-        ) noexcept {
-            log_event("MONO_MODE_OFF", time_offset, channel);
+            log_event("CHANNEL_MODE", time_offset, channel, message, data);
         }
 
         std::string events;
@@ -148,7 +107,7 @@ class MidiEventLogger : public Midi::EventHandler
     private:
         void log_event(
                 char const* const event_name,
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel
         ) {
             char buffer[128];
@@ -162,7 +121,7 @@ class MidiEventLogger : public Midi::EventHandler
 
         void log_event(
                 char const* const event_name,
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Byte const byte
         ) {
@@ -183,7 +142,7 @@ class MidiEventLogger : public Midi::EventHandler
 
         void log_event(
                 char const* const event_name,
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Byte const byte_1,
                 Midi::Byte const byte_2
@@ -206,7 +165,7 @@ class MidiEventLogger : public Midi::EventHandler
 
         void log_event(
                 char const* const event_name,
-                Seconds const time_offset,
+                double const time_offset,
                 Midi::Channel const channel,
                 Midi::Word const word
         ) {
@@ -236,7 +195,7 @@ void assert_all_bytes_were_processed(
 
 
 std::string parse_midi(
-        Seconds const time_offset,
+        double const time_offset,
         char const* const buffer,
         size_t buffer_size = 0
 ) {
@@ -262,28 +221,11 @@ TEST(parses_known_midi_messages_and_ignores_unknown_and_invalid_ones, {
     assert_eq("PROGRAM_CHANGE 5.0 0x06 0x01\n", parse_midi(5.0, "\xc6\x01"));
     assert_eq("CHANNEL_PRESSURE 6.0 0x06 0x42\n", parse_midi(6.0, "\xd6\x42"));
     assert_eq("PITCH_WHEEL 7.0 0x06 0x0abc\n", parse_midi(7.0, "\xe6\x3c\x15"));
-    assert_eq("ALL_SOUND_OFF 8.0 0x06\n", parse_midi(8.0, "\xb6\x78\x00", 3));
-    assert_eq("RESET_ALL_CONTROLLERS 9.0 0x06\n", parse_midi(9.0, "\xb6\x79\x00", 3));
-    assert_eq("ALL_NOTES_OFF 10.0 0x06\n", parse_midi(10.0, "\xb6\x7b\x00", 3));
-    assert_eq("ALL_NOTES_OFF 11.0 0x06\n", parse_midi(11.0, "\xb6\x7c\x00", 3));
-    assert_eq("ALL_NOTES_OFF 12.0 0x06\n", parse_midi(12.0, "\xb6\x7d\x00", 3));
+    assert_eq("CHANNEL_MODE 8.0 0x06 0x78 0x00\n", parse_midi(8.0, "\xb6\x78\x00", 3));
+    assert_eq("CHANNEL_MODE 9.0 0x06 0x79 0x42\n", parse_midi(9.0, "\xb6\x79\x42"));
     assert_eq(
-        (
-            "ALL_NOTES_OFF 13.0 0x06\n"
-            "MONO_MODE_ON 13.0 0x06\n"
-        ),
-        parse_midi(13.0, "\xb6\x7e\x00", 3)
-    );
-    assert_eq(
-        (
-            "ALL_NOTES_OFF 14.0 0x06\n"
-            "MONO_MODE_OFF 14.0 0x06\n"
-        ),
-        parse_midi(14.0, "\xb6\x7f\x00", 3)
-    );
-    assert_eq(
-        "NOTE_ON 15.0 0x06 0x42 0x70\n",
-        parse_midi(15.0, "\x01\xff\x7f\x7f\x86\x99\xff\x96\x42\x70\xff")
+        "NOTE_ON 10.0 0x06 0x42 0x70\n",
+        parse_midi(10.0, "\x01\xff\x7f\x7f\x86\x99\xff\x96\x42\x70\xff")
     );
 })
 
@@ -315,4 +257,59 @@ TEST(running_status, {
             18
         )
     );
+})
+
+
+TEST(type_conversions, {
+    assert_eq(0, Midi::float_to_byte<float>(-0.1f));
+    assert_eq(0, Midi::float_to_byte<float>(0.0f));
+    assert_eq(63, Midi::float_to_byte<float>(63.0f / 127.0f));
+    assert_eq(127, Midi::float_to_byte<float>(1.0f));
+    assert_eq(127, Midi::float_to_byte<float>(1.1f));
+
+    assert_eq(0, Midi::float_to_word<float>(-0.1f));
+    assert_eq(0, Midi::float_to_word<float>(0.0f));
+    assert_eq(8192, Midi::float_to_word<float>(0.5f));
+    assert_eq(16383, Midi::float_to_word<float>(1.0f));
+    assert_eq(16383, Midi::float_to_word<float>(1.1f));
+
+    assert_eq(0.0f, Midi::byte_to_float<float>(0), 0.0001f);
+    assert_eq(63.0f / 127.0f, Midi::byte_to_float<float>(63), 0.0001f);
+    assert_eq(1.0f, Midi::byte_to_float<float>(127), 0.0001f);
+    assert_eq(1.0f, Midi::byte_to_float<float>(128), 0.0001f);
+
+    assert_eq(0.0f, Midi::word_to_float<float>(0), 0.0001f);
+    assert_eq(0.5f, Midi::word_to_float<float>(8192), 0.0001f);
+    assert_eq(1.0f, Midi::word_to_float<float>(16383), 0.0001f);
+    assert_eq(1.0f, Midi::word_to_float<float>(16384), 0.0001f);
+})
+
+
+void assert_event_sample_offset(
+        int const expected_offset,
+        double const time_offset,
+        double const sample_rate,
+        int const last_sample_offset
+) {
+    Midi::Event event(time_offset, Midi::NOTE_OFF, 1);
+
+    assert_eq(
+        expected_offset,
+        event.get_sample_offset(sample_rate, last_sample_offset),
+        "time_offset=%f, sample_rate=%f, last_sample_offset=%d",
+        time_offset,
+        sample_rate,
+        last_sample_offset
+    );
+}
+
+
+TEST(event_time_offset_to_sample_offset_conversion, {
+    assert_event_sample_offset(0, 0.0, 44100.0, 255);
+    assert_event_sample_offset(0, -0.0, 44100.0, 255);
+    assert_event_sample_offset(0, -1.0, 44100.0, 255);
+    assert_event_sample_offset(0, 0.000001, 44100.0, 255);
+    assert_event_sample_offset(255, 1.0, 44100.0, 255);
+    assert_event_sample_offset(100, 0.01, 10000.0, 255);
+    assert_event_sample_offset(100, 0.999999, 100.0, 999);
 })

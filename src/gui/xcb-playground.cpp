@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -30,16 +30,16 @@
 
 #include "gui/xcb.hpp"
 
-#include "js80p.hpp"
+#include "common.hpp"
 #include "serializer.hpp"
-#include "synth.hpp"
+#include "proxy.hpp"
 
 
-xcb_generic_event_t* const JS80P_XCB_TIMEOUT = (xcb_generic_event_t*)-1;
+xcb_generic_event_t* const MPE_EMULATOR_XCB_TIMEOUT = (xcb_generic_event_t*)-1;
 
 
 xcb_generic_event_t* xcb_wait_for_event_with_timeout(
-        JS80P::XcbPlatform* xcb,
+        MpeEmulator::XcbPlatform* xcb,
         double const timeout
 )
 {
@@ -63,18 +63,13 @@ xcb_generic_event_t* xcb_wait_for_event_with_timeout(
         return xcb_poll_for_event(xcb_connection);
     }
 
-    return JS80P_XCB_TIMEOUT;
+    return MPE_EMULATOR_XCB_TIMEOUT;
 }
 
 
-void timer_tick(
-        JS80P::Synth& synth,
-        JS80P::GUI& gui,
-        JS80P::Integer& rendering_round
-) {
-    ++rendering_round;
-    rendering_round = rendering_round & 0x7fff;
-    synth.generate_samples(rendering_round, 1);
+void timer_tick(MpeEmulator::Proxy& proxy, MpeEmulator::GUI& gui)
+{
+    proxy.process_messages();
     gui.idle();
 }
 
@@ -99,9 +94,8 @@ int main(int const argc, char const* argv[])
         | XCB_EVENT_MASK_PROPERTY_CHANGE
     );
 
-    JS80P::XcbPlatform* xcb = new JS80P::XcbPlatform();
-    JS80P::XcbPlatform* gui_xcb = new JS80P::XcbPlatform();
-    JS80P::Integer rendering_round = 0;
+    MpeEmulator::XcbPlatform* xcb = new MpeEmulator::XcbPlatform();
+    MpeEmulator::XcbPlatform* gui_xcb = new MpeEmulator::XcbPlatform();
 
     xcb_connection_t* xcb_connection = xcb->get_connection();
     xcb_screen_t* screen = xcb->get_screen();
@@ -165,20 +159,20 @@ int main(int const argc, char const* argv[])
 
     xcb_flush(xcb_connection);
 
-    JS80P::Synth synth;
+    MpeEmulator::Proxy proxy;
 
-    JS80P::GUI* gui = new JS80P::GUI(
+    MpeEmulator::GUI* gui = new MpeEmulator::GUI(
         NULL,
-        (JS80P::GUI::PlatformData)gui_xcb,
-        (JS80P::GUI::PlatformWidget)window_id,
-        synth,
+        (MpeEmulator::GUI::PlatformData)gui_xcb,
+        (MpeEmulator::GUI::PlatformWidget)window_id,
+        proxy,
         true
     );
     gui->show();
 
     while (is_running && (event = xcb_wait_for_event_with_timeout(xcb, 0.05))) {
-        if (event == JS80P_XCB_TIMEOUT) {
-            timer_tick(synth, *gui, rendering_round);
+        if (event == MPE_EMULATOR_XCB_TIMEOUT) {
+            timer_tick(proxy, *gui);
 
             continue;
         }
@@ -216,7 +210,7 @@ int main(int const argc, char const* argv[])
 
         free(event);
 
-        timer_tick(synth, *gui, rendering_round);
+        timer_tick(proxy, *gui);
         xcb_flush(xcb_connection);
     }
 

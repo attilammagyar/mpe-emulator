@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__PLUGIN__VST3__PLUGIN_HPP
-#define JS80P__PLUGIN__VST3__PLUGIN_HPP
+#ifndef MPE_EMULATOR__PLUGIN__VST3__PLUGIN_HPP
+#define MPE_EMULATOR__PLUGIN__VST3__PLUGIN_HPP
 
 #include <string>
 #include <vector>
@@ -33,36 +33,28 @@
 
 #include "gui/gui.hpp"
 
-#include "bank.hpp"
-#include "js80p.hpp"
-#include "mtsesp.hpp"
-#include "renderer.hpp"
-#include "synth.hpp"
+#include "common.hpp"
+#include "midi.hpp"
+#include "proxy.hpp"
 
 
 using namespace Steinberg;
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class Vst3Plugin
 {
     public:
-        static constexpr char const* MSG_CTL_READY = "JS80PCtl";
-        static constexpr char const* MSG_CTL_READY_BANK = "Bank";
+        static constexpr char const* MSG_CTL_READY = "MpeEmulatorCtl";
 
-        static constexpr char const* MSG_PROGRAM_CHANGE = "JS80PProg";
-        static constexpr char const* MSG_PROGRAM_CHANGE_PROGRAM = "Prog";
+        static constexpr char const* MSG_SHARE_PROXY = "MpeEmulatorProxy";
+        static constexpr char const* MSG_SHARE_PROXY_PROXY = "Proxy";
 
-        static constexpr char const* MSG_SHARE_SYNTH = "JS80PSynth";
-        static constexpr char const* MSG_SHARE_SYNTH_SYNTH = "Synth";
+        static constexpr char const* MSG_PROXY_DIRTY = "MpeEmulatorDirty";
 
-        static constexpr char const* MSG_SYNTH_DIRTY = "JS80PDirty";
-
-        static constexpr Vst::ProgramListID PROGRAM_LIST_ID = Vst::kCtrlProgramChange;
-
-        static constexpr Vst::ParamID PATCH_CHANGED_PARAM_ID = 255;
+        static constexpr Vst::ParamID SETTINGS_CHANGED_PARAM_ID = 8192;
 
         static std::string read_stream(IBStream* stream);
 
@@ -77,16 +69,16 @@ class Vst3Plugin
                     PITCH_WHEEL = 4,
                     CONTROL_CHANGE = 5,
                     CHANNEL_PRESSURE = 6,
-                    PROGRAM_CHANGE = 7,
+                    PARAM_CHANGE = 7,
                 };
 
                 Event();
                 Event(
                     Type const type,
-                    Seconds const time_offset,
+                    double const time_offset,
                     Midi::Byte const note_or_ctl,
                     Midi::Channel const channel,
-                    Number const velocity_or_value
+                    double const velocity_or_value
                 );
                 Event(Event const& event) = default;
                 Event(Event&& event) = default;
@@ -95,8 +87,8 @@ class Vst3Plugin
                 Event& operator=(Event&& event) noexcept = default;
                 bool operator<(Event const& event) const noexcept;
 
-                Seconds time_offset;
-                Number velocity_or_value;
+                double time_offset;
+                double velocity_or_value;
                 Type type;
                 Midi::Byte note_or_ctl;
                 Midi::Channel channel;
@@ -135,36 +127,51 @@ class Vst3Plugin
                 tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
 
             private:
-                void share_synth() noexcept;
+                void share_proxy() noexcept;
 
                 void collect_param_change_events(Vst::ProcessData& data) noexcept;
 
-                void collect_param_change_events_as(
+                void collect_param_change_events_as_midi_ctl(
                     Vst::IParamValueQueue* const param_queue,
                     Event::Type const event_type,
                     Midi::Byte const midi_controller
                 ) noexcept;
 
+                void collect_param_change_events_as_exported_param(
+                    Vst::IParamValueQueue* const param_queue,
+                    Vst::ParamID const param_tag
+                ) noexcept;
+
                 void collect_note_events(Vst::ProcessData& data) noexcept;
                 void process_events() noexcept;
-                void process_event(Event const event) noexcept;
+                void process_event(Event const& event) noexcept;
+                void generate_out_events(
+                    Vst::IEventList& queue,
+                    int32 const last_sample_offset
+                ) noexcept;
 
-                Midi::Byte float_to_midi_byte(Number const number) const noexcept;
-                Midi::Word float_to_midi_word(Number const number) const noexcept;
+                void initialize_cc_event(
+                    Vst::Event& vst_event,
+                    int32 const sample_offset,
+                    int32 const last_sample_offset,
+                    uint8 const control_number,
+                    uint8 const channel,
+                    int8 const value_1,
+                    int8 const value_2,
+                    bool const is_pre_note_on_setup
+                ) const noexcept;
 
-                void update_bpm(Vst::ProcessData& data) noexcept;
+                Midi::Byte float_to_midi_byte(double const number) const noexcept;
+                Midi::Word float_to_midi_word(double const number) const noexcept;
 
                 void generate_samples(Vst::ProcessData& data) noexcept;
 
                 void import_patch(std::string const& serialized) noexcept;
 
-                Synth synth;
-                Renderer renderer;
-                MtsEsp mts_esp;
-                Bank const* bank;
+                Proxy proxy;
                 std::vector<Event> events;
+                double sample_rate;
                 size_t new_program;
-                bool need_to_load_new_program;
 
             public:
                 /* No need to check the SDK. */
@@ -180,7 +187,7 @@ class Vst3Plugin
         class GUI : public CPluginView
         {
             public:
-                explicit GUI(Synth& synth);
+                explicit GUI(Proxy& proxy);
 
                 virtual ~GUI();
 
@@ -196,8 +203,8 @@ class Vst3Plugin
                 void initialize();
                 void show_if_needed();
 
-                Synth& synth;
-                JS80P::GUI* gui;
+                Proxy& proxy;
+                MpeEmulator::GUI* gui;
 
                 void* run_loop;
                 void* event_handler;
@@ -229,26 +236,22 @@ class Vst3Plugin
 
                 IPlugView* PLUGIN_API createView(FIDString name) SMTG_OVERRIDE;
 
-                tresult PLUGIN_API setParamNormalized(
-                    Vst::ParamID tag,
-                    Vst::ParamValue value
-                ) SMTG_OVERRIDE;
-
                 tresult PLUGIN_API setComponentState(IBStream* state) SMTG_OVERRIDE;
 
             private:
-                Vst::Parameter* set_up_program_change_param();
-
-                Vst::RangeParameter* create_midi_ctl_param(
-                    Synth::ControllerId const controller_id,
+                Vst::Parameter* create_midi_ctl_param(
+                    Proxy::ControllerId const controller_id,
                     Vst::ParamID const param_id
                 ) const;
 
-                Vst::RangeParameter* set_up_patch_changed_param() const;
+                Vst::Parameter* create_exported_param(
+                    Proxy const& proxy,
+                    Proxy::ParamId const param_id
+                ) const;
 
-                Bank const bank;
+                Vst::Parameter* set_up_patch_changed_param() const;
 
-                Synth* synth;
+                Proxy* proxy;
 
             public:
                 OBJ_METHODS(Controller, Vst::EditControllerEx1)
@@ -257,6 +260,15 @@ class Vst3Plugin
                 END_DEFINE_INTERFACES(Vst::EditControllerEx1)
                 REFCOUNT_METHODS(Vst::EditControllerEx1)
         };
+
+    private:
+        static Vst::ParamID proxy_param_id_to_vst3_param_tag(
+            Proxy::ParamId const param_id
+        );
+
+        static Proxy::ParamId vst3_param_tag_to_proxy_param_id(
+            Vst::ParamID const param_tag
+        );
 };
 
 }

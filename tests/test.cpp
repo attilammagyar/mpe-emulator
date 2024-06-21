@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -17,8 +17,8 @@
  */
 
 /// \cond HIDDEN
-#ifndef JS80P__TESTS__TEST_CPP
-#define JS80P__TESTS__TEST_CPP
+#ifndef MPE_EMULATOR__TESTS__TEST_CPP
+#define MPE_EMULATOR__TESTS__TEST_CPP
 /// \endcond
 
 /**

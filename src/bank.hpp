@@ -1,14 +1,14 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  * Copyright (C) 2023  Patrik Ehringer
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -17,17 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__BANK_HPP
-#define JS80P__BANK_HPP
+#ifndef MPE_EMULATOR__BANK_HPP
+#define MPE_EMULATOR__BANK_HPP
 
 #include <cstddef>
 #include <string>
 
-#include "js80p.hpp"
+#include "common.hpp"
 #include "serializer.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 class Bank
@@ -36,8 +36,8 @@ class Bank
         class Program
         {
             public:
-                static constexpr Integer NAME_MAX_LENGTH = 24;
-                static constexpr Integer SHORT_NAME_MAX_LENGTH = 8;
+                static constexpr size_t NAME_MAX_LENGTH = 24;
+                static constexpr size_t SHORT_NAME_MAX_LENGTH = 8;
 
                 Program();
 
@@ -99,9 +99,9 @@ class Bank
         static constexpr size_t NUMBER_OF_PROGRAMS = 128;
 
         static size_t normalized_parameter_value_to_program_index(
-            Number const parameter_value
+            double const parameter_value
         );
-        static Number program_index_to_normalized_parameter_value(
+        static double program_index_to_normalized_parameter_value(
             size_t const index
         );
 
@@ -120,17 +120,18 @@ class Bank
     private:
         static size_t const NUMBER_OF_BUILT_IN_PROGRAMS;
         static Program const BUILT_IN_PROGRAMS[];
-        static constexpr Number FLOAT_TO_PROGRAM_INDEX_SCALE = (
-            (Number)(NUMBER_OF_PROGRAMS - 1)
+        static constexpr double FLOAT_TO_PROGRAM_INDEX_SCALE = (
+            (double)(NUMBER_OF_PROGRAMS - 1)
         );
-        static constexpr Number PROGRAM_INDEX_TO_FLOAT_SCALE = (
-            1.0 / (Number)(NUMBER_OF_PROGRAMS - 1)
+        static constexpr double PROGRAM_INDEX_TO_FLOAT_SCALE = (
+            1.0 / (double)(NUMBER_OF_PROGRAMS - 1)
         );
 
         void generate_empty_programs(size_t const start_index);
 
         Program programs[NUMBER_OF_PROGRAMS];
         size_t current_program_index;
+        size_t non_blank_programs;
 };
 
 }

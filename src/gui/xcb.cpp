@@ -1,13 +1,13 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__GUI__XCB_CPP
-#define JS80P__GUI__XCB_CPP
+#ifndef MPE_EMULATOR__GUI__XCB_CPP
+#define MPE_EMULATOR__GUI__XCB_CPP
 
 #include <cerrno>
 #include <cstring>
@@ -39,48 +39,22 @@
 
 extern unsigned char _binary_gui_img_about_png_start;
 extern unsigned char _binary_gui_img_about_png_end;
-extern unsigned char _binary_gui_img_effects_png_start;
-extern unsigned char _binary_gui_img_effects_png_end;
-extern unsigned char _binary_gui_img_envelopes1_png_start;
-extern unsigned char _binary_gui_img_envelopes1_png_end;
-extern unsigned char _binary_gui_img_envelopes2_png_start;
-extern unsigned char _binary_gui_img_envelopes2_png_end;
-extern unsigned char _binary_gui_img_env_shapes_01_png_start;
-extern unsigned char _binary_gui_img_env_shapes_01_png_end;
-extern unsigned char _binary_gui_img_env_shapes_10_png_start;
-extern unsigned char _binary_gui_img_env_shapes_10_png_end;
-extern unsigned char _binary_gui_img_knob_states_controlled_png_start;
-extern unsigned char _binary_gui_img_knob_states_controlled_png_end;
-extern unsigned char _binary_gui_img_knob_states_free_png_start;
-extern unsigned char _binary_gui_img_knob_states_free_png_end;
-extern unsigned char _binary_gui_img_knob_states_none_png_start;
-extern unsigned char _binary_gui_img_knob_states_none_png_end;
-extern unsigned char _binary_gui_img_lfos_png_start;
-extern unsigned char _binary_gui_img_lfos_png_end;
-extern unsigned char _binary_gui_img_macro_distortions_png_start;
-extern unsigned char _binary_gui_img_macro_distortions_png_end;
-extern unsigned char _binary_gui_img_macro_midpoint_states_png_start;
-extern unsigned char _binary_gui_img_macro_midpoint_states_png_end;
-extern unsigned char _binary_gui_img_macros1_png_start;
-extern unsigned char _binary_gui_img_macros1_png_end;
-extern unsigned char _binary_gui_img_macros2_png_start;
-extern unsigned char _binary_gui_img_macros2_png_end;
-extern unsigned char _binary_gui_img_macros3_png_start;
-extern unsigned char _binary_gui_img_macros3_png_end;
-extern unsigned char _binary_gui_img_screw_states_png_start;
-extern unsigned char _binary_gui_img_screw_states_png_end;
-extern unsigned char _binary_gui_img_screw_states_synced_png_start;
-extern unsigned char _binary_gui_img_screw_states_synced_png_end;
-extern unsigned char _binary_gui_img_synth_png_start;
-extern unsigned char _binary_gui_img_synth_png_end;
+extern unsigned char _binary_gui_img_distortions_png_start;
+extern unsigned char _binary_gui_img_distortions_png_end;
+extern unsigned char _binary_gui_img_midpoint_states_png_start;
+extern unsigned char _binary_gui_img_midpoint_states_png_end;
+extern unsigned char _binary_gui_img_knob_states_png_start;
+extern unsigned char _binary_gui_img_knob_states_png_end;
 extern unsigned char _binary_gui_img_vst_logo_png_start;
 extern unsigned char _binary_gui_img_vst_logo_png_end;
+extern unsigned char _binary_gui_img_zone1_png_start;
+extern unsigned char _binary_gui_img_zone1_png_end;
 
 
 extern "C" char** environ;
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 std::map<std::string, Widget::Resource> const Widget::IMAGES{
@@ -92,122 +66,24 @@ std::map<std::string, Widget::Resource> const Widget::IMAGES{
         )
     },
     {
-        "EFFECTS",
+        "DISTORTIONS",
         Widget::Resource(
-            &_binary_gui_img_effects_png_start,
-            &_binary_gui_img_effects_png_end
+            &_binary_gui_img_distortions_png_start,
+            &_binary_gui_img_distortions_png_end
         )
     },
     {
-        "ENVELOPES1",
+        "MIDPOINT",
         Widget::Resource(
-            &_binary_gui_img_envelopes1_png_start,
-            &_binary_gui_img_envelopes1_png_end
+            &_binary_gui_img_midpoint_states_png_start,
+            &_binary_gui_img_midpoint_states_png_end
         )
     },
     {
-        "ENVELOPES2",
+        "KNOBSTATES",
         Widget::Resource(
-            &_binary_gui_img_envelopes2_png_start,
-            &_binary_gui_img_envelopes2_png_end
-        )
-    },
-    {
-        "ENVSHAPES01",
-        Widget::Resource(
-            &_binary_gui_img_env_shapes_01_png_start,
-            &_binary_gui_img_env_shapes_01_png_end
-        )
-    },
-    {
-        "ENVSHAPES10",
-        Widget::Resource(
-            &_binary_gui_img_env_shapes_10_png_start,
-            &_binary_gui_img_env_shapes_10_png_end
-        )
-    },
-    {
-        "KNOBSTATESCONTROLLED",
-        Widget::Resource(
-            &_binary_gui_img_knob_states_controlled_png_start,
-            &_binary_gui_img_knob_states_controlled_png_end
-        )
-    },
-    {
-        "KNOBSTATESFREE",
-        Widget::Resource(
-            &_binary_gui_img_knob_states_free_png_start,
-            &_binary_gui_img_knob_states_free_png_end
-        )
-    },
-    {
-        "KNOBSTATESNONE",
-        Widget::Resource(
-            &_binary_gui_img_knob_states_none_png_start,
-            &_binary_gui_img_knob_states_none_png_end
-        )
-    },
-    {
-        "LFOS",
-        Widget::Resource(
-            &_binary_gui_img_lfos_png_start,
-            &_binary_gui_img_lfos_png_end
-        )
-    },
-    {
-        "MACROS1",
-        Widget::Resource(
-            &_binary_gui_img_macros1_png_start,
-            &_binary_gui_img_macros1_png_end
-        )
-    },
-    {
-        "MACROS2",
-        Widget::Resource(
-            &_binary_gui_img_macros2_png_start,
-            &_binary_gui_img_macros2_png_end
-        )
-    },
-    {
-        "MACROS3",
-        Widget::Resource(
-            &_binary_gui_img_macros3_png_start,
-            &_binary_gui_img_macros3_png_end
-        )
-    },
-    {
-        "MACRODIST",
-        Widget::Resource(
-            &_binary_gui_img_macro_distortions_png_start,
-            &_binary_gui_img_macro_distortions_png_end
-        )
-    },
-    {
-        "MACROMID",
-        Widget::Resource(
-            &_binary_gui_img_macro_midpoint_states_png_start,
-            &_binary_gui_img_macro_midpoint_states_png_end
-        )
-    },
-    {
-        "SCREWSTATES",
-        Widget::Resource(
-            &_binary_gui_img_screw_states_png_start,
-            &_binary_gui_img_screw_states_png_end
-        )
-    },
-    {
-        "SCREWSTATESSYNCED",
-        Widget::Resource(
-            &_binary_gui_img_screw_states_synced_png_start,
-            &_binary_gui_img_screw_states_synced_png_end
-        )
-    },
-    {
-        "SYNTH",
-        Widget::Resource(
-            &_binary_gui_img_synth_png_start,
-            &_binary_gui_img_synth_png_end
+            &_binary_gui_img_knob_states_png_start,
+            &_binary_gui_img_knob_states_png_end
         )
     },
     {
@@ -215,6 +91,13 @@ std::map<std::string, Widget::Resource> const Widget::IMAGES{
         Widget::Resource(
             &_binary_gui_img_vst_logo_png_start,
             &_binary_gui_img_vst_logo_png_end
+        )
+    },
+    {
+        "ZONE1",
+        Widget::Resource(
+            &_binary_gui_img_zone1_png_start,
+            &_binary_gui_img_zone1_png_end
         )
     },
 };
@@ -252,7 +135,7 @@ char const* const XcbPlatform::KDIALOG_SAVE_ARGUMENTS[] = {
     "--title",
     "Save As",
     ".",
-    "JS80P Patches (*.js80p)\nAll Files (*)",
+    "MPE Emulator Settings (*.mpe)\nAll Files (*)",
     NULL,
 };
 
@@ -261,7 +144,7 @@ char const* const XcbPlatform::KDIALOG_OPEN_ARGUMENTS[] = {
     "--title",
     "Open",
     ".",
-    "JS80P Patches (*.js80p)\nAll Files (*)",
+    "MPE Emulator Settings (*.mpe)\nAll Files (*)",
     NULL,
 };
 
@@ -277,7 +160,7 @@ char const* const XcbPlatform::ZENITY_SAVE_ARGUMENTS[] = {
     "--save",
     "--confirm-overwrite",
     "--title=Save As",
-    "--file-filter=JS80P Patches (*.js80p) | *.js80p",
+    "--file-filter=MPE Emulator Settings (*.mpe) | *.mpe",
     "--file-filter=All Files (*) | *",
     NULL,
 };
@@ -285,7 +168,7 @@ char const* const XcbPlatform::ZENITY_SAVE_ARGUMENTS[] = {
 char const* const XcbPlatform::ZENITY_OPEN_ARGUMENTS[] = {
     "--file-selection",
     "--title=Open",
-    "--file-filter=JS80P Patches (*.js80p) | *.js80p",
+    "--file-filter=MPE Emulator Settings (*.mpe) | *.mpe",
     "--file-filter=All Files (*) | *",
     NULL,
 };
@@ -304,7 +187,7 @@ XcbPlatform::XcbPlatform()
     screen_root_visual(NULL),
     font_face_normal(NULL),
     font_face_bold(NULL),
-    import_patch_button(NULL),
+    import_settings_button(NULL),
     active_file_selector_dialog_pipe(NULL),
     active_file_selector_dialog_type(FileSelectorDialogType::NONE),
     active_file_selector_dialog_pid(0),
@@ -512,7 +395,7 @@ bool XcbPlatform::is_file_selector_dialog_open() const
 }
 
 
-void XcbPlatform::export_patch(std::string const& contents)
+void XcbPlatform::export_settings(std::string const& contents)
 {
     if (is_file_selector_dialog_open()) {
         return;
@@ -541,7 +424,7 @@ void XcbPlatform::export_patch(std::string const& contents)
 }
 
 
-void XcbPlatform::import_patch(ImportPatchButton* import_patch_button)
+void XcbPlatform::import_settings(ImportSettingsButton* import_settings_button)
 {
     if (is_file_selector_dialog_open()) {
         return;
@@ -549,7 +432,7 @@ void XcbPlatform::import_patch(ImportPatchButton* import_patch_button)
 
     active_file_selector_dialog_type = FileSelectorDialogType::IMPORT;
     file_contents = "";
-    this->import_patch_button = import_patch_button;
+    this->import_settings_button = import_settings_button;
 
     char const* const zenity = find_executable(ZENITY);
 
@@ -639,7 +522,7 @@ void XcbPlatform::clear_active_file_selector_dialog_data()
 {
     file_path = "";
     file_contents = "";
-    import_patch_button = NULL;
+    import_settings_button = NULL;
     active_file_selector_dialog_pid = 0;
 
     if (active_file_selector_dialog_pipe != NULL) {
@@ -741,8 +624,8 @@ void XcbPlatform::handle_file_selector_dialog()
         }
 
         switch (active_file_selector_dialog_type) {
-            case FileSelectorDialogType::EXPORT: finish_exporting_patch(); break;
-            case FileSelectorDialogType::IMPORT: finish_importing_patch(); break;
+            case FileSelectorDialogType::EXPORT: finish_exporting_settings(); break;
+            case FileSelectorDialogType::IMPORT: finish_importing_settings(); break;
             default: break;
         }
     }
@@ -822,23 +705,23 @@ bool XcbPlatform::has_file_selector_exited(int* exit_code) const
 }
 
 
-void XcbPlatform::finish_exporting_patch()
+void XcbPlatform::finish_exporting_settings()
 {
-    std::ofstream patch_file(file_path, std::ios::out | std::ios::binary);
+    std::ofstream settings_file(file_path, std::ios::out | std::ios::binary);
 
-    if (!patch_file.is_open()) {
+    if (!settings_file.is_open()) {
         return;
     }
 
-    patch_file.write(file_contents.c_str(), file_contents.length());
+    settings_file.write(file_contents.c_str(), file_contents.length());
 }
 
 
-void XcbPlatform::finish_importing_patch()
+void XcbPlatform::finish_importing_settings()
 {
-    std::ifstream patch_file(file_path, std::ios::in | std::ios::binary);
+    std::ifstream settings_file(file_path, std::ios::in | std::ios::binary);
 
-    if (!patch_file.is_open()) {
+    if (!settings_file.is_open()) {
         // TODO: handle error
         return;
     }
@@ -846,9 +729,9 @@ void XcbPlatform::finish_importing_patch()
     char* buffer = new char[Serializer::MAX_SIZE];
 
     std::fill_n(buffer, Serializer::MAX_SIZE, '\x00');
-    patch_file.read(buffer, Serializer::MAX_SIZE);
+    settings_file.read(buffer, Serializer::MAX_SIZE);
 
-    import_patch_button->import_patch(buffer, (Integer)patch_file.gcount());
+    import_settings_button->import_settings(buffer, (int)settings_file.gcount());
 
     delete[] buffer;
 }
@@ -1695,15 +1578,15 @@ XcbPlatform* Widget::xcb() const
 }
 
 
-void ImportPatchButton::click()
+void ImportSettingsButton::click()
 {
-    xcb()->import_patch(this);
+    xcb()->import_settings(this);
 }
 
 
-void ExportPatchButton::click()
+void ExportSettingsButton::click()
 {
-    xcb()->export_patch(Serializer::serialize(synth));
+    xcb()->export_settings(Serializer::serialize(proxy));
 }
 
 }

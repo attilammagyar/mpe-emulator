@@ -1,14 +1,14 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  * Copyright (C) 2023  Patrik Ehringer
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -24,9 +24,10 @@
 // #include "debug.hpp"
 #include "serializer.hpp"
 #include "spscqueue.cpp"
+#include "strings.hpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 static constexpr int FST_OP_CODE_NAMES_LEN = 78;
@@ -143,7 +144,7 @@ AEffect* FstPlugin::create_instance(
     );
     effect->initialDelay = fst_plugin->get_latency_samples();
     effect->object = (void*)fst_plugin;
-    effect->uniqueID = CCONST('a', 'm', 'j', '8');
+    effect->uniqueID = CCONST('A', 'M', 'P', 'E');
     effect->version = FstPlugin::VERSION;
     effect->processReplacing = &process_replacing;
     effect->processDoubleReplacing = &process_double_replacing;
@@ -160,13 +161,15 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
         void* pointer,
         float fvalue
 ) {
-    JS80P::FstPlugin* fst_plugin = (JS80P::FstPlugin*)effect->object;
+    constexpr VstInt32 effIdle = 53; /* see the comment at the bottom */
+
+    MpeEmulator::FstPlugin* fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
 
     // if (
             // true
             // && op_code != effEditIdle
             // && (op_code != effProcessEvents || fst_plugin->prev_logged_op_code != effProcessEvents)
-            // && op_code != 53
+            // && op_code != effIdle
             // && op_code != effGetProgram
             // && op_code != effGetProgramName
             // && op_code != effGetProductString
@@ -177,7 +180,7 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
     // ) {
         // fst_plugin->prev_logged_op_code = op_code;
 
-        // JS80P_DEBUG(
+        // MPE_EMULATOR_DEBUG(
             // "plugin=%p, op_code=%d, op_code_name=%s, index=%d, ivalue=%d, fvalue=%f",
             // effect->object,
             // (int)op_code,
@@ -187,8 +190,6 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
             // fvalue
         // );
     // }
-
-    constexpr VstInt32 effIdle = 53; /* see the comment at the bottom */
 
     switch (op_code) {
         case effProcessEvents:
@@ -237,7 +238,7 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
             return fst_plugin->is_automatable((size_t)index) ? 1 : 0;
 
         case effSetSampleRate:
-            fst_plugin->set_sample_rate(fvalue);
+            fst_plugin->set_sample_rate((double)fvalue);
             return 0;
 
         case effSetBlockSize:
@@ -280,7 +281,7 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
 
         case effGetEffectName:
         case effGetProductString:
-            strncpy((char*)pointer, Constants::PLUGIN_NAME, 8);
+            strncpy((char*)pointer, Constants::PLUGIN_NAME, 16);
             return 1;
 
         case effGetVendorString:
@@ -298,19 +299,24 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
 
         case effCanDo:
             /*
-            Though receiveVstMidiEvent should be enough, JUCE's implementation
-            of effCanDo checks the other two as well, probably for good reason,
-            e.g. compatibility with certain hosts.
+            Can-do queries based on JUCE.
             */
             if (
                     strcmp("receiveVstMidiEvent", (char const*)pointer) == 0
                     || strcmp("receiveVstMidiEvents", (char const*)pointer) == 0
                     || strcmp("receiveVstEvents", (char const*)pointer) == 0
+                    || strcmp("sendVstEvents", (char const*)pointer) == 0
+                    || strcmp("sendVstMidiEvent", (char const*)pointer) == 0
+                    || strcmp("sendVstMidiEvents", (char const*)pointer) == 0
             ) {
                 return 1;
             }
 
-            // JS80P_DEBUG(
+            if (strcmp("openCloseAnyThread", (char const*)pointer) == 0) {
+                return -1;
+            }
+
+            // MPE_EMULATOR_DEBUG(
                 // "op_code=%d, op_code_name=%s, index=%d, ivalue=%d, fvalue=%f, pointer=%s",
                 // (int)op_code,
                 // ((op_code < FST_OP_CODE_NAMES_LEN) ? FST_OP_CODE_NAMES[op_code] : "???"),
@@ -338,7 +344,7 @@ void VSTCALLBACK FstPlugin::process_accumulating(
         float** outdata,
         VstInt32 frames
 ) {
-    JS80P::FstPlugin* fst_plugin = (JS80P::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
 
     fst_plugin->generate_and_add_samples(frames, indata, outdata);
 }
@@ -350,9 +356,9 @@ void VSTCALLBACK FstPlugin::process_replacing(
         float** outdata,
         VstInt32 frames
 ) {
-    JS80P::FstPlugin* fst_plugin = (JS80P::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
 
-    fst_plugin->generate_samples<float>(frames, indata, outdata);
+    fst_plugin->generate_samples<float>(frames, outdata);
 }
 
 
@@ -362,15 +368,15 @@ void VSTCALLBACK FstPlugin::process_double_replacing(
         double** outdata,
         VstInt32 frames
 ) {
-    JS80P::FstPlugin* fst_plugin = (JS80P::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
 
-    fst_plugin->generate_samples<double>(frames, indata, outdata);
+    fst_plugin->generate_samples<double>(frames, outdata);
 }
 
 
 float VSTCALLBACK FstPlugin::get_parameter(AEffect* effect, VstInt32 index)
 {
-    JS80P::FstPlugin* fst_plugin = (JS80P::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
 
     return fst_plugin->get_parameter((size_t)index);
 }
@@ -381,89 +387,71 @@ void VSTCALLBACK FstPlugin::set_parameter(
         VstInt32 index,
         float fvalue
 ) {
-    JS80P::FstPlugin* fst_plugin = (JS80P::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
 
     fst_plugin->set_parameter((size_t)index, fvalue);
 }
 
 
 void FstPlugin::populate_parameters(
-        Synth& synth,
+        Proxy& proxy,
         Parameters& parameters
 ) noexcept {
-    parameters[0] = Parameter("Program", NULL, Synth::ControllerId::NONE);
-    parameters[1] = create_midi_ctl_param(
-        Synth::ControllerId::PITCH_WHEEL, &synth.pitch_wheel, synth
-    );
-    parameters[2] = create_midi_ctl_param(
-        Synth::ControllerId::CHANNEL_PRESSURE,
-        &synth.channel_pressure_ctl,
-        synth
-    );
+    size_t index = 0;
 
-    size_t index = 3;
+    constexpr int midi_cc_begin = (int)Proxy::ControllerId::BANK_SELECT;
+    constexpr int midi_cc_end = (int)Proxy::ControllerId::MAX_MIDI_CC + 1;
 
-    for (Integer cc = 0; cc != Synth::MIDI_CONTROLLERS; ++cc) {
-        Midi::Controller const midi_controller = (Midi::Controller)cc;
-
-        if (!Synth::is_supported_midi_controller(midi_controller)) {
-            continue;
-        }
-
-        /*
-        The sustain pedal was added in v1.9.0, but if it was put in the middle
-        of the list of exported parameters, then it could break DAW projects
-        that have automations for parameters which come after it. In order to
-        avoid such backward-incompatibility, we need to put it at the end.
-
-        Similarly, CC 88 was erroneously missing, and it was added after v3.1.0.
-        */
-        if (midi_controller == Midi::SUSTAIN_PEDAL || midi_controller == Midi::UNDEFINED_20) {
-            continue;
-        }
-
-        parameters[index] = create_midi_ctl_param(
-            (Synth::ControllerId)cc,
-            synth.midi_controllers[cc],
-            synth
+    for (int controller_id = midi_cc_begin; controller_id != midi_cc_end; ++controller_id) {
+        parameters[index++] = Parameter(
+            Strings::CONTROLLERS_SHORT[controller_id],
+            Strings::CONTROLLERS_LONG[controller_id],
+            Proxy::ParamId::INVALID_PARAM_ID,
+            (Proxy::ControllerId)controller_id
         );
-        ++index;
     }
 
-    parameters[index++] = create_midi_ctl_param(
-        Synth::ControllerId::SUSTAIN_PEDAL,
-        synth.midi_controllers[Synth::ControllerId::SUSTAIN_PEDAL],
-        synth
+    Parameter pitch_wheel(
+        Strings::CONTROLLERS_SHORT[Proxy::ControllerId::PITCH_WHEEL],
+        Strings::CONTROLLERS_LONG[Proxy::ControllerId::PITCH_WHEEL],
+        Proxy::ParamId::INVALID_PARAM_ID,
+        Proxy::ControllerId::PITCH_WHEEL
+    );
+    pitch_wheel.set_value(0.5f);
+
+    parameters[index++] = pitch_wheel;
+
+    parameters[index++] = Parameter(
+        Strings::CONTROLLERS_SHORT[Proxy::ControllerId::CHANNEL_PRESSURE],
+        Strings::CONTROLLERS_LONG[Proxy::ControllerId::CHANNEL_PRESSURE],
+        Proxy::ParamId::INVALID_PARAM_ID,
+        Proxy::ControllerId::CHANNEL_PRESSURE
     );
 
+    constexpr int param_begin = (int)Proxy::ParamId::MCM;
+    constexpr int param_end = (int)Proxy::ParamId::INVALID_PARAM_ID;
+
+    for (int param_id = param_begin; param_id != param_end; ++param_id) {
+        parameters[index++] = Parameter(
+            proxy.get_param_name((Proxy::ParamId)param_id).c_str(),
+            Strings::PARAMS[param_id],
+            (Proxy::ParamId)param_id,
+            Proxy::ControllerId::INVALID_CONTROLLER_ID
+        );
+    }
+
+    MPE_EMULATOR_ASSERT(index == PATCH_CHANGED_PARAMETER_INDEX);
+
     Parameter patch_changed = Parameter(
-        PATCH_CHANGED_PARAMETER_SHORT_NAME, NULL, Synth::ControllerId::NONE
+        PATCH_CHANGED_PARAMETER_SHORT_NAME,
+        PATCH_CHANGED_PARAMETER_LONG_NAME,
+        Proxy::ParamId::INVALID_PARAM_ID,
+        Proxy::ControllerId::INVALID_CONTROLLER_ID
     );
 
     patch_changed.set_value(0.0f);
 
     parameters[PATCH_CHANGED_PARAMETER_INDEX] = patch_changed;
-
-    parameters[PATCH_CHANGED_PARAMETER_INDEX + 1] = create_midi_ctl_param(
-        Synth::ControllerId::UNDEFINED_20,
-        synth.midi_controllers[Synth::ControllerId::UNDEFINED_20],
-        synth
-    );
-}
-
-
-FstPlugin::Parameter FstPlugin::create_midi_ctl_param(
-        Synth::ControllerId const controller_id,
-        MidiController* midi_controller,
-        Synth& synth
-) noexcept {
-    return Parameter(
-        GUI::get_controller(controller_id)->short_name,
-        midi_controller != NULL
-            ? midi_controller
-            : synth.midi_controllers[controller_id],
-        (Midi::Controller)controller_id
-    );
 }
 
 
@@ -472,18 +460,17 @@ FstPlugin::FstPlugin(
         audioMasterCallback const host_callback_ptr,
         GUI::PlatformData const platform_data
 ) noexcept
-    : synth(),
+    : proxy(),
     effect(effect),
     host_callback_ptr(host_callback_ptr),
     platform_data(platform_data),
     gui(NULL),
-    renderer(synth),
     to_audio_messages(1024),
     to_audio_string_messages(256),
     to_gui_messages(1024),
-    mts_esp(synth),
     serialized_bank(""),
     current_patch(""),
+    sample_rate(44100.0),
     current_program_index(0),
     min_samples_before_next_cc_ui_update(8192),
     remaining_samples_before_next_cc_ui_update(0),
@@ -501,7 +488,7 @@ FstPlugin::FstPlugin(
     window_rect.bottom = GUI::HEIGHT;
     window_rect.right = GUI::WIDTH;
 
-    populate_parameters(synth, parameters);
+    populate_parameters(proxy, parameters);
 
     serialized_bank = bank.serialize();
     current_patch = bank[current_program_index].serialize();
@@ -539,9 +526,7 @@ void FstPlugin::process_internal_messages_in_audio_thread(
 
             case MessageType::CHANGE_PARAM:
                 handle_change_param(
-                    message.get_controller_id(),
-                    message.get_new_value(),
-                    message.get_midi_controller()
+                    message.get_index(), message.get_new_value()
                 );
                 break;
 
@@ -574,11 +559,10 @@ void FstPlugin::handle_change_program(size_t const new_program) noexcept
 
     std::string const new_patch(bank[new_program].serialize());
 
-    synth.process_messages();
-    bank[old_program].import(Serializer::serialize(synth));
-    Serializer::import_patch_in_audio_thread(synth, new_patch);
-    synth.clear_dirty_flag();
-    renderer.reset();
+    proxy.process_messages();
+    bank[old_program].import(Serializer::serialize(proxy));
+    Serializer::import_settings_in_audio_thread(proxy, new_patch);
+    proxy.clear_dirty_flag();
     bank.set_current_program_index(new_program);
 
     need_bank_update = true;
@@ -597,29 +581,68 @@ void FstPlugin::handle_rename_program(std::string const& name) noexcept
 
 
 void FstPlugin::handle_change_param(
-        Midi::Controller const controller_id,
-        Number const new_value,
-        MidiController* const midi_controller
+        size_t const index,
+        double const new_value
 ) noexcept {
-    if (Synth::is_supported_midi_controller(controller_id)) {
-        if (midi_cc_received[(size_t)controller_id]) {
-            return;
-        }
+    if (index >= NUMBER_OF_PARAMETERS || index == PATCH_CHANGED_PARAMETER_INDEX) {
+        return;
+    }
 
-        /*
-        Some hosts (e.g. FL Studio 21) swallow most MIDI CC messages, and
-        the only way to make physical knobs and faders on a MIDI keyboard
-        work in the plugin is to export parameters to which those MIDI CC
-        messages can be assigned in the host, and then interpret the
-        changes of these parameters as if the corresponding MIDI CC message
-        had been received.
-        */
+    Parameter& param = parameters[index];
 
-        synth.control_change(
-            0.0, 0, controller_id, float_to_midi_byte(new_value)
+    if (param.is_exported_param()) {
+        proxy.process_message(
+            Proxy::MessageType::SET_PARAM, param.get_param_id(), new_value
         );
-    } else if (JS80P_LIKELY(midi_controller != NULL)) {
-        midi_controller->change(0.0, new_value);
+
+        return;
+    }
+
+    Proxy::ControllerId controller_id = param.get_controller_id();
+
+    if (midi_cc_received[(size_t)controller_id]) {
+        return;
+    }
+
+    /*
+    Some hosts (e.g. FL Studio 21) swallow most MIDI CC messages, and
+    the only way to make physical knobs and faders on a MIDI keyboard
+    work in the plugin is to export parameters to which those MIDI CC
+    messages can be assigned in the host, and then interpret the
+    changes of these parameters as if the corresponding MIDI CC message
+    had been received.
+    */
+
+    switch (controller_id) {
+        case Proxy::ControllerId::PITCH_WHEEL:
+            proxy.pitch_wheel_change(
+                0.0, 0, Midi::float_to_word<double>(new_value)
+            );
+
+            break;
+
+        case Proxy::ControllerId::CHANNEL_PRESSURE:
+            proxy.channel_pressure(
+                0.0, 0, Midi::float_to_byte<double>(new_value)
+            );
+
+            break;
+
+        case Proxy::ControllerId::MIDI_LEARN:
+        case Proxy::ControllerId::NONE:
+            MPE_EMULATOR_ASSERT_NOT_REACHED();
+
+            break;
+
+        default:
+            proxy.control_change(
+                0.0,
+                0,
+                param.get_controller_id(),
+                Midi::float_to_byte<double>(new_value)
+            );
+
+            break;
     }
 }
 
@@ -628,11 +651,10 @@ void FstPlugin::handle_import_patch(std::string const& patch) noexcept
 {
     size_t const current_program = bank.get_current_program_index();
 
-    Serializer::import_patch_in_audio_thread(synth, patch);
-    synth.clear_dirty_flag();
-    renderer.reset();
+    Serializer::import_settings_in_audio_thread(proxy, patch);
+    proxy.clear_dirty_flag();
 
-    std::string const& serialized_patch(Serializer::serialize(synth));
+    std::string const& serialized_patch(Serializer::serialize(proxy));
 
     bank[current_program].import(serialized_patch);
 
@@ -646,11 +668,10 @@ void FstPlugin::handle_import_bank(std::string const& serialized_bank) noexcept
 
     bank.import(serialized_bank);
 
-    Serializer::import_patch_in_audio_thread(
-        synth, bank[current_program].serialize()
+    Serializer::import_settings_in_audio_thread(
+        proxy, bank[current_program].serialize()
     );
-    synth.clear_dirty_flag();
-    renderer.reset();
+    proxy.clear_dirty_flag();
 
     need_bank_update = true;
 }
@@ -682,8 +703,8 @@ void FstPlugin::process_internal_messages_in_gui_thread() noexcept
                 handle_params_changed();
                 break;
 
-            case MessageType::SYNTH_WAS_DIRTY:
-                handle_synth_was_dirty();
+            case MessageType::PROXY_WAS_DIRTY:
+                handle_proxy_was_dirty();
                 break;
 
             default:
@@ -704,10 +725,6 @@ void FstPlugin::handle_program_changed(
 
     program.import(patch);
     program_names[current_program_index].set_name(program.get_name());
-
-    parameters[0].set_value(
-        Bank::program_index_to_normalized_parameter_value(new_program)
-    );
 }
 
 
@@ -725,11 +742,11 @@ void FstPlugin::handle_params_changed() noexcept
 }
 
 
-void FstPlugin::handle_synth_was_dirty() noexcept
+void FstPlugin::handle_proxy_was_dirty() noexcept
 {
     Parameter& dirty = parameters[PATCH_CHANGED_PARAMETER_INDEX];
 
-    float const new_value = dirty.get_value() + 0.01f;
+    float const new_value = dirty.get_value(proxy) + 0.01f;
 
     dirty.set_value(new_value < 1.0f ? new_value : 0.0f);
     need_host_update = true;
@@ -744,7 +761,7 @@ void FstPlugin::handle_synth_was_dirty() noexcept
 
 VstInt32 FstPlugin::get_latency_samples() const noexcept
 {
-    return (VstInt32)renderer.get_latency_samples();
+    return 0;
 }
 
 
@@ -772,34 +789,33 @@ VstIntPtr FstPlugin::idle() noexcept
 }
 
 
-void FstPlugin::set_sample_rate(float const new_sample_rate) noexcept
+void FstPlugin::set_sample_rate(double const new_sample_rate) noexcept
 {
+    sample_rate = new_sample_rate;
+
     process_internal_messages_in_gui_thread();
 
     if (new_sample_rate > HOST_CC_UI_UPDATE_FREQUENCY) {
-        min_samples_before_next_cc_ui_update = 1 + (Integer)(
+        min_samples_before_next_cc_ui_update = 1 + (VstInt32)(
             new_sample_rate * HOST_CC_UI_UPDATE_FREQUENCY_INV
         );
         remaining_samples_before_next_cc_ui_update = min_samples_before_next_cc_ui_update;
 
-        min_samples_before_next_bank_update = 1 + (Integer)(
+        min_samples_before_next_bank_update = 1 + (VstInt32)(
             new_sample_rate * BANK_UPDATE_FREQUENCY_INV
         );
         remaining_samples_before_next_bank_update = min_samples_before_next_bank_update;
     }
 
-    synth.set_sample_rate((Frequency)new_sample_rate);
-    synth.running_status = 0;
+    proxy.running_status = 0;
     this->running_status = 0;
-    renderer.reset();
 }
 
 
 void FstPlugin::set_block_size(VstIntPtr const new_block_size) noexcept
 {
     process_internal_messages_in_gui_thread();
-    renderer.reset();
-    synth.running_status = 0;
+    proxy.running_status = 0;
     this->running_status = 0;
 }
 
@@ -808,19 +824,18 @@ void FstPlugin::suspend() noexcept
 {
     process_internal_messages_in_gui_thread();
     need_idle();
-    synth.suspend();
-    synth.running_status = 0;
+    proxy.suspend();
+    proxy.running_status = 0;
     this->running_status = 0;
-    renderer.reset();
 }
 
 
 void FstPlugin::resume() noexcept
 {
-    synth.resume();
-    synth.running_status = 0;
+    proxy.resume();
+    proxy.begin_processing();
+    proxy.running_status = 0;
     this->running_status = 0;
-    renderer.reset();
     host_callback(audioMasterWantMidi, 0, 1);
     process_internal_messages_in_gui_thread();
     need_idle();
@@ -871,39 +886,41 @@ void FstPlugin::clear_received_midi_cc() noexcept
 
 void FstPlugin::process_vst_midi_event(VstMidiEvent const* const event) noexcept
 {
-    Seconds const time_offset = (
-        synth.sample_count_to_time_offset((Integer)event->deltaFrames)
-    );
+    double const time_offset = (double)event->deltaFrames / sample_rate;
+
     Midi::Byte const* const midi_bytes = (Midi::Byte const*)event->midiData;
 
     Midi::EventDispatcher<FstPlugin>::dispatch_event(
         *this, time_offset, midi_bytes, 4
     );
-    Midi::EventDispatcher<Synth>::dispatch_event(
-        synth, time_offset, midi_bytes, 4
+    Midi::EventDispatcher<Proxy>::dispatch_event(
+        proxy, time_offset, midi_bytes, 4
     );
 }
 
 
-template<typename NumberType>
+template<typename SampleType>
 void FstPlugin::generate_samples(
         VstInt32 const sample_count,
-        NumberType const* const* const in_samples,
-        NumberType** out_samples
+        SampleType** out_samples
 ) noexcept {
     if (sample_count < 1) {
         return;
     }
 
-    prepare_rendering(sample_count);
-    renderer.render<NumberType>(sample_count, in_samples, out_samples);
-    finalize_rendering(sample_count);
+    prepare_processing(sample_count);
+
+    for (VstInt32 i = 0; i != OUT_CHANNELS; ++i) {
+        std::fill_n(out_samples[i], sample_count, (SampleType)0.0);
+    }
+
+    finalize_processing(sample_count);
 
     /*
     It would be nice to notify the host about param changes that originate from
-    the plugin, but since these parameters only ever change due to MIDI CC
-    messages, we don't want the host to record them both as MIDI CC and as
-    parameter automation.
+    the plugin, but since the CC helper parameters are only ever changed by us
+    during processing due to MIDI CC messages, we don't want the host to record
+    them both as MIDI CC and as parameter automation.
 
     Also, since parameter handling seems to be done in the GUI thread and
     generate_samples() is run in the audio thread, calling audioMasterAutomate
@@ -912,7 +929,7 @@ void FstPlugin::generate_samples(
 }
 
 
-void FstPlugin::prepare_rendering(Integer const sample_count) noexcept
+void FstPlugin::prepare_processing(VstInt32 const sample_count) noexcept
 {
     if (!received_midi_cc_cleared) {
         clear_received_midi_cc();
@@ -923,8 +940,6 @@ void FstPlugin::prepare_rendering(Integer const sample_count) noexcept
     process_internal_messages_in_audio_thread(to_audio_string_messages);
     process_internal_messages_in_audio_thread(to_audio_messages);
 
-    update_bpm();
-
     if (had_midi_cc_event) {
         if (remaining_samples_before_next_cc_ui_update >= sample_count) {
             remaining_samples_before_next_cc_ui_update -= sample_count;
@@ -933,12 +948,15 @@ void FstPlugin::prepare_rendering(Integer const sample_count) noexcept
         }
     }
 
-    mts_esp.update_active_notes_tuning();
+    proxy.process_messages();
 }
 
 
-void FstPlugin::finalize_rendering(Integer const sample_count) noexcept
+void FstPlugin::finalize_processing(VstInt32 const sample_count) noexcept
 {
+    send_out_events((int)std::max(0, sample_count - 1));
+    proxy.begin_processing();
+
     if (remaining_samples_before_next_bank_update >= sample_count) {
         remaining_samples_before_next_bank_update -= sample_count;
 
@@ -949,20 +967,18 @@ void FstPlugin::finalize_rendering(Integer const sample_count) noexcept
         return;
     }
 
-    mts_esp.update_connection_status();
+    bool const is_dirty = proxy.is_dirty();
 
-    bool const is_dirty = synth.is_dirty();
-
-    if (JS80P_LIKELY(!(is_dirty || need_bank_update))) {
+    if (MPE_EMULATOR_LIKELY(!(is_dirty || need_bank_update))) {
         return;
     }
 
     remaining_samples_before_next_bank_update = min_samples_before_next_bank_update;
     need_bank_update = false;
-    synth.clear_dirty_flag();
+    proxy.clear_dirty_flag();
 
     size_t const current_program = bank.get_current_program_index();
-    std::string const& current_patch = Serializer::serialize(synth);
+    std::string const& current_patch = Serializer::serialize(proxy);
 
     bank[current_program].import(current_patch);
 
@@ -974,31 +990,49 @@ void FstPlugin::finalize_rendering(Integer const sample_count) noexcept
     to_gui_messages.push(Message(MessageType::BANK_CHANGED, 0, serialized_bank));
 
     if (is_dirty) {
-        to_gui_messages.push(Message(MessageType::SYNTH_WAS_DIRTY));
+        to_gui_messages.push(Message(MessageType::PROXY_WAS_DIRTY));
     }
 }
 
 
-Midi::Byte FstPlugin::float_to_midi_byte(float const value) const noexcept
+void FstPlugin::send_out_events(int const last_sample_offset) noexcept
 {
-    return std::min(
-        (Midi::Byte)127,
-        std::max((Midi::Byte)0, (Midi::Byte)std::round(value * 127.0f))
-    );
-}
+    size_t next_vst_event_idx = 0;
 
+    memset(&out_events, 0, sizeof(VstEvents_));
 
-void FstPlugin::update_bpm() noexcept
-{
-    VstTimeInfo const* time_info = (
-        (VstTimeInfo const*)host_callback(audioMasterGetTime, 0, kVstTempoValid)
-    );
+    out_events.numEvents = 0;
 
-    if (time_info == NULL || (time_info->flags & kVstTempoValid) == 0) {
-        return;
+    for (Proxy::OutEvents::const_iterator i = proxy.out_events.begin(); i != proxy.out_events.end(); ++i) {
+        Midi::Event const& midi_event(*i);
+        VstMidiEvent* const vst_midi_event = &out_event_buffer[next_vst_event_idx];
+
+        memset(vst_midi_event, 0, sizeof(VstMidiEvent));
+
+        vst_midi_event->type = kVstMidiType;
+        vst_midi_event->byteSize = sizeof(VstMidiEvent);
+        vst_midi_event->deltaFrames = (
+            midi_event.get_sample_offset<int>(sample_rate, last_sample_offset)
+        );
+        vst_midi_event->midiData[0] = midi_event.command | midi_event.channel;
+        vst_midi_event->midiData[1] = midi_event.data_1;
+        vst_midi_event->midiData[2] = midi_event.data_2;
+
+        out_events.events[next_vst_event_idx] = vst_midi_event;
+
+        ++next_vst_event_idx;
+
+        if (next_vst_event_idx == OUT_EVENTS_BUFFER_SIZE) {
+            out_events.numEvents = (int)next_vst_event_idx;
+            host_callback(audioMasterProcessEvents, 0, 0, (void*)&out_events);
+            next_vst_event_idx = 0;
+        }
     }
 
-    synth.set_bpm((Number)time_info->tempo);
+    if (next_vst_event_idx != 0) {
+        out_events.numEvents = (int)next_vst_event_idx;
+        host_callback(audioMasterProcessEvents, 0, 0, (void*)&out_events);
+    }
 }
 
 
@@ -1020,11 +1054,8 @@ void FstPlugin::generate_and_add_samples(
         return;
     }
 
-    prepare_rendering(sample_count);
-    renderer.render<float, Renderer::Operation::ADD>(
-        sample_count, in_samples, out_samples
-    );
-    finalize_rendering(sample_count);
+    prepare_processing(sample_count);
+    finalize_processing(sample_count);
 }
 
 
@@ -1086,41 +1117,42 @@ void FstPlugin::set_chunk(void const* chunk, VstIntPtr const size, bool is_prese
 
 
 void FstPlugin::note_on(
-        Seconds const time_offset,
+        double const time_offset,
         Midi::Channel const channel,
         Midi::Note const note,
         Midi::Byte const velocity
 ) noexcept {
-    mts_esp.update_note_tuning(channel, note);
 }
 
 
 void FstPlugin::control_change(
-        Seconds const time_offset,
+        double const time_offset,
         Midi::Channel const channel,
         Midi::Controller const controller,
         Midi::Byte const new_value
 ) noexcept {
+    constexpr Midi::Controller max_cc = (
+        (Midi::Controller)Proxy::ControllerId::MAX_MIDI_CC
+    );
+
     had_midi_cc_event = true;
 
-    if (synth.is_supported_midi_controller(controller)) {
+    if (controller <= max_cc) {
         midi_cc_received[(size_t)controller] = true;
     }
 }
 
 
 void FstPlugin::program_change(
-        Seconds const time_offset,
+        double const time_offset,
         Midi::Channel const channel,
         Midi::Byte const new_program
 ) noexcept {
-    had_midi_cc_event = true;
-    handle_change_program((size_t)new_program);
 }
 
 
 void FstPlugin::channel_pressure(
-        Seconds const time_offset,
+        double const time_offset,
         Midi::Channel const channel,
         Midi::Byte const pressure
 ) noexcept {
@@ -1129,7 +1161,7 @@ void FstPlugin::channel_pressure(
 
 
 void FstPlugin::pitch_wheel_change(
-        Seconds const time_offset,
+        double const time_offset,
         Midi::Channel const channel,
         Midi::Word const new_value
 ) noexcept {
@@ -1146,9 +1178,6 @@ VstIntPtr FstPlugin::get_program() noexcept
 void FstPlugin::set_program(size_t index) noexcept
 {
     current_program_index = index;
-    parameters[0].set_value(
-        Bank::program_index_to_normalized_parameter_value(index)
-    );
 
     to_audio_messages.push(Message(MessageType::CHANGE_PROGRAM, index));
 }
@@ -1200,7 +1229,7 @@ void FstPlugin::open_gui(GUI::PlatformWidget parent_window)
     process_internal_messages_in_gui_thread();
 
     close_gui();
-    gui = new GUI(FST_H_VERSION, platform_data, parent_window, synth, false);
+    gui = new GUI(FST_H_VERSION, platform_data, parent_window, proxy, false);
     gui->show();
 }
 
@@ -1240,69 +1269,84 @@ void FstPlugin::close_gui()
 
 
 FstPlugin::Parameter::Parameter()
-    : midi_controller(NULL),
-    name("unknown"),
-    controller_id(0),
+    : short_name("unknown"),
+    long_name("unknown"),
+    param_id(Proxy::ParamId::INVALID_PARAM_ID),
+    controller_id(Proxy::ControllerId::INVALID_CONTROLLER_ID),
     // change_index(-1), /* See FstPlugin::generate_samples() */
-    value(0.5f)
+    value(0.0f)
 {
 }
 
 
 FstPlugin::Parameter::Parameter(
-        char const* name,
-        MidiController* midi_controller,
-        Midi::Controller const controller_id
-) : midi_controller(midi_controller),
-    name(name),
+        char const* const short_name,
+        char const* const long_name,
+        Proxy::ParamId const param_id,
+        Proxy::ControllerId const controller_id
+) : short_name(short_name),
+    long_name(long_name),
+    param_id(param_id),
     controller_id(controller_id),
     // change_index(-1), /* See FstPlugin::generate_samples() */
-    value(0.5f)
+    value(0.0f)
 {
 }
 
 
-char const* FstPlugin::Parameter::get_name() const noexcept
+char const* FstPlugin::Parameter::get_short_name() const noexcept
 {
-    return name;
+    return short_name;
 }
 
 
-MidiController* FstPlugin::Parameter::get_midi_controller() const noexcept
+char const* FstPlugin::Parameter::get_long_name() const noexcept
 {
-    return midi_controller;
+    return long_name;
 }
 
 
-Midi::Controller FstPlugin::Parameter::get_controller_id() const noexcept
+Proxy::ParamId FstPlugin::Parameter::get_param_id() const noexcept
+{
+    return param_id;
+}
+
+
+Proxy::ControllerId FstPlugin::Parameter::get_controller_id() const noexcept
 {
     return controller_id;
+}
+
+
+bool FstPlugin::Parameter::is_midi_cc_helper() const noexcept
+{
+    return controller_id != Proxy::ControllerId::INVALID_CONTROLLER_ID;
+}
+
+
+bool FstPlugin::Parameter::is_exported_param() const noexcept
+{
+    return param_id != Proxy::ParamId::INVALID_PARAM_ID;
 }
 
 
 /* See FstPlugin::generate_samples() */
 // bool FstPlugin::Parameter::needs_host_update() const noexcept
 // {
-    // if (JS80P_UNLIKELY(midi_controller == NULL)) {
-        // return false;
-    // }
-
     // return change_index != midi_controller->get_change_index();
 // }
 
 
-float FstPlugin::Parameter::get_value() noexcept
+float FstPlugin::Parameter::get_value(Proxy const& proxy) const noexcept
 {
-    if (JS80P_UNLIKELY(midi_controller == NULL)) {
-        return get_last_set_value();
+    if (is_exported_param()) {
+        /* See FstPlugin::generate_samples() */
+        // change_index = ...
+
+        return proxy.get_param_ratio_atomic(param_id);
     }
 
-    float const value = (float)midi_controller->get_value();
-
-    /* See FstPlugin::generate_samples() */
-    // change_index = midi_controller->get_change_index();
-
-    return value;
+    return get_last_set_value();
 }
 
 
@@ -1320,7 +1364,7 @@ void FstPlugin::Parameter::set_value(float const value) noexcept
 
 float FstPlugin::get_parameter(size_t index) noexcept
 {
-    return parameters[index].get_value();
+    return parameters[index].get_value(proxy);
 }
 
 
@@ -1334,22 +1378,7 @@ void FstPlugin::set_parameter(size_t index, float value) noexcept
 
     param.set_value(value);
 
-    if (index == 0) {
-        size_t const program = (
-            Bank::normalized_parameter_value_to_program_index((Number)value)
-        );
-
-        to_audio_messages.push(Message(MessageType::CHANGE_PROGRAM, program));
-        current_program_index = program;
-    } else {
-        to_audio_messages.push(
-            Message(
-                param.get_controller_id(),
-                (Number)value,
-                param.get_midi_controller()
-            )
-        );
-    }
+    to_audio_messages.push(Message(index, (double)value));
 }
 
 
@@ -1365,8 +1394,7 @@ void FstPlugin::get_param_label(size_t index, char* buffer) noexcept
 {
     process_internal_messages_in_gui_thread();
 
-    strncpy(buffer, index == 0 ? "" : "%", kVstMaxParamStrLen);
-    buffer[kVstMaxParamStrLen - 1] = '\x00';
+    buffer[0] = '\x00';
 }
 
 
@@ -1374,29 +1402,17 @@ void FstPlugin::get_param_display(size_t index, char* buffer) noexcept
 {
     process_internal_messages_in_gui_thread();
 
-    if (index == 0) {
-        size_t const program_index = (
-            Bank::normalized_parameter_value_to_program_index(
-                (Number)parameters[0].get_last_set_value()
-            )
+    Parameter const& param = parameters[index];
+    float const value = param.get_value(proxy);
+
+    if (param.is_exported_param()) {
+        Strings::param_ratio_to_str(
+            proxy, param.get_param_id(), value, buffer, kVstMaxParamStrLen
         );
-
-        if (program_index < Bank::NUMBER_OF_PROGRAMS) {
-            strncpy(
-                buffer,
-                program_names[program_index].get_short_name().c_str(),
-                kVstMaxParamStrLen - 1
-            );
-        } else {
-            strncpy(buffer, "???", kVstMaxParamStrLen - 1);
-        }
     } else {
-        float const value = get_parameter(index);
-
-        snprintf(buffer, kVstMaxParamStrLen, "%.2f", value * 100.0f);
+        snprintf(buffer, kVstMaxParamStrLen, "%.2f%%", value * 100.0f);
+        buffer[kVstMaxParamStrLen - 1] = '\x00';
     }
-
-    buffer[kVstMaxParamStrLen - 1] = '\x00';
 }
 
 
@@ -1404,7 +1420,7 @@ void FstPlugin::get_param_name(size_t index, char* buffer) noexcept
 {
     process_internal_messages_in_gui_thread();
 
-    strncpy(buffer, parameters[index].get_name(), kVstMaxParamStrLen);
+    strncpy(buffer, parameters[index].get_short_name(), kVstMaxParamStrLen);
     buffer[kVstMaxParamStrLen - 1] = '\x00';
 }
 
@@ -1419,25 +1435,18 @@ FstPlugin::Message::Message(
         size_t const index,
         std::string const& serialized_data
 ) : serialized_data(serialized_data),
-    midi_controller(NULL),
     new_value(0.0),
     index(index),
-    type(type),
-    controller_id(0)
+    type(type)
 {
 }
 
 
-FstPlugin::Message::Message(
-        Midi::Controller const controller_id,
-        Number const new_value,
-        MidiController* const midi_controller
-) : serialized_data(""),
-    midi_controller(midi_controller),
+FstPlugin::Message::Message(size_t const index, double const new_value)
+    : serialized_data(""),
     new_value(new_value),
-    index(0),
-    type(MessageType::CHANGE_PARAM),
-    controller_id(controller_id)
+    index(index),
+    type(MessageType::CHANGE_PARAM)
 {
 }
 
@@ -1460,21 +1469,9 @@ std::string const& FstPlugin::Message::get_serialized_data() const noexcept
 }
 
 
-Midi::Controller FstPlugin::Message::get_controller_id() const noexcept
-{
-    return controller_id;
-}
-
-
-Number FstPlugin::Message::get_new_value() const noexcept
+double FstPlugin::Message::get_new_value() const noexcept
 {
     return new_value;
-}
-
-
-MidiController* FstPlugin::Message::get_midi_controller() const noexcept
-{
-    return midi_controller;
 }
 
 
@@ -1488,14 +1485,14 @@ https://git.iem.at/zmoelnig/FST/-/issues/24
 The values for `effIdle` and `audioMasterNeedIdle` were discovered using trial
 and error.
 
-REAPER 6.79 keeps sending opcode `53` regularly to JS80P from the UI thread,
-even when the plugin's window is closed, and even when the plugin is bypassed
-and its track is muted. This seems to suggest that 53 might be the missing
-value of `effIdle` in `fst.h`, since other opcodes that one would expect to be
-used this frequently (like `effEditIdle` and `effProcessEvent`) are already
-known, and there aren't any other unknown opcode names which would make a lot
-of sense to be called repeatedly. (Though there might be unknown-unknown
-opcodes, but let's be optimistic.)
+REAPER 6.79 keeps sending opcode `53` regularly to the plugin from the UI
+thread, even when the plugin's window is closed, and even when the plugin is
+bypassed and its track is muted. This seems to suggest that 53 might be the
+missing value of `effIdle` in `fst.h`, since other opcodes that one would
+expect to be used this frequently (like `effEditIdle` and `effProcessEvent`)
+are already known, and there aren't any other unknown opcode names which would
+make a lot of sense to be called repeatedly. (Though there might be
+unknown-unknown opcodes, but let's be optimistic.)
 
 One way to confirm this would be to see how this opcode interacts with
 `audioMasterNeedIdle` which seems to be related, based on its name. The problem

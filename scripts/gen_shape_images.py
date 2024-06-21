@@ -1,13 +1,13 @@
 ###############################################################################
-# This file is part of JS80P, a synthesizer plugin.
+# This file is part of MPE Emulator.
 # Copyright (C) 2024  Attila M. Magyar
 #
-# JS80P is free software: you can redistribute it and/or modify
+# MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# JS80P is distributed in the hope that it will be useful,
+# MPE Emulator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -33,21 +33,13 @@ except ImportError as error:
     sys.exit(1)
 
 
-BLACK = (0, 0, 0)
 LIGHT_GREY = (200, 200, 200)
 GREEN = (100, 255, 140)
-CYAN_1 = (120, 200, 230)
-CYAN_2 = (140, 210, 240)
-CYAN_3 = (160, 220, 250)
-PURPLE_1 = (170, 100, 220)
-PURPLE_2 = (200, 120, 240)
-PURPLE_3 = (230, 140, 250)
-YELLOW_1 = (255, 175, 120)
-YELLOW_2 = (255, 215, 140)
-YELLOW_3 = (255, 255, 160)
+CYAN = (140, 210, 240)
+PURPLE = (200, 120, 240)
+YELLOW = (255, 215, 140)
 RED_1 = (210, 100, 100)
 RED_2 = (230, 140, 140)
-RED_3 = (250, 180, 180)
 
 SUBPIXELS = 5
 
@@ -57,49 +49,21 @@ SEGMENTS = 20
 STROKE_WIDTH = int(SUBPIXELS * 3.5 + 0.5)
 
 
-ENV_SHAPES = (
-    # See Math::apply_envelope_shape().
-    (CYAN_1, lambda x: ((-2.0 * x + 3.0) * x) * x),
-    (CYAN_2, lambda x: ((((6.0 * x - 15.0) * x + 10.0) * x) * x) * x),
-    (CYAN_3, lambda x: ((((((((((-252.0 * x + 1386.0) * x - 3080.0) * x + 3465.0) * x - 1980.0) * x + 462.0) * x) * x) * x) * x) * x) * x),
-
-    (PURPLE_1, lambda x: x ** 2.0),
-    (PURPLE_2, lambda x: x ** 3.0),
-    (PURPLE_3, lambda x: x ** 5.0),
-
-    (YELLOW_1, lambda x: x * (1.0 - log(x + 0.001)) / (1.0 - log(1.001))),
-    (YELLOW_2, lambda x: (x * (1.0 - log(x + 0.001)) / (1.0 - log(1.001))) ** (2.0 / 3.0)),
-    (YELLOW_3, lambda x: (x * (1.0 - log(x + 0.001)) / (1.0 - log(1.001))) ** (1.0 / 3.0)),
-
-    (RED_1, lambda x: ((4.0 * x - 6.0) * x + 3.0) * x),
-    (RED_2, lambda x: ((((16.0 * x - 40.0) * x + 40.0) * x - 20.0) * x + 5.0) * x),
-    (RED_3, lambda x: ((((((((((1024.0 * x - 5632.0) * x + 14080.0) * x - 21120.0) * x + 21120.0) * x - 14784.0) * x + 7392.0) * x - 2640.0) * x + 660.0) * x - 110.0) * x + 11.0) * x),
-
-    (LIGHT_GREY, lambda x: x),
-)
-
-
-MACRO_DISTORTIONS = (
-    (CYAN_2, lambda x: tanh(8.0 * (x * 2.0 - 1.0)) * 0.5 + 0.5),
-    (PURPLE_2, ENV_SHAPES[5][1]),
-    (YELLOW_2, ENV_SHAPES[8][1]),
-    (RED_2, ENV_SHAPES[11][1]),
+DISTORTIONS = (
+    (CYAN, lambda x: tanh(8.0 * (x * 2.0 - 1.0)) * 0.5 + 0.5),
+    (PURPLE, lambda x: x ** 5.0),
+    (YELLOW, lambda x: (x * (1.0 - log(x + 0.001)) / (1.0 - log(1.001))) ** (1.0 / 3.0)),
+    (RED_2, lambda x: ((((((((((1024.0 * x - 5632.0) * x + 14080.0) * x - 21120.0) * x + 21120.0) * x - 14784.0) * x + 7392.0) * x - 2640.0) * x + 660.0) * x - 110.0) * x + 11.0) * x),
 )
 
 
 def main(argv):
     out_dir = os.path.join(os.path.dirname(argv[0]), "../gui/img/")
     generate_image(
-        os.path.join(out_dir, "env_shapes-01.png"), 0.0, 1.0, ENV_SHAPES
+        os.path.join(out_dir, "distortions.png"), 0.0, 1.0, DISTORTIONS
     )
     generate_image(
-        os.path.join(out_dir, "env_shapes-10.png"), 1.0, 0.0, ENV_SHAPES
-    )
-    generate_image(
-        os.path.join(out_dir, "macro_distortions.png"), 0.0, 1.0, MACRO_DISTORTIONS
-    )
-    generate_image(
-        os.path.join(out_dir, "macro_midpoint_states.png"),
+        os.path.join(out_dir, "midpoint_states.png"),
         0.0,
         1.0,
         tuple(
@@ -157,10 +121,10 @@ def make_midpoint_shift_function(midpoint):
         color = vint(vsum(vscale(1.0 - s, GREEN), vscale(s, LIGHT_GREY)))
     elif midpoint <= 0.75:
         s = 4.0 * (midpoint - 0.5)
-        color = vint(vsum(vscale(1.0 - s, LIGHT_GREY), vscale(s, YELLOW_2)))
+        color = vint(vsum(vscale(1.0 - s, LIGHT_GREY), vscale(s, YELLOW)))
     else:
         s = 4.0 * (midpoint - 0.75)
-        color = vint(vsum(vscale(1.0 - s, YELLOW_2), vscale(s, RED_1)))
+        color = vint(vsum(vscale(1.0 - s, YELLOW), vscale(s, RED_1)))
 
     return (color, func)
 

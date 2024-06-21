@@ -1,14 +1,14 @@
 /*
- * This file is part of JS80P, a synthesizer plugin.
+ * This file is part of MPE Emulator.
  * Copyright (C) 2023, 2024  Attila M. Magyar
  * Copyright (C) 2023  Patrik Ehringer
  *
- * JS80P is free software: you can redistribute it and/or modify
+ * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * JS80P is distributed in the hope that it will be useful,
+ * MPE Emulator is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -17,11 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef JS80P__BANK_CPP
-#define JS80P__BANK_CPP
+#ifndef MPE_EMULATOR__BANK_CPP
+#define MPE_EMULATOR__BANK_CPP
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 
 #include "bank.hpp"
@@ -29,7 +29,7 @@
 #include "programs.cpp"
 
 
-namespace JS80P
+namespace MpeEmulator
 {
 
 Bank::Program::Program(
@@ -62,10 +62,10 @@ void Bank::Program::set_name_without_update(std::string const& new_name)
 
 std::string Bank::Program::sanitize_name(std::string const& name) const
 {
-    Integer const buffer_size = name.length() + 1;
+    size_t const buffer_size = name.length() + 1;
 
     char filtered[buffer_size];
-    Integer next = 0;
+    int next = 0;
 
     std::fill_n(filtered, buffer_size, '\x00');
 
@@ -130,7 +130,7 @@ bool Bank::Program::is_allowed_char(char const c) const
 
 void Bank::Program::update()
 {
-    std::string prefix("[js80p]\r\nNAME = ");
+    std::string prefix("[mpeemulator]\r\nNAME = ");
     prefix += name;
     prefix += "\r\n";
 
@@ -210,8 +210,7 @@ void Bank::Program::import_without_update(
     std::string serialized_params("");
     Serializer::SectionName section_name;
     Serializer::ParamName param_name;
-    Serializer::Suffix suffix;
-    bool is_js80p_section = false;
+    bool is_mpe_emulator_section = false;
     bool found_program_name = false;
 
     for (; it != end; ++it) {
@@ -220,34 +219,33 @@ void Bank::Program::import_without_update(
         std::string::const_iterator line_end = line.end();
 
         if (Serializer::parse_section_name(line, section_name)) {
-            if (is_js80p_section) {
+            if (is_mpe_emulator_section) {
                 break;
             }
 
             serialized_params = "";
             program_name = "";
             param_name[0] = '\x00';
-            is_js80p_section = Serializer::is_js80p_section_start(section_name);
+            is_mpe_emulator_section = (
+                Serializer::is_mpe_emulator_section_start(section_name)
+            );
         } else if (
-                is_js80p_section
-                && Serializer::parse_line_until_value(
-                    line_it, line_end, param_name, suffix
-                )
-                && strncmp(param_name, "NAME", 8) == 0
-                && strncmp(suffix, "", 4) == 0
+                is_mpe_emulator_section
+                && Serializer::parse_line_until_value(line_it, line_end, param_name)
+                && strncmp(param_name, "NAME", Serializer::PARAM_NAME_MAX_LENGTH) == 0
         ) {
             Serializer::skipping_remaining_whitespace_or_comment_reaches_the_end(
                 line_it, line_end
             );
             program_name = &(*line_it);
             found_program_name = true;
-        } else if (is_js80p_section) {
+        } else if (is_mpe_emulator_section) {
             serialized_params += line;
             serialized_params += "\r\n";
         }
     }
 
-    if (is_js80p_section) {
+    if (is_mpe_emulator_section) {
         if (found_program_name) {
             set_name_without_update(program_name);
         }
@@ -263,7 +261,7 @@ void Bank::Program::import_without_update(
 
 
 size_t Bank::normalized_parameter_value_to_program_index(
-        Number const parameter_value
+        double const parameter_value
 ) {
     return std::min(
         NUMBER_OF_PROGRAMS - 1,
@@ -274,11 +272,11 @@ size_t Bank::normalized_parameter_value_to_program_index(
 }
 
 
-Number Bank::program_index_to_normalized_parameter_value(size_t const index)
+double Bank::program_index_to_normalized_parameter_value(size_t const index)
 {
     return std::min(
         1.0,
-        std::max(0.0, (Number)index * PROGRAM_INDEX_TO_FLOAT_SCALE)
+        std::max(0.0, (double)index * PROGRAM_INDEX_TO_FLOAT_SCALE)
     );
 }
 

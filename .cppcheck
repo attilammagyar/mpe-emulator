@@ -6,3 +6,7 @@ missingIncludeSystem
 
 // Too many false positives.
 unusedFunction
+uninitMemberVar
+
+// Maybe later.
+cstyleCast
