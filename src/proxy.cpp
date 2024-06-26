@@ -164,6 +164,21 @@ Proxy::Rule::Rule(
 }
 
 
+double Proxy::Rule::distort(double const value) const noexcept
+{
+    double const m = midpoint.get_ratio();
+    double const shifted = (
+        value < 0.5 ? 2.0 * value * m : (m + (2.0 * value - 1.0) * (1.0 - m))
+    );
+
+    return Math::distort(
+        distortion_level.get_ratio(),
+        (Toggle)invert.get_value() == Toggle::ON ? 1.0 - shifted : shifted,
+        (Math::DistortionShape)distortion_type.get_value()
+    );
+}
+
+
 Proxy::Proxy() noexcept
     : send_mcm("MCM", Toggle::OFF, Toggle::ON, Toggle::OFF),
     zone_type(
@@ -492,7 +507,7 @@ void Proxy::push_resets_for_new_note(
             time_offset,
             new_note_channel,
             out_cc,
-            distort(rule, init_value),
+            rule.distort(init_value),
             is_pre_note_on_setup
         );
     }
@@ -587,7 +602,7 @@ void Proxy::reset_outdated_targets_if_changed_for_new_note(
 
     if (channel != Midi::INVALID_CHANNEL && channel != new_note_channel) {
         push_controller_event(
-            time_offset, channel, out_cc, distort(rule, init_value)
+            time_offset, channel, out_cc, rule.distort(init_value)
         );
     }
 }
@@ -820,7 +835,7 @@ void Proxy::process_controller_event(
 
         if (channel != Midi::INVALID_CHANNEL) {
             push_controller_event(
-                time_offset, channel, out_controller_id, distort(rule, value)
+                time_offset, channel, out_controller_id, rule.distort(value)
             );
         }
     }
@@ -830,25 +845,6 @@ void Proxy::process_controller_event(
             time_offset, manager_channel, controller_id, value
         );
     }
-}
-
-
-double Proxy::distort(Rule const& rule, double const value) const noexcept
-{
-    double const midpoint = rule.midpoint.get_ratio();
-    double const shifted_value = (
-        value < 0.5
-            ? 2.0 * value * midpoint
-            : (midpoint + (2.0 * value - 1.0) * (1.0 - midpoint))
-    );
-
-    return Math::distort(
-        rule.distortion_level.get_ratio(),
-        (Toggle)rule.invert.get_value() == Toggle::ON
-            ? 1.0 - shifted_value
-            : shifted_value,
-        (Math::DistortionShape)rule.distortion_type.get_value()
-    );
 }
 
 
@@ -1231,7 +1227,7 @@ void Proxy::reset_global_controllers() noexcept
                 0.0,
                 manager_channel,
                 (ControllerId)rule.out_cc.get_value(),
-                distort(rule, rule.init_value.get_ratio())
+                rule.distort(rule.init_value.get_ratio())
             );
         }
     }

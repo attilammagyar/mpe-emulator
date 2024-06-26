@@ -381,6 +381,8 @@ class Proxy : public Midi::EventHandler
                     Toggle const reset = Toggle::ON
                 ) noexcept;
 
+                double distort(double const value) const noexcept;
+
                 Param in_cc;
                 Param out_cc;
                 Param init_value;
@@ -735,8 +737,6 @@ class Proxy : public Midi::EventHandler
             double const value,
             bool const is_note_on_setup = false
         ) noexcept;
-
-        double distort(Rule const& rule, double const value) const noexcept;
 
         OutEvents out_events_rw;
         MidiControllerMessage previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
