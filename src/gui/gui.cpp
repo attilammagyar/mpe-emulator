@@ -320,8 +320,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R1TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R1DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R1NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R1RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R1NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R1RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R1MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R1DT, distortions);
 
@@ -336,8 +336,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R2TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R2DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R2NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R2RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R2NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R2RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R2MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R2DT, distortions);
 
@@ -352,8 +352,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R3TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R3DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R3NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R3RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R3NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R3RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R3MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R3DT, distortions);
 
@@ -368,8 +368,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R4TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R4DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R4NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R4RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R4NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R4RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R4MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R4DT, distortions);
 
@@ -384,8 +384,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R5TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R5DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R5NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R5RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R5NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R5RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R5MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R5DT, distortions);
 
@@ -400,8 +400,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R6TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R6DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R6NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R6RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R6NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R6RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R6MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R6DT, distortions);
 
@@ -416,8 +416,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R7TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R7DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R7NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R7RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R7NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R7RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R7MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R7DT, distortions);
 
@@ -432,8 +432,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R8TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R8DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R8NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R8RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R8NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R8RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R8MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R8DT, distortions);
 
@@ -448,8 +448,8 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R9TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R9DL, knob_states);
 
-    TOGG(zone_1_body,  83, 4, 62, 24, 41, Proxy::ParamId::Z1R9NV);
-    TOGG(zone_1_body, 154, 4, 58, 24, 37, Proxy::ParamId::Z1R9RS);
+    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R9NV);
+    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R9RS);
     MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R9MP, midpoint_states);
     DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R9DT, distortions);
 

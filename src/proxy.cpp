@@ -138,12 +138,12 @@ Proxy::Rule::Rule(
         ControllerId const in_cc,
         ControllerId const out_cc,
         Target const target,
-        unsigned int const init_value,
-        Toggle const reset
+        unsigned int const init_value_,
+        Reset const reset
 ) noexcept
     : in_cc(name + "IN", ControllerId::BANK_SELECT, ControllerId::NONE, in_cc),
     out_cc(name + "OU", ControllerId::BANK_SELECT, ControllerId::NONE, out_cc),
-    init_value(name + "IV", 0, 16383, init_value),
+    init_value(name + "IV", 0, 16383, init_value_),
     target(
         name + "TR",
         Target::TRG_GLOBAL,
@@ -158,8 +158,9 @@ Proxy::Rule::Rule(
     ),
     distortion_level(name + "DL", 0, 16383, 0),
     midpoint(name + "MP", 0, 20000, 10000),
-    reset(name + "RS", Toggle::OFF, Toggle::ON, reset),
-    invert(name + "NV", Toggle::OFF, Toggle::ON, Toggle::OFF)
+    reset(name + "RS", Reset::RST_OFF, Reset::RST_INIT, reset),
+    invert(name + "NV", Toggle::OFF, Toggle::ON, Toggle::OFF),
+    last_input_value(init_value.get_ratio())
 {
 }
 
@@ -196,7 +197,7 @@ Proxy::Proxy() noexcept
     rules{
         Rule("Z1R1", ControllerId::PITCH_WHEEL, ControllerId::PITCH_WHEEL, Target::TRG_NEWEST, 8192),
         Rule("Z1R2", ControllerId::CHANNEL_PRESSURE, ControllerId::CHANNEL_PRESSURE, Target::TRG_NEWEST, 0),
-        Rule("Z1R3", ControllerId::SOUND_5, ControllerId::SOUND_5, Target::TRG_NEWEST, 8192, Toggle::OFF),
+        Rule("Z1R3", ControllerId::SOUND_5, ControllerId::SOUND_5, Target::TRG_NEWEST, 8192, Reset::RST_OFF),
         Rule("Z1R4"),
         Rule("Z1R5"),
         Rule("Z1R6"),
@@ -478,15 +479,17 @@ void Proxy::push_resets_for_new_note(
     for (size_t i = 0; i != RULES; ++i) {
         Rule const& rule = rules[i];
         Target const target = (Target)rule.target.get_value();
+        Reset const reset = (Reset)rule.reset.get_value();
 
-        if (
-                (Toggle)rule.reset.get_value() != Toggle::ON
-                || target == Target::TRG_GLOBAL
-        ) {
+        if (reset == Reset::RST_OFF || target == Target::TRG_GLOBAL) {
             continue;
         }
 
-        double const init_value = rule.init_value.get_ratio();
+        double const reset_value = rule.distort(
+            reset == Reset::RST_INIT
+                ?  rule.init_value.get_ratio()
+                : rule.last_input_value
+        );
         ControllerId const out_cc = (ControllerId)rule.out_cc.get_value();
 
         if constexpr (is_pre_note_on_setup) {
@@ -498,7 +501,7 @@ void Proxy::push_resets_for_new_note(
                 old_channel_stats,
                 old_channel_stats_below,
                 old_channel_stats_above,
-                init_value,
+                reset_value,
                 out_cc
             );
         }
@@ -507,7 +510,7 @@ void Proxy::push_resets_for_new_note(
             time_offset,
             new_note_channel,
             out_cc,
-            rule.distort(init_value),
+            reset_value,
             is_pre_note_on_setup
         );
     }
@@ -522,7 +525,7 @@ void Proxy::reset_outdated_targets_if_changed_for_new_note(
         NoteStack::ChannelStats const& old_channel_stats,
         NoteStack::ChannelStats const& old_channel_stats_below,
         NoteStack::ChannelStats const& old_channel_stats_above,
-        double const init_value,
+        double const reset_value,
         ControllerId const out_cc
 ) noexcept {
     Midi::Channel channel = Midi::INVALID_CHANNEL;
@@ -601,9 +604,7 @@ void Proxy::reset_outdated_targets_if_changed_for_new_note(
     }
 
     if (channel != Midi::INVALID_CHANNEL && channel != new_note_channel) {
-        push_controller_event(
-            time_offset, channel, out_cc, rule.distort(init_value)
-        );
+        push_controller_event(time_offset, channel, out_cc, reset_value);
     }
 }
 
@@ -766,6 +767,8 @@ void Proxy::process_controller_event(
         }
 
         matched = true;
+
+        rule.last_input_value = value;
 
         ControllerId const out_controller_id = (
             (ControllerId)rule.out_cc.get_value()
@@ -1121,7 +1124,7 @@ void Proxy::reset() noexcept
         out_events_rw.clear();
         stop_all_notes();
         push_mcms();
-        reset_global_controllers();
+        reset_rules_and_global_controllers();
         had_reset = true;
     }
 }
@@ -1151,7 +1154,7 @@ bool Proxy::update_mpe_config() noexcept
     last_channel = manager_channel + channel_increment * channel_count;
 
     push_mcms();
-    reset_global_controllers();
+    reset_rules_and_global_controllers();
 
     had_reset = true;
 
@@ -1214,20 +1217,23 @@ void Proxy::push_mcm(
 }
 
 
-void Proxy::reset_global_controllers() noexcept
+void Proxy::reset_rules_and_global_controllers() noexcept
 {
     for (size_t i = 0; i != RULES; ++i) {
-        Rule const& rule = rules[i];
+        Rule& rule = rules[i];
+        double const init_value = rule.init_value.get_ratio();
+
+        rule.last_input_value = init_value;
 
         if (
-                (Toggle)rule.reset.get_value() == Toggle::ON
+                (Reset)rule.reset.get_value() != Reset::RST_OFF
                 && (Target)rule.target.get_value() == Target::TRG_GLOBAL
         ) {
             push_controller_event(
                 0.0,
                 manager_channel,
                 (ControllerId)rule.out_cc.get_value(),
-                rule.distort(rule.init_value.get_ratio())
+                rule.distort(init_value)
             );
         }
     }

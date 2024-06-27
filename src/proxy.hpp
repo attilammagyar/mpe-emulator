@@ -326,6 +326,12 @@ class Proxy : public Midi::EventHandler
             TRG_NEWEST_ABOVE_ANCHOR = 12,
         };
 
+        enum Reset {
+            RST_OFF = 0,
+            RST_LAST = 1,
+            RST_INIT = 2,
+        };
+
         class Param
         {
             public:
@@ -377,8 +383,8 @@ class Proxy : public Midi::EventHandler
                     ControllerId const in_cc = ControllerId::NONE,
                     ControllerId const out_cc = ControllerId::NONE,
                     Target const target = Target::TRG_NEWEST,
-                    unsigned int const init_value = 0,
-                    Toggle const reset = Toggle::ON
+                    unsigned int const init_value_ = 0,
+                    Reset const reset = Reset::RST_INIT
                 ) noexcept;
 
                 double distort(double const value) const noexcept;
@@ -392,6 +398,8 @@ class Proxy : public Midi::EventHandler
                 Param midpoint;
                 Param reset;
                 Param invert;
+
+                double last_input_value;
         };
 
         class Message
@@ -676,7 +684,7 @@ class Proxy : public Midi::EventHandler
             Midi::Channel const channel_count
         ) noexcept;
 
-        void reset_global_controllers() noexcept;
+        void reset_rules_and_global_controllers() noexcept;
 
         void push_controller_event(
             double const time_offset,
@@ -710,7 +718,7 @@ class Proxy : public Midi::EventHandler
             NoteStack::ChannelStats const& old_channel_stats,
             NoteStack::ChannelStats const& old_channel_stats_below,
             NoteStack::ChannelStats const& old_channel_stats_above,
-            double const init_value,
+            double const reset_value,
             ControllerId const out_cc
         ) noexcept;
 

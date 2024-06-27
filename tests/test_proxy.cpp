@@ -185,7 +185,7 @@ TEST(can_process_messages_synchronously, {
 void turn_off_reset_for_all_rules(Proxy& proxy)
 {
     for (size_t i = 0; i != Proxy::RULES; ++i) {
-        proxy.rules[i].reset.set_value(Proxy::Toggle::OFF);
+        proxy.rules[i].reset.set_value(Proxy::Reset::RST_OFF);
     }
 }
 
@@ -659,32 +659,38 @@ TEST(when_excess_notes_are_to_steal_channels_then_repeated_note_on_replaces_exis
 })
 
 
-TEST(when_reset_is_on_for_a_global_cc_event_then_its_initial_value_is_sent_on_reset, {
+void test_global_cc_reset(Proxy::Reset const reset)
+{
     Proxy proxy;
 
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
     proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
     proxy.rules[0].init_value.set_ratio(0.5);
     proxy.rules[0].target.set_value(Proxy::Target::TRG_GLOBAL);
-    proxy.rules[0].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[0].reset.set_value(reset);
 
     proxy.rules[1].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
     proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].init_value.set_ratio(0.2);
     proxy.rules[1].target.set_value(Proxy::Target::TRG_GLOBAL);
-    proxy.rules[1].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[1].reset.set_value(reset);
 
     proxy.rules[2].in_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
     proxy.rules[2].init_value.set_ratio(0.3);
     proxy.rules[2].target.set_value(Proxy::Target::TRG_GLOBAL);
-    proxy.rules[2].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[2].reset.set_value(reset);
 
     proxy.rules[3].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[3].out_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
     proxy.rules[3].init_value.set_ratio(0.123);
     proxy.rules[3].target.set_value(Proxy::Target::TRG_NEWEST);
-    proxy.rules[3].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[3].reset.set_value(reset);
+
+    proxy.pitch_wheel_change(0.0, 0, 16383);
+    proxy.channel_pressure(0.0, 0, 127);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::MODULATION_WHEEL, 127);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::VOLUME, 127);
 
     proxy.suspend();
     proxy.resume();
@@ -698,10 +704,16 @@ TEST(when_reset_is_on_for_a_global_cc_event_then_its_initial_value_is_sent_on_re
         },
         proxy
     );
+}
+
+
+TEST(when_reset_is_on_for_a_global_cc_event_then_its_initial_value_is_sent_on_reset, {
+    test_global_cc_reset(Proxy::Reset::RST_INIT);
+    test_global_cc_reset(Proxy::Reset::RST_LAST);
 })
 
 
-TEST(when_reset_is_on_for_a_non_global_cc_event_then_its_initial_value_is_sent_before_note_on, {
+TEST(when_reset_is_set_to_init_for_a_non_global_cc_event_then_its_initial_value_is_sent_before_note_on, {
     Proxy proxy;
 
     proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
@@ -714,19 +726,19 @@ TEST(when_reset_is_on_for_a_non_global_cc_event_then_its_initial_value_is_sent_b
     proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
     proxy.rules[0].init_value.set_ratio(0.5);
     proxy.rules[0].target.set_value(Proxy::Target::TRG_NEWEST);
-    proxy.rules[0].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_INIT);
 
     proxy.rules[1].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
     proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].init_value.set_ratio(0.2);
     proxy.rules[1].target.set_value(Proxy::Target::TRG_HIGHEST);
-    proxy.rules[1].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
 
     proxy.rules[2].in_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
     proxy.rules[2].init_value.set_ratio(0.5);
     proxy.rules[2].target.set_value(Proxy::Target::TRG_LOWEST_ABOVE_ANCHOR);
-    proxy.rules[2].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[2].reset.set_value(Proxy::Reset::RST_INIT);
 
     proxy.begin_processing();
 
@@ -762,6 +774,79 @@ TEST(when_reset_is_on_for_a_non_global_cc_event_then_its_initial_value_is_sent_b
             "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500)",
             "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200)",
             "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x40 (v=0.500)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_reset_is_set_to_last_for_a_non_global_cc_event_then_its_last_value_is_sent_before_note_on, {
+    Proxy proxy;
+
+    proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
+    proxy.channels.set_value(2);
+    proxy.excess_note_handling.set_value(
+        Proxy::ExcessNoteHandling::ENH_STEAL_OLDEST
+    );
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].init_value.set_ratio(0.5);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_NEWEST);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].init_value.set_ratio(0.2);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_HIGHEST);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
+    proxy.rules[2].init_value.set_ratio(0.5);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_LOWEST_ABOVE_ANCHOR);
+    proxy.rules[2].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.begin_processing();
+
+    proxy.pitch_wheel_change(0.0, 0, 16383);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::MODULATION_WHEEL, 127);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::VOLUME, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_on(1.0, 1, 60, 96);
+    proxy.note_on(2.0, 2, 72, 111);
+    proxy.note_on(3.0, 2, 84, 127);
+
+    assert_out_events<26>(
+        {
+            "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
+            "t=1.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
+            "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000)",
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000)",
+            "t=1.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000)",
+            "t=2.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000)",
+            "t=2.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=2.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000)",
+            "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
+            "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
+            "t=2.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000)",
+            "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000)",
+            "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000)",
+            "t=3.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
+            "t=3.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000)",
+            "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=3.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000)",
+            "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
+            "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=3.000 cmd=NOTE_ON ch=14 d1=0x54 d2=0x7f (v=1.000)",
+            "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000)",
+            "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000)",
         },
         proxy
     );
@@ -1070,7 +1155,7 @@ TEST(when_cc_target_is_above_the_anchor_but_all_notes_are_below_it_then_cc_is_dr
 })
 
 
-TEST(when_reset_is_on_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
+TEST(when_reset_is_set_to_init_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -1079,13 +1164,13 @@ TEST(when_reset_is_on_and_cc_target_changes_then_cc_is_reset_for_previous_note, 
     proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
     proxy.rules[0].target.set_value(Proxy::Target::TRG_OLDEST);
     proxy.rules[0].init_value.set_ratio(0.5);
-    proxy.rules[0].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_INIT);
 
     proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
     proxy.rules[1].init_value.set_ratio(0.2);
-    proxy.rules[1].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
 
     proxy.note_on(0.0, 0, 48, 127);     /* channel=1, oldest */
     proxy.note_on(1.0, 0, 60, 127);     /* channel=2, newest */
@@ -1105,6 +1190,47 @@ TEST(when_reset_is_on_and_cc_target_changes_then_cc_is_reset_for_previous_note, 
             "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x00 d2=0x40 (v=0.500)",
             "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x19 d2=0x00 (v=0.200)",
             "t=1.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_reset_is_set_to_last_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_OLDEST);
+    proxy.rules[0].init_value.set_ratio(0.5);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+    proxy.rules[1].init_value.set_ratio(0.2);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.note_on(0.0, 0, 48, 127);     /* channel=1, oldest */
+    proxy.note_on(1.0, 0, 60, 127);     /* channel=2, newest */
+    proxy.channel_pressure(2.0, 0, 127);
+    proxy.pitch_wheel_change(3.0, 0, 16383);
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 72, 127);     /* channel=3, newest */
+    proxy.channel_pressure(1.0, 0, 96);
+
+    assert_out_events<7>(
+        {
+            "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
+            "t=0.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
+            "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x7f d2=0x7f (v=1.000)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x60 d2=0x00 (v=0.756)",
         },
         proxy
     );
@@ -1225,7 +1351,7 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
     proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
     proxy.rules[0].target.set_value(Proxy::Target::TRG_GLOBAL);
-    proxy.rules[0].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_INIT);
     proxy.rules[0].init_value.set_ratio(0.80);
     proxy.rules[0].midpoint.set_ratio(0.75);
     proxy.rules[0].invert.set_value(Proxy::Toggle::ON);
@@ -1237,7 +1363,7 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
     proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
-    proxy.rules[1].reset.set_value(Proxy::Toggle::ON);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
     proxy.rules[1].init_value.set_ratio(0.15);
     proxy.rules[1].distortion_type.set_value(
         Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
@@ -1262,6 +1388,64 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
 
     proxy.note_off(0.0, 0, 48, 64);
     proxy.note_off(0.0, 0, 60, 64);
+    proxy.begin_processing();
+
+    proxy.suspend();
+    proxy.resume();
+
+    assert_out_events<1>(
+        {"t=0.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x00 (v=0.000)"},
+        proxy
+    );
+})
+
+
+TEST(distortions_are_applied_for_last_value_on_reset, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_GLOBAL);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_LAST);
+    proxy.rules[0].init_value.set_ratio(0.80);
+    proxy.rules[0].midpoint.set_ratio(0.75);
+    proxy.rules[0].invert.set_value(Proxy::Toggle::ON);
+    proxy.rules[0].distortion_type.set_value(
+        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+    );
+    proxy.rules[0].distortion_level.set_ratio(1.0);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+    proxy.rules[1].init_value.set_ratio(1.0);
+    proxy.rules[1].distortion_type.set_value(
+        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+    );
+    proxy.rules[1].distortion_level.set_ratio(1.0);
+
+    proxy.note_on(0.0, 0, 48, 127);     /* channel=1, oldest */
+    proxy.channel_pressure(0.0, 0, 19);
+
+    proxy.begin_processing();
+    proxy.note_on(1.0, 0, 60, 127);     /* channel=2, newest */
+
+    assert_out_events<4>(
+        {
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x00 d2=0x00 (v=0.000)",
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x00 d2=0x00 (v=0.000) pre-NOTE_ON setup",
+            "t=1.000 cmd=NOTE_ON ch=2 d1=0x3c d2=0x7f (v=1.000)",
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x00 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+
+    proxy.note_off(0.0, 0, 48, 64);
+    proxy.note_off(0.0, 0, 60, 64);
+    proxy.pitch_wheel_change(0.0, 0, 0);
     proxy.begin_processing();
 
     proxy.suspend();

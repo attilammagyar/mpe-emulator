@@ -51,6 +51,9 @@ class Strings
         static char const* const TARGETS[];
         static size_t const TARGETS_COUNT;
 
+        static char const* const RESETS[];
+        static size_t const RESETS_COUNT;
+
         static char const* const TOGGLE_STATES[];
         static size_t const TOGGLE_STATES_COUNT;
 
