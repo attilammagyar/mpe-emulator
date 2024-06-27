@@ -197,7 +197,7 @@ Proxy::Proxy() noexcept
     rules{
         Rule("Z1R1", ControllerId::PITCH_WHEEL, ControllerId::PITCH_WHEEL, Target::TRG_NEWEST, 8192),
         Rule("Z1R2", ControllerId::CHANNEL_PRESSURE, ControllerId::CHANNEL_PRESSURE, Target::TRG_NEWEST, 0),
-        Rule("Z1R3", ControllerId::SOUND_5, ControllerId::SOUND_5, Target::TRG_NEWEST, 8192, Reset::RST_OFF),
+        Rule("Z1R3", ControllerId::SOUND_5, ControllerId::SOUND_5, Target::TRG_NEWEST, 8192),
         Rule("Z1R4"),
         Rule("Z1R5"),
         Rule("Z1R6"),
