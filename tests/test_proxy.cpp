@@ -217,7 +217,7 @@ TEST(when_proxy_is_suspended_then_new_events_are_ignored, {
     proxy.begin_processing();
 
     proxy.suspend();
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
     proxy.channel_pressure(3.0, 7, 30);
     proxy.note_on(1.0, 1, 60, 96);
@@ -417,7 +417,7 @@ TEST(when_a_cc_does_not_match_any_rule_then_it_is_sent_unmodified_via_the_manage
     }
 
     proxy.begin_processing();
-    proxy.control_change(1.0, 5, 7, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
     proxy.channel_pressure(3.0, 7, 30);
 
@@ -448,7 +448,7 @@ TEST(when_the_target_of_a_cc_is_global_then_it_is_sent_via_the_manager_channel, 
     proxy.rules[2].target.set_value(Proxy::Target::TRG_GLOBAL);
 
     proxy.begin_processing();
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
     proxy.channel_pressure(3.0, 7, 30);
 
@@ -484,7 +484,7 @@ void test_out_cc_none(Proxy::Target const target)
     proxy.note_on(0.0, 1, 60, 96);
 
     proxy.begin_processing();
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
     proxy.channel_pressure(3.0, 7, 30);
 
@@ -506,11 +506,11 @@ TEST(repeated_cc_events_are_sent_only_once_on_the_manager_channel, {
     }
 
     proxy.begin_processing();
-    proxy.control_change(1.0, 5, 7, 110);
-    proxy.control_change(1.0, 5, 7, 110);
-    proxy.control_change(1.0, 5, 7, 110);
-    proxy.control_change(1.0, 5, 7, 110);
-    proxy.control_change(1.0, 5, 7, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
 
     assert_out_events<1>(
         {"t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x6e (v=0.866)"},
@@ -966,9 +966,9 @@ TEST(when_the_target_of_a_cc_is_not_global_then_it_is_sent_only_on_the_channel_o
     proxy.note_on(0.4, 0, 64, 127);     /* channel=4, newest */
     proxy.begin_processing();
 
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
-    proxy.control_change(3.0, 8, 7, 96);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
     proxy.channel_pressure(4.0, 7, 30);
 
     assert_out_events<4>(
@@ -1011,9 +1011,9 @@ TEST(target_of_a_cc_may_be_below_the_anchor, {
     proxy.note_on(0.5, 0, 72, 127);     /* channel=5, above anchor */
     proxy.begin_processing();
 
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
-    proxy.control_change(3.0, 8, 7, 96);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
     proxy.channel_pressure(4.0, 7, 30);
 
     assert_out_events<4>(
@@ -1056,9 +1056,9 @@ TEST(target_of_a_cc_may_be_above_the_anchor, {
     proxy.note_on(0.5, 0, 36, 127);     /* channel=5, below anchor */
     proxy.begin_processing();
 
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
-    proxy.control_change(3.0, 8, 7, 96);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
     proxy.channel_pressure(4.0, 7, 30);
 
     assert_out_events<4>(
@@ -1105,9 +1105,9 @@ TEST(when_cc_target_is_below_the_anchor_but_all_notes_are_above_it_then_cc_is_dr
     proxy.note_off(0.9, 0, 64, 64);
     proxy.begin_processing();
 
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
-    proxy.control_change(3.0, 8, 7, 96);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
     proxy.channel_pressure(4.0, 7, 30);
 
     assert_out_events<0>({}, proxy);
@@ -1146,9 +1146,9 @@ TEST(when_cc_target_is_above_the_anchor_but_all_notes_are_below_it_then_cc_is_dr
     proxy.note_off(0.9, 0, 64, 64);
     proxy.begin_processing();
 
-    proxy.control_change(1.0, 5, 1, 110);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
     proxy.pitch_wheel_change(2.0, 6, 10000);
-    proxy.control_change(3.0, 8, 7, 96);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
     proxy.channel_pressure(4.0, 7, 30);
 
     assert_out_events<0>({}, proxy);
