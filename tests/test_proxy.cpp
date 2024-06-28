@@ -509,8 +509,8 @@ TEST(repeated_cc_events_are_sent_only_once_on_the_manager_channel, {
     proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
     proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
     proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
-    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
-    proxy.control_change(1.0, 5, Proxy::ControllerId::VOLUME, 110);
+    proxy.control_change(1.0, 6, Proxy::ControllerId::VOLUME, 110);
+    proxy.control_change(1.0, 7, Proxy::ControllerId::VOLUME, 110);
 
     assert_out_events<1>(
         {"t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x6e (v=0.866)"},
