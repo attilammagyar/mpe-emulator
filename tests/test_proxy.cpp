@@ -983,6 +983,40 @@ TEST(when_the_target_of_a_cc_is_not_global_then_it_is_sent_only_on_the_channel_o
 })
 
 
+TEST(multiple_rules_can_share_the_same_controller_as_input, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_LOWEST);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_GLOBAL);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_HIGHEST);
+
+    proxy.note_on(0.1, 0, 48, 127);     /* channel=1 */
+    proxy.note_on(0.2, 0, 60, 127);     /* channel=2 */
+    proxy.begin_processing();
+
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 127);
+
+    assert_out_events<3>(
+        {
+            "t=1.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x7f d2=0x7f (v=1.000)",
+            "t=1.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x7f d2=0x00 (v=1.000)",
+            "t=1.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x7f (v=1.000)",
+        },
+        proxy
+    );
+})
+
+
 TEST(target_of_a_cc_may_be_below_the_anchor, {
     Proxy proxy;
 
