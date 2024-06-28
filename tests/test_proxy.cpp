@@ -687,10 +687,24 @@ void test_global_cc_reset(Proxy::Reset const reset)
     proxy.rules[3].target.set_value(Proxy::Target::TRG_NEWEST);
     proxy.rules[3].reset.set_value(reset);
 
+    proxy.rules[4].in_cc.set_value(Proxy::ControllerId::EXPRESSION_PEDAL);
+    proxy.rules[4].out_cc.set_value(Proxy::ControllerId::EXPRESSION_PEDAL);
+    proxy.rules[4].init_value.set_ratio(0.321);
+    proxy.rules[4].target.set_value(Proxy::Target::TRG_ALL_ABOVE_ANCHOR);
+    proxy.rules[4].reset.set_value(reset);
+
+    proxy.rules[5].in_cc.set_value(Proxy::ControllerId::SOUND_1);
+    proxy.rules[5].out_cc.set_value(Proxy::ControllerId::SOUND_1);
+    proxy.rules[5].init_value.set_ratio(0.321);
+    proxy.rules[5].target.set_value(Proxy::Target::TRG_ALL_BELOW_ANCHOR);
+    proxy.rules[5].reset.set_value(reset);
+
     proxy.pitch_wheel_change(0.0, 0, 16383);
     proxy.channel_pressure(0.0, 0, 127);
     proxy.control_change(0.0, 0, Proxy::ControllerId::MODULATION_WHEEL, 127);
     proxy.control_change(0.0, 0, Proxy::ControllerId::VOLUME, 127);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::EXPRESSION_PEDAL, 127);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::SOUND_1, 127);
 
     proxy.suspend();
     proxy.resume();
@@ -1487,6 +1501,148 @@ TEST(distortions_are_applied_for_last_value_on_reset, {
 
     assert_out_events<1>(
         {"t=0.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x00 (v=0.000)"},
+        proxy
+    );
+})
+
+
+TEST(when_rule_target_is_all_below_anchor_then_new_note_runs_with_latest_ctl_and_does_not_trigger_reset_for_old_notes, {
+    Proxy proxy;
+
+    proxy.anchor.set_value(60);
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_ALL_BELOW_ANCHOR);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 72, 127);     /* channel=1 */
+    proxy.note_on(1.0, 0, 48, 127);     /* channel=2, below anchor */
+    proxy.note_on(2.0, 0, 36, 127);     /* channel=3, below anchor */
+
+    proxy.channel_pressure(0.0, 0, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 24, 127);     /* channel=4, below anchor */
+
+    assert_out_events<3>(
+        {
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
+            "t=0.000 cmd=NOTE_ON ch=4 d1=0x18 d2=0x7f (v=1.000)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_rule_target_is_all_above_anchor_then_new_note_runs_with_latest_ctl_and_does_not_trigger_reset_for_old_notes, {
+    Proxy proxy;
+
+    proxy.anchor.set_value(60);
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_ALL_ABOVE_ANCHOR);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 48, 127);     /* channel=1 */
+    proxy.note_on(1.0, 0, 60, 127);     /* channel=2, above anchor */
+    proxy.note_on(2.0, 0, 72, 127);     /* channel=3, above anchor */
+
+    proxy.channel_pressure(0.0, 0, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 84, 127);     /* channel=4, above anchor */
+
+    assert_out_events<3>(
+        {
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
+            "t=0.000 cmd=NOTE_ON ch=4 d1=0x54 d2=0x7f (v=1.000)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_rule_target_is_all_below_anchor_then_cc_is_sent_to_all_notes_below_anchor, {
+    Proxy proxy;
+
+    proxy.anchor.set_value(60);
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_ALL_BELOW_ANCHOR);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 72, 127);     /* channel=1 */
+    proxy.note_on(1.0, 0, 48, 127);     /* channel=2, below anchor */
+    proxy.note_on(2.0, 0, 36, 127);     /* channel=3, below anchor */
+
+    proxy.channel_pressure(0.0, 0, 0);
+
+    proxy.begin_processing();
+
+    proxy.channel_pressure(0.0, 0, 127);
+
+    assert_out_events<2>(
+        {
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_rule_target_is_all_above_anchor_then_cc_is_sent_to_all_notes_below_anchor, {
+    Proxy proxy;
+
+    proxy.anchor.set_value(60);
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_ALL_ABOVE_ANCHOR);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 48, 127);     /* channel=1 */
+    proxy.note_on(1.0, 0, 60, 127);     /* channel=2, above anchor */
+    proxy.note_on(2.0, 0, 72, 127);     /* channel=3, above anchor */
+
+    proxy.channel_pressure(0.0, 0, 0);
+
+    proxy.begin_processing();
+
+    proxy.channel_pressure(0.0, 0, 127);
+
+    assert_out_events<2>(
+        {
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+        },
         proxy
     );
 })

@@ -317,17 +317,15 @@ void NoteStack::remove(Midi::Byte const item) noexcept
 }
 
 
-Midi::Word NoteStack::get_active_channels() const noexcept
+void NoteStack::get_active_channels(Channels& channels, size_t& count) const noexcept
 {
-    Midi::Word active_channels = 0;
+    count = 0;
     Midi::Byte item = head;
 
-    for (size_t i = 0; item != INVALID_ITEM && i != ITEMS; ++i) {
-        active_channels |= (1 << channels[item]);
+    for (size_t i = 0; item != INVALID_ITEM && i != ITEMS && count != Midi::CHANNELS; ++i) {
+        channels[count++] = this->channels[item];
         item = next[item];
     }
-
-    return active_channels;
 }
 
 

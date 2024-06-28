@@ -619,6 +619,7 @@ int main(int argc, char const* argv[])
 
 
 #define _TEST_INT_F "%d (0x%x)"
+#define _TEST_UCHAR_F "%hhu (0x%hhx)"
 #define _TEST_LLINT_F "%lld (0x%llx)"
 #define _TEST_PTR_F "%p"
 #define _TEST_DBL_F "%.9f (%.12e)"
@@ -887,31 +888,37 @@ static void _name(                                                          \
     }                                                                       \
 }
 
+        _ASSERT_ARRAY_OP_METHOD(eq, ==, unsigned char, _TEST_UCHAR_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(eq, ==, int, _TEST_INT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(eq, ==, long long int, _TEST_LLINT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(eq, ==, float, _TEST_DBL_F, std::fabs)
         _ASSERT_ARRAY_OP_METHOD(eq, ==, double, _TEST_DBL_F, std::fabs)
 
+        _ASSERT_ARRAY_OP_METHOD(neq, !=, unsigned char, _TEST_UCHAR_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(neq, !=, int, _TEST_INT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(neq, !=, long long int, _TEST_LLINT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(neq, !=, float, _TEST_DBL_F, std::fabs)
         _ASSERT_ARRAY_OP_METHOD(neq, !=, double, _TEST_DBL_F, std::fabs)
 
+        _ASSERT_ARRAY_OP_METHOD(lt, <, unsigned char, _TEST_UCHAR_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(lt, <, int, _TEST_INT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(lt, <, long long int, _TEST_LLINT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(lt, <, float, _TEST_DBL_F, std::fabs)
         _ASSERT_ARRAY_OP_METHOD(lt, <, double, _TEST_DBL_F, std::fabs)
 
+        _ASSERT_ARRAY_OP_METHOD(lte, <=, unsigned char, _TEST_UCHAR_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(lte, <=, int, _TEST_INT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(lte, <=, long long int, _TEST_LLINT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(lte, <=, float, _TEST_DBL_F, std::fabs)
         _ASSERT_ARRAY_OP_METHOD(lte, <=, double, _TEST_DBL_F, std::fabs)
 
+        _ASSERT_ARRAY_OP_METHOD(gt, >, unsigned char, _TEST_UCHAR_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(gt, >, int, _TEST_INT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(gt, >, long long int, _TEST_LLINT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(gt, >, float, _TEST_DBL_F, std::fabs)
         _ASSERT_ARRAY_OP_METHOD(gt, >, double, _TEST_DBL_F, std::fabs)
 
+        _ASSERT_ARRAY_OP_METHOD(gte, >=, unsigned char, _TEST_UCHAR_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(gte, >=, int, _TEST_INT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(gte, >=, long long int, _TEST_LLINT_F, std::abs)
         _ASSERT_ARRAY_OP_METHOD(gte, >=, float, _TEST_DBL_F, std::fabs)

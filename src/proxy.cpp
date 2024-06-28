@@ -425,7 +425,9 @@ void Proxy::push_note_on(
     note_stack.push(note, channel, velocity);
     note_stack.make_stats(this->channel_stats);
 
-    if (note >= (Midi::Note)anchor.get_value()) {
+    bool const is_above_anchor = note >= (Midi::Note)anchor.get_value();
+
+    if (is_above_anchor) {
         note_stack_above.push(note, channel, velocity);
         note_stack_above.make_stats(this->channel_stats_above);
     } else {
@@ -436,6 +438,7 @@ void Proxy::push_note_on(
     push_resets_for_new_note<true>(
         time_offset,
         channel,
+        is_above_anchor,
         old_channel_stats,
         old_channel_stats_below,
         old_channel_stats_above
@@ -461,6 +464,7 @@ void Proxy::push_note_on(
     push_resets_for_new_note<false>(
         time_offset,
         channel,
+        is_above_anchor,
         old_channel_stats,
         old_channel_stats_below,
         old_channel_stats_above
@@ -472,6 +476,7 @@ template<bool is_pre_note_on_setup>
 void Proxy::push_resets_for_new_note(
         double const time_offset,
         Midi::Channel const new_note_channel,
+        bool const is_above_anchor,
         NoteStack::ChannelStats const& old_channel_stats,
         NoteStack::ChannelStats const& old_channel_stats_below,
         NoteStack::ChannelStats const& old_channel_stats_above
@@ -486,9 +491,13 @@ void Proxy::push_resets_for_new_note(
         }
 
         double const reset_value = rule.distort(
-            reset == Reset::RST_INIT
-                ?  rule.init_value.get_ratio()
-                : rule.last_input_value
+            (
+                reset == Reset::RST_LAST
+                || (target == Target::TRG_ALL_ABOVE_ANCHOR && is_above_anchor)
+                || (target == Target::TRG_ALL_BELOW_ANCHOR && !is_above_anchor)
+            )
+                ? rule.last_input_value
+                : rule.init_value.get_ratio()
         );
         ControllerId const out_cc = (ControllerId)rule.out_cc.get_value();
 
@@ -597,8 +606,9 @@ void Proxy::reset_outdated_targets_if_changed_for_new_note(
         default:
             /*
             A new note cannot possibly change the oldest note in either stack,
-            and global targets are not to be reset for changes in polyphonic
-            channels, so there's nothing to do here.
+            and global, all-below-anchor, and all-above-anchor targets are not
+            to be reset for changes in polyphonic channels, so there's nothing
+            to do here.
             */
             return;
     }
@@ -754,6 +764,8 @@ void Proxy::process_controller_event(
         ControllerId const controller_id,
         double const value
 ) noexcept {
+    Midi::Channel target_channels[Midi::CHANNELS];
+    size_t target_channels_count;
     bool matched = false;
 
     for (size_t i = 0; i != RULES; ++i) {
@@ -767,6 +779,7 @@ void Proxy::process_controller_event(
         }
 
         matched = true;
+        target_channels_count = 0;
 
         rule.last_input_value = value;
 
@@ -774,72 +787,98 @@ void Proxy::process_controller_event(
             (ControllerId)rule.out_cc.get_value()
         );
         Midi::Note note;
-        Midi::Channel channel = Midi::INVALID_CHANNEL;
 
         switch ((Target)rule.target.get_value()) {
-            case Target::TRG_LOWEST: note_stack.lowest(note, channel); break;
-            case Target::TRG_HIGHEST: note_stack.highest(note, channel); break;
-            case Target::TRG_OLDEST: note_stack.oldest(note, channel); break;
-            case Target::TRG_NEWEST: note_stack.top(note, channel); break;
+            case Target::TRG_ALL_BELOW_ANCHOR:
+                note_stack_below.get_active_channels(
+                    target_channels, target_channels_count
+                );
+                break;
+
+            case Target::TRG_ALL_ABOVE_ANCHOR:
+                note_stack_above.get_active_channels(
+                    target_channels, target_channels_count
+                );
+                break;
+
+            case Target::TRG_LOWEST:
+                note_stack.lowest(note, target_channels[target_channels_count++]);
+                break;
+
+            case Target::TRG_HIGHEST:
+                note_stack.highest(note, target_channels[target_channels_count++]);
+                break;
+
+            case Target::TRG_OLDEST:
+                note_stack.oldest(note, target_channels[target_channels_count++]);
+                break;
+
+            case Target::TRG_NEWEST:
+                note_stack.top(note, target_channels[target_channels_count++]);
+                break;
 
             case Target::TRG_LOWEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.lowest(note, channel);
+                    note_stack_below.lowest(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_HIGHEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.highest(note, channel);
+                    note_stack_below.highest(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_OLDEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.oldest(note, channel);
+                    note_stack_below.oldest(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_NEWEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.top(note, channel);
+                    note_stack_below.top(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_LOWEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.lowest(note, channel);
+                    note_stack_above.lowest(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_HIGHEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.highest(note, channel);
+                    note_stack_above.highest(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_OLDEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.oldest(note, channel);
+                    note_stack_above.oldest(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_NEWEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.top(note, channel);
+                    note_stack_above.top(note, target_channels[target_channels_count++]);
                 }
                 break;
 
             case Target::TRG_GLOBAL:
             default:
-                channel = manager_channel;
+                target_channels[target_channels_count++] = manager_channel;
                 break;
         }
 
-        if (channel != Midi::INVALID_CHANNEL) {
-            push_controller_event(
-                time_offset, channel, out_controller_id, rule.distort(value)
-            );
+        if (target_channels_count != 0) {
+            double const out_value = rule.distort(value);
+
+            for (size_t c = 0; c != target_channels_count; ++c) {
+                push_controller_event(
+                    time_offset, target_channels[c], out_controller_id, out_value
+                );
+            }
         }
     }
 

@@ -312,18 +312,20 @@ class Proxy : public Midi::EventHandler
 
         enum Target {
             TRG_GLOBAL = 0,
-            TRG_LOWEST = 1,
-            TRG_HIGHEST = 2,
-            TRG_OLDEST = 3,
-            TRG_NEWEST = 4,
-            TRG_LOWEST_BELOW_ANCHOR = 5,
-            TRG_HIGHEST_BELOW_ANCHOR = 6,
-            TRG_OLDEST_BELOW_ANCHOR = 7,
-            TRG_NEWEST_BELOW_ANCHOR = 8,
-            TRG_LOWEST_ABOVE_ANCHOR = 9,
-            TRG_HIGHEST_ABOVE_ANCHOR = 10,
-            TRG_OLDEST_ABOVE_ANCHOR = 11,
-            TRG_NEWEST_ABOVE_ANCHOR = 12,
+            TRG_ALL_BELOW_ANCHOR = 1,
+            TRG_ALL_ABOVE_ANCHOR = 2,
+            TRG_LOWEST = 3,
+            TRG_HIGHEST = 4,
+            TRG_OLDEST = 5,
+            TRG_NEWEST = 6,
+            TRG_LOWEST_BELOW_ANCHOR = 7,
+            TRG_HIGHEST_BELOW_ANCHOR = 8,
+            TRG_OLDEST_BELOW_ANCHOR = 9,
+            TRG_NEWEST_BELOW_ANCHOR = 10,
+            TRG_LOWEST_ABOVE_ANCHOR = 11,
+            TRG_HIGHEST_ABOVE_ANCHOR = 12,
+            TRG_OLDEST_ABOVE_ANCHOR = 13,
+            TRG_NEWEST_ABOVE_ANCHOR = 14,
         };
 
         enum Reset {
@@ -705,6 +707,7 @@ class Proxy : public Midi::EventHandler
         void push_resets_for_new_note(
                 double const time_offset,
                 Midi::Channel const new_note_channel,
+                bool const is_above_anchor,
                 NoteStack::ChannelStats const& old_channel_stats,
                 NoteStack::ChannelStats const& old_channel_stats_below,
                 NoteStack::ChannelStats const& old_channel_stats_above

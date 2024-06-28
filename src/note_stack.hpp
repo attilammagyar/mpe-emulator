@@ -61,6 +61,8 @@ class NoteStack
                 Midi::Channel newest;
         };
 
+        typedef Midi::Channel Channels[Midi::CHANNELS];
+
         NoteStack() noexcept;
 
         void clear() noexcept;
@@ -119,7 +121,7 @@ class NoteStack
 
         void remove(Midi::Note const note) noexcept;
 
-        Midi::Word get_active_channels() const noexcept;
+        void get_active_channels(Channels& channels, size_t& count) const noexcept;
 
         void make_stats(ChannelStats& stats) const noexcept;
 

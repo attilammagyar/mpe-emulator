@@ -18,6 +18,10 @@
 
 #include "test.cpp"
 
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
+
 #include "note_stack.cpp"
 
 
@@ -624,14 +628,13 @@ TEST(can_make_statistics_about_channels, {
 
 
 TEST(can_collect_active_channels, {
-    constexpr int expected_channels = (
-        0
-        | (1 << 0)
-        | (1 << 5)
-        | (1 << 15)
-    );
+    constexpr Midi::Channel expected_channels[] = {0, 5, 15};
 
     NoteStack note_stack;
+    NoteStack::Channels active_channels;
+    size_t active_channels_count = 0;
+
+    std::fill_n(active_channels, Midi::CHANNELS, Midi::INVALID_CHANNEL);
 
     note_stack.push(48, 2, 33);
     note_stack.push(59, 5, 43);
@@ -640,5 +643,9 @@ TEST(can_collect_active_channels, {
     note_stack.push(60, 10, 33);
     note_stack.remove(60);
 
-    assert_eq(expected_channels, (int)note_stack.get_active_channels());
+    note_stack.get_active_channels(active_channels, active_channels_count);
+    std::sort(std::begin(active_channels), std::end(active_channels));
+
+    assert_eq(3, active_channels_count);
+    assert_eq(expected_channels, active_channels, active_channels_count);
 })

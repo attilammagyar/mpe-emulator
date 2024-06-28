@@ -462,6 +462,8 @@ size_t const Strings::EXCESS_NOTE_HANDLINGS_COUNT = 5;
 
 char const* const Strings::TARGETS[] = {
     [Proxy::Target::TRG_GLOBAL] = "Global",
+    [Proxy::Target::TRG_ALL_BELOW_ANCHOR] = "All BA",
+    [Proxy::Target::TRG_ALL_ABOVE_ANCHOR] = "All AA",
     [Proxy::Target::TRG_LOWEST] = "Low",
     [Proxy::Target::TRG_HIGHEST] = "High",
     [Proxy::Target::TRG_OLDEST] = "Old",
@@ -476,7 +478,7 @@ char const* const Strings::TARGETS[] = {
     [Proxy::Target::TRG_NEWEST_ABOVE_ANCHOR] = "New AA",
 };
 
-size_t const Strings::TARGETS_COUNT = 13;
+size_t const Strings::TARGETS_COUNT = 15;
 
 
 char const* const Strings::RESETS[] = {
