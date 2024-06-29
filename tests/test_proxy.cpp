@@ -727,7 +727,7 @@ TEST(when_reset_is_on_for_a_global_cc_event_then_its_initial_value_is_sent_on_re
 })
 
 
-TEST(when_reset_is_set_to_init_for_a_non_global_cc_event_then_its_initial_value_is_sent_before_note_on, {
+TEST(when_reset_is_set_to_init_value_for_a_non_global_cc_event_then_its_initial_value_is_sent_before_note_on, {
     Proxy proxy;
 
     proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
@@ -794,7 +794,7 @@ TEST(when_reset_is_set_to_init_for_a_non_global_cc_event_then_its_initial_value_
 })
 
 
-TEST(when_reset_is_set_to_last_for_a_non_global_cc_event_then_its_last_value_is_sent_before_note_on, {
+TEST(when_reset_is_set_to_last_value_for_a_non_global_cc_event_then_its_last_value_is_sent_before_note_on, {
     Proxy proxy;
 
     proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
@@ -1203,7 +1203,7 @@ TEST(when_cc_target_is_above_the_anchor_but_all_notes_are_below_it_then_cc_is_dr
 })
 
 
-TEST(when_reset_is_set_to_init_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
+TEST(when_reset_is_set_to_init_value_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -1244,7 +1244,7 @@ TEST(when_reset_is_set_to_init_and_cc_target_changes_then_cc_is_reset_for_previo
 })
 
 
-TEST(when_reset_is_set_to_last_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
+TEST(when_reset_is_set_to_last_value_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
