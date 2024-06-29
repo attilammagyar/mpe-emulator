@@ -770,7 +770,6 @@ class Proxy : public Midi::EventHandler
         Midi::Channel last_channel;
 
         bool is_suspended;
-        bool is_learning;
         bool is_dirty_;
         bool had_reset;
 };

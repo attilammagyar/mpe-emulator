@@ -209,7 +209,6 @@ Proxy::Proxy() noexcept
     messages(MESSAGE_QUEUE_SIZE),
     used_channels(0),
     is_suspended(false),
-    is_learning(false),
     is_dirty_(false),
     had_reset(false)
 {
@@ -779,6 +778,7 @@ void Proxy::process_controller_event(
 
         if (rule_ctl_id == ControllerId::MIDI_LEARN) {
             rule.in_cc.set_value(controller_id);
+            is_dirty_ = true;
         } else if (rule_ctl_id != controller_id) {
             continue;
         }

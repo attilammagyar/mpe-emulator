@@ -1318,6 +1318,8 @@ TEST(when_the_in_cc_of_a_rule_is_midi_learn_then_it_is_replaced_with_the_first_c
         (int)Proxy::ControllerId::CHANNEL_PRESSURE,
         (int)proxy.rules[1].in_cc.get_value()
     );
+
+    assert_true(proxy.is_dirty());
 })
 
 
