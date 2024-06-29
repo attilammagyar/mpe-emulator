@@ -486,15 +486,20 @@ void Proxy::push_resets_for_new_note(
         Target const target = (Target)rule.target.get_value();
         Reset const reset = (Reset)rule.reset.get_value();
 
-        if (reset == Reset::RST_OFF || target == Target::TRG_GLOBAL) {
+        if (
+                reset == Reset::RST_OFF
+                || target == Target::TRG_GLOBAL
+                || (target == Target::TRG_ALL_BELOW_ANCHOR && is_above_anchor)
+                || (target == Target::TRG_ALL_ABOVE_ANCHOR && !is_above_anchor)
+        ) {
             continue;
         }
 
         double const reset_value = rule.distort(
             (
                 reset == Reset::RST_LAST
-                || (target == Target::TRG_ALL_ABOVE_ANCHOR && is_above_anchor)
-                || (target == Target::TRG_ALL_BELOW_ANCHOR && !is_above_anchor)
+                || target == Target::TRG_ALL_ABOVE_ANCHOR
+                || target == Target::TRG_ALL_BELOW_ANCHOR
             )
                 ? rule.last_input_value
                 : rule.init_value.get_ratio()

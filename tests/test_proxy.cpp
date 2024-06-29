@@ -1646,3 +1646,57 @@ TEST(when_rule_target_is_all_above_anchor_then_cc_is_sent_to_all_notes_below_anc
         proxy
     );
 })
+
+
+TEST(when_reset_is_set_to_last_value_and_target_is_all_below_anchor_then_new_note_above_anchor_is_not_reset, {
+    Proxy proxy;
+
+    proxy.anchor.set_value(60);
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_ALL_BELOW_ANCHOR);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.begin_processing();
+
+    proxy.channel_pressure(0.0, 0, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 72, 127);
+
+    assert_out_events<1>(
+        {"t=0.000 cmd=NOTE_ON ch=1 d1=0x48 d2=0x7f (v=1.000)"}, proxy
+    );
+})
+
+
+TEST(when_reset_is_set_to_init_value_value_and_target_is_all_above_anchor_then_new_note_below_anchor_is_not_reset, {
+    Proxy proxy;
+
+    proxy.anchor.set_value(60);
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_ALL_ABOVE_ANCHOR);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.begin_processing();
+
+    proxy.channel_pressure(0.0, 0, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 48, 127);
+
+    assert_out_events<1>(
+        {"t=0.000 cmd=NOTE_ON ch=1 d1=0x30 d2=0x7f (v=1.000)"}, proxy
+    );
+})
