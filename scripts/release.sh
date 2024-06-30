@@ -104,7 +104,6 @@ main()
         LICENSE.txt \
         make \
         Makefile \
-        pm-fm-equivalence.md \
         README.md \
         README.txt \
         scripts \
@@ -112,11 +111,6 @@ main()
         tests \
         NEWS.txt \
         "$DIST_DIR_BASE/$source_dir/"
-
-    cp --verbose --recursive \
-        doc/pm-fm-equivalence.pdf \
-        doc/pm-fm-equivalence.tex \
-        "$DIST_DIR_BASE/$source_dir/doc/"
 
     find "$DIST_DIR_BASE/$source_dir/" -name ".*.swp" -delete
 
