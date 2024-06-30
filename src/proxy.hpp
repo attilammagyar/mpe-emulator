@@ -391,6 +391,12 @@ class Proxy : public Midi::EventHandler
 
                 double distort(double const value) const noexcept;
 
+                bool needs_reset_for_note_event(
+                    bool const is_above_anchor
+                ) const noexcept;
+
+                double get_reset_value() const noexcept;
+
                 Param in_cc;
                 Param out_cc;
                 Param init_value;
@@ -713,14 +719,25 @@ class Proxy : public Midi::EventHandler
                 NoteStack::ChannelStats const& old_channel_stats_above
         ) noexcept;
 
-        void reset_outdated_targets_if_changed_for_new_note(
+        void push_resets_for_note_off(
+            double const time_offset,
+            bool const was_above_anchor,
+            NoteStack::ChannelStats const& old_channel_stats,
+            NoteStack::ChannelStats const& old_channel_stats_below,
+            NoteStack::ChannelStats const& old_channel_stats_above
+        ) noexcept;
+
+        void reset_outdated_targets_if_changed(
             Rule const& rule,
             Target const target,
             double const time_offset,
             Midi::Channel const new_note_channel,
-            NoteStack::ChannelStats const& old_channel_stats,
-            NoteStack::ChannelStats const& old_channel_stats_below,
-            NoteStack::ChannelStats const& old_channel_stats_above,
+            NoteStack::ChannelStats const& a_channel_stats,
+            NoteStack::ChannelStats const& a_channel_stats_below,
+            NoteStack::ChannelStats const& a_channel_stats_above,
+            NoteStack::ChannelStats const& b_channel_stats,
+            NoteStack::ChannelStats const& b_channel_stats_below,
+            NoteStack::ChannelStats const& b_channel_stats_above,
             double const reset_value,
             ControllerId const out_cc
         ) noexcept;

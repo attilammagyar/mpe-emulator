@@ -756,11 +756,17 @@ TEST(when_reset_is_set_to_init_value_for_a_non_global_cc_event_then_its_initial_
 
     proxy.begin_processing();
 
+    proxy.pitch_wheel_change(0.0, 0, 16383);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::MODULATION_WHEEL, 127);
+    proxy.control_change(0.0, 0, Proxy::ControllerId::VOLUME, 127);
+
+    proxy.begin_processing();
+
     proxy.note_on(1.0, 1, 60, 96);
     proxy.note_on(2.0, 2, 72, 111);
     proxy.note_on(3.0, 2, 84, 127);
 
-    assert_out_events<26>(
+    assert_out_events<27>(
         {
             "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
             "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200) pre-NOTE_ON setup",
@@ -779,6 +785,7 @@ TEST(when_reset_is_set_to_init_value_for_a_non_global_cc_event_then_its_initial_
             "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x19 d2=0x00 (v=0.200)",
             "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x40 (v=0.500)",
             "t=3.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x40 (v=0.500)",
             "t=3.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x00 d2=0x40 (v=0.500)",
             "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
             "t=3.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x19 d2=0x00 (v=0.200)",
@@ -833,7 +840,7 @@ TEST(when_reset_is_set_to_last_value_for_a_non_global_cc_event_then_its_last_val
     proxy.note_on(2.0, 2, 72, 111);
     proxy.note_on(3.0, 2, 84, 127);
 
-    assert_out_events<26>(
+    assert_out_events<27>(
         {
             "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
             "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
@@ -852,6 +859,7 @@ TEST(when_reset_is_set_to_last_value_for_a_non_global_cc_event_then_its_last_val
             "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000)",
             "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000)",
             "t=3.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000)",
             "t=3.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000)",
             "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
             "t=3.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000)",
@@ -1700,5 +1708,36 @@ TEST(when_reset_is_set_to_init_value_value_and_target_is_all_above_anchor_then_n
 
     assert_out_events<1>(
         {"t=0.000 cmd=NOTE_ON ch=1 d1=0x30 d2=0x7f (v=1.000)"}, proxy
+    );
+})
+
+
+TEST(when_note_off_affects_rule_targets_then_affected_notes_are_reset, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_OLDEST);
+    proxy.rules[1].init_value.set_ratio(0.0);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 48, 127);     /* channel=1 */
+    proxy.note_on(0.0, 0, 60, 127);     /* channel=2 */
+    proxy.channel_pressure(1.0, 0, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_off(0.0, 0, 48, 64);
+
+    assert_out_events<2>(
+        {
+            "t=0.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
+            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+        },
+        proxy
     );
 })

@@ -180,6 +180,39 @@ double Proxy::Rule::distort(double const value) const noexcept
 }
 
 
+bool Proxy::Rule::needs_reset_for_note_event(
+        bool const is_above_anchor
+) const noexcept {
+    if ((Proxy::Reset)reset.get_value() == Proxy::Reset::RST_OFF) {
+        return false;
+    }
+
+    Proxy::Target const target = (Proxy::Target)this->target.get_value();
+
+    return (
+        target != Proxy::Target::TRG_GLOBAL
+        && (target != Proxy::Target::TRG_ALL_BELOW_ANCHOR || !is_above_anchor)
+        && (target != Proxy::Target::TRG_ALL_ABOVE_ANCHOR || is_above_anchor)
+    );
+}
+
+
+double Proxy::Rule::get_reset_value() const noexcept
+{
+    Proxy::Target const target = (Proxy::Target)this->target.get_value();
+
+    return distort(
+        (
+            (Proxy::Reset)reset.get_value() == Proxy::Reset::RST_LAST
+            || target == Proxy::Target::TRG_ALL_ABOVE_ANCHOR
+            || target == Proxy::Target::TRG_ALL_BELOW_ANCHOR
+        )
+            ? last_input_value
+            : init_value.get_ratio()
+    );
+}
+
+
 Proxy::Proxy() noexcept
     : send_mcm("MCM", Toggle::OFF, Toggle::ON, Toggle::OFF),
     zone_type(
@@ -417,21 +450,21 @@ void Proxy::push_note_on(
         Midi::Note const note,
         Midi::Byte velocity
 ) noexcept {
-    NoteStack::ChannelStats old_channel_stats(this->channel_stats);
-    NoteStack::ChannelStats old_channel_stats_below(this->channel_stats_below);
-    NoteStack::ChannelStats old_channel_stats_above(this->channel_stats_above);
+    NoteStack::ChannelStats old_channel_stats(channel_stats);
+    NoteStack::ChannelStats old_channel_stats_below(channel_stats_below);
+    NoteStack::ChannelStats old_channel_stats_above(channel_stats_above);
 
     note_stack.push(note, channel, velocity);
-    note_stack.make_stats(this->channel_stats);
+    note_stack.make_stats(channel_stats);
 
     bool const is_above_anchor = note >= (Midi::Note)anchor.get_value();
 
     if (is_above_anchor) {
         note_stack_above.push(note, channel, velocity);
-        note_stack_above.make_stats(this->channel_stats_above);
+        note_stack_above.make_stats(channel_stats_above);
     } else {
         note_stack_below.push(note, channel, velocity);
-        note_stack_below.make_stats(this->channel_stats_below);
+        note_stack_below.make_stats(channel_stats_below);
     }
 
     push_resets_for_new_note<true>(
@@ -482,38 +515,26 @@ void Proxy::push_resets_for_new_note(
 ) noexcept {
     for (size_t i = 0; i != RULES; ++i) {
         Rule const& rule = rules[i];
-        Target const target = (Target)rule.target.get_value();
-        Reset const reset = (Reset)rule.reset.get_value();
 
-        if (
-                reset == Reset::RST_OFF
-                || target == Target::TRG_GLOBAL
-                || (target == Target::TRG_ALL_BELOW_ANCHOR && is_above_anchor)
-                || (target == Target::TRG_ALL_ABOVE_ANCHOR && !is_above_anchor)
-        ) {
+        if (!rule.needs_reset_for_note_event(is_above_anchor)) {
             continue;
         }
 
-        double const reset_value = rule.distort(
-            (
-                reset == Reset::RST_LAST
-                || target == Target::TRG_ALL_ABOVE_ANCHOR
-                || target == Target::TRG_ALL_BELOW_ANCHOR
-            )
-                ? rule.last_input_value
-                : rule.init_value.get_ratio()
-        );
+        double const reset_value = rule.get_reset_value();
         ControllerId const out_cc = (ControllerId)rule.out_cc.get_value();
 
         if constexpr (is_pre_note_on_setup) {
-            reset_outdated_targets_if_changed_for_new_note(
+            reset_outdated_targets_if_changed(
                 rule,
-                target,
+                (Target)rule.target.get_value(),
                 time_offset,
                 new_note_channel,
                 old_channel_stats,
                 old_channel_stats_below,
                 old_channel_stats_above,
+                channel_stats,
+                channel_stats_below,
+                channel_stats_above,
                 reset_value,
                 out_cc
             );
@@ -530,14 +551,17 @@ void Proxy::push_resets_for_new_note(
 }
 
 
-void Proxy::reset_outdated_targets_if_changed_for_new_note(
+void Proxy::reset_outdated_targets_if_changed(
         Rule const& rule,
         Target const target,
         double const time_offset,
         Midi::Channel const new_note_channel,
-        NoteStack::ChannelStats const& old_channel_stats,
-        NoteStack::ChannelStats const& old_channel_stats_below,
-        NoteStack::ChannelStats const& old_channel_stats_above,
+        NoteStack::ChannelStats const& a_channel_stats,
+        NoteStack::ChannelStats const& a_channel_stats_below,
+        NoteStack::ChannelStats const& a_channel_stats_above,
+        NoteStack::ChannelStats const& b_channel_stats,
+        NoteStack::ChannelStats const& b_channel_stats_below,
+        NoteStack::ChannelStats const& b_channel_stats_above,
         double const reset_value,
         ControllerId const out_cc
 ) noexcept {
@@ -545,74 +569,94 @@ void Proxy::reset_outdated_targets_if_changed_for_new_note(
 
     switch (target) {
         case Target::TRG_LOWEST:
-            if (old_channel_stats.lowest != this->channel_stats.lowest) {
-                channel = old_channel_stats.lowest;
+            if (a_channel_stats.lowest != b_channel_stats.lowest) {
+                channel = a_channel_stats.lowest;
             }
 
             break;
 
         case Target::TRG_HIGHEST:
-            if (old_channel_stats.highest != this->channel_stats.highest) {
-                channel = old_channel_stats.highest;
+            if (a_channel_stats.highest != b_channel_stats.highest) {
+                channel = a_channel_stats.highest;
+            }
+
+            break;
+
+        case Target::TRG_OLDEST:
+            if (a_channel_stats.oldest != b_channel_stats.oldest) {
+                channel = a_channel_stats.oldest;
             }
 
             break;
 
         case Target::TRG_NEWEST:
-            if (old_channel_stats.newest != this->channel_stats.newest) {
-                channel = old_channel_stats.newest;
+            if (a_channel_stats.newest != b_channel_stats.newest) {
+                channel = a_channel_stats.newest;
             }
 
             break;
 
         case Target::TRG_LOWEST_BELOW_ANCHOR:
-            if (old_channel_stats_below.lowest != this->channel_stats_below.lowest) {
-                channel = old_channel_stats_below.lowest;
+            if (a_channel_stats_below.lowest != b_channel_stats_below.lowest) {
+                channel = a_channel_stats_below.lowest;
             }
 
             break;
 
         case Target::TRG_HIGHEST_BELOW_ANCHOR:
-            if (old_channel_stats_below.highest != this->channel_stats_below.highest) {
-                channel = old_channel_stats_below.highest;
+            if (a_channel_stats_below.highest != b_channel_stats_below.highest) {
+                channel = a_channel_stats_below.highest;
+            }
+
+            break;
+
+        case Target::TRG_OLDEST_BELOW_ANCHOR:
+            if (a_channel_stats_below.oldest != b_channel_stats_below.oldest) {
+                channel = a_channel_stats_below.oldest;
             }
 
             break;
 
         case Target::TRG_NEWEST_BELOW_ANCHOR:
-            if (old_channel_stats_below.newest != this->channel_stats_below.newest) {
-                channel = old_channel_stats_below.newest;
+            if (a_channel_stats_below.newest != b_channel_stats_below.newest) {
+                channel = a_channel_stats_below.newest;
             }
 
             break;
 
         case Target::TRG_LOWEST_ABOVE_ANCHOR:
-            if (old_channel_stats_above.lowest != this->channel_stats_above.lowest) {
-                channel = old_channel_stats_above.lowest;
+            if (a_channel_stats_above.lowest != b_channel_stats_above.lowest) {
+                channel = a_channel_stats_above.lowest;
             }
 
             break;
 
         case Target::TRG_HIGHEST_ABOVE_ANCHOR:
-            if (old_channel_stats_above.highest != this->channel_stats_above.highest) {
-                channel = old_channel_stats_above.highest;
+            if (a_channel_stats_above.highest != b_channel_stats_above.highest) {
+                channel = a_channel_stats_above.highest;
+            }
+
+            break;
+
+        case Target::TRG_OLDEST_ABOVE_ANCHOR:
+            if (a_channel_stats_above.oldest != b_channel_stats_above.oldest) {
+                channel = a_channel_stats_above.oldest;
             }
 
             break;
 
         case Target::TRG_NEWEST_ABOVE_ANCHOR:
-            if (old_channel_stats_above.newest != this->channel_stats_above.newest) {
-                channel = old_channel_stats_above.newest;
+            if (a_channel_stats_above.newest != b_channel_stats_above.newest) {
+                channel = a_channel_stats_above.newest;
             }
 
             break;
 
         default:
             /*
-            A new note cannot possibly change the oldest note in either stack,
-            and global, all-below-anchor, and all-above-anchor targets are not
-            to be reset for changes in polyphonic channels, so there's nothing
-            to do here.
+            Global, all-below-anchor, and all-above-anchor targets are not to
+            be reset for changes in polyphonic channels, so there's nothing to
+            do here.
             */
             return;
     }
@@ -699,11 +743,11 @@ void Proxy::push_controller_event(
 
 
 void Proxy::push_note_off(
-    double const time_offset,
-    Midi::Channel const channel,
-    Midi::Note const note,
-    Midi::Byte const velocity,
-    Midi::Byte const note_on_velocity
+        double const time_offset,
+        Midi::Channel const channel,
+        Midi::Note const note,
+        Midi::Byte const velocity,
+        Midi::Byte const note_on_velocity
 ) noexcept {
     Midi::Byte const note_off_velocity = (
         (Toggle)override_release_velocity.get_value() == Toggle::ON
@@ -722,9 +766,62 @@ void Proxy::push_note_off(
         )
     );
 
+    bool const was_above_anchor = note >= (Midi::Note)anchor.get_value();
+
+    NoteStack::ChannelStats old_channel_stats(channel_stats);
+    NoteStack::ChannelStats old_channel_stats_below(channel_stats_below);
+    NoteStack::ChannelStats old_channel_stats_above(channel_stats_above);
+
     note_stack.remove(note);
     note_stack_above.remove(note);
     note_stack_below.remove(note);
+
+    note_stack.make_stats(channel_stats);
+    note_stack_above.make_stats(channel_stats_above);
+    note_stack_below.make_stats(channel_stats_below);
+
+    push_resets_for_note_off(
+        time_offset,
+        was_above_anchor,
+        old_channel_stats,
+        old_channel_stats_below,
+        old_channel_stats_above
+    );
+}
+
+
+void Proxy::push_resets_for_note_off(
+        double const time_offset,
+        bool const was_above_anchor,
+        NoteStack::ChannelStats const& old_channel_stats,
+        NoteStack::ChannelStats const& old_channel_stats_below,
+        NoteStack::ChannelStats const& old_channel_stats_above
+) noexcept {
+    for (size_t i = 0; i != RULES; ++i) {
+        Rule const& rule = rules[i];
+
+        if (!rule.needs_reset_for_note_event(was_above_anchor)) {
+            continue;
+        }
+
+        double const reset_value = rule.get_reset_value();
+        ControllerId const out_cc = (ControllerId)rule.out_cc.get_value();
+
+        reset_outdated_targets_if_changed(
+            rule,
+            (Target)rule.target.get_value(),
+            time_offset,
+            Midi::INVALID_CHANNEL,
+            channel_stats,
+            channel_stats_below,
+            channel_stats_above,
+            old_channel_stats,
+            old_channel_stats_below,
+            old_channel_stats_above,
+            reset_value,
+            out_cc
+        );
+    }
 }
 
 
