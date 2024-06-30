@@ -1,2 +1,13 @@
-v0.0.1 (2024-??-??)
- * First release
+v0.0.1 (2024-07-01)
+ * Retroactively add MPE functionality to non-MPE-capable MIDI input devices.
+ * Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and
+   vice-versa.
+ * Invert MIDI expression and controller data, and apply various other
+   distortions.
+ * Use the trigger velocity of notes as release velocity for synths that
+   utilize it.
+ * Split the keyboard and route polyphonic expressions to the two halves with
+   different rules.
+ * Route various expressions and controllers to the lowest, highest, oldest, or
+   newest note globally, or across the split halves of the keyboard.
+ * MIDI Learn.
