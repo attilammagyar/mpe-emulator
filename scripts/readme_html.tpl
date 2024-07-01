@@ -3,7 +3,7 @@
 <head>
   <title>MPE Emulator</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="description" content="TODO" />
+  <meta name="description" content="A MIDI proxy plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules." />
 
 <style>
 html, body {
