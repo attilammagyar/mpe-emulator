@@ -59,7 +59,7 @@ get_os()
     local file_name="$1"
 
     printf "%s\n" "$file_name" \
-        | cut -d"-" -f3 \
+        | cut -d"-" -f4 \
         | uppercase_first
 }
 
@@ -94,7 +94,7 @@ get_plugin_type()
     local file_name="$1"
 
     printf "%s\n" "$file_name" \
-        | cut -d"-" -f6 \
+        | cut -d"-" -f7 \
         | cut -d"." -f1 \
         | sed "s/fst/FST (VST 2.4)/ ; s/vst3_single_file/VST 3 Single File/"
 }
@@ -120,7 +120,7 @@ get_version()
     local file_name="$1"
 
     printf "v%s\n" "$file_name" \
-        | cut -d "-" -f 2 \
+        | cut -d "-" -f 3 \
         | sed "s/_/./g"
 }
 
