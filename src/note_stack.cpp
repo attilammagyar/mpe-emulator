@@ -252,12 +252,20 @@ void NoteStack::update_extremes(Midi::Byte const changed_item) noexcept
         return;
     }
 
+    bool can_skip = true;
+
     if (changed_item == lowest_) {
         lowest_ = INVALID_ITEM;
+        can_skip = false;
     }
 
     if (changed_item == highest_) {
         highest_ = INVALID_ITEM;
+        can_skip = false;
+    }
+
+    if (can_skip) {
+        return;
     }
 
     Midi::Byte item = head;
