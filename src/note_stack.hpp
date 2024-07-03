@@ -137,7 +137,7 @@ class NoteStack
         template<bool should_update_extremes>
         void remove(Midi::Byte const item) noexcept;
 
-        void update_extremes(Midi::Byte const changed_item) noexcept;
+        void update_extremes_after_remove(Midi::Byte const changed_item) noexcept;
 
         bool is_already_pushed(Midi::Note const note) const noexcept;
 

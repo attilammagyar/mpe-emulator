@@ -239,11 +239,11 @@ void NoteStack::pop(
     channel = channels[item];
     note = item;
 
-    update_extremes(item);
+    update_extremes_after_remove(item);
 }
 
 
-void NoteStack::update_extremes(Midi::Byte const changed_item) noexcept
+void NoteStack::update_extremes_after_remove(Midi::Byte const changed_item) noexcept
 {
     if (is_empty()) {
         lowest_ = INVALID_ITEM;
@@ -320,7 +320,7 @@ void NoteStack::remove(Midi::Byte const item) noexcept
     }
 
     if constexpr (should_update_extremes) {
-        update_extremes(item);
+        update_extremes_after_remove(item);
     }
 }
 
