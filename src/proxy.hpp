@@ -27,6 +27,7 @@
 #include "common.hpp"
 #include "midi.hpp"
 #include "note_stack.hpp"
+#include "queue.hpp"
 #include "spscqueue.hpp"
 
 
@@ -658,6 +659,8 @@ class Proxy : public Midi::EventHandler
         static ParamIdHashTable param_id_hash_table;
         static std::string param_names_by_id[ParamId::PARAM_ID_COUNT];
 
+        static constexpr size_t MPE_MEMBER_CHANNELS_MAX = Midi::CHANNELS - 1;
+
         void register_param(ParamId const param_id, Param& param) noexcept;
 
         bool is_repeated_midi_controller_message(
@@ -673,6 +676,8 @@ class Proxy : public Midi::EventHandler
          *        controllers, pitch bend, channel pressure, etc.
          */
         void reset() noexcept;
+
+        void reset_available_channels() noexcept;
 
         void handle_set_param(
             ParamId const param_id,
@@ -769,6 +774,7 @@ class Proxy : public Midi::EventHandler
         OutEvents out_events_rw;
         MidiControllerMessage previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
         Param* params[ParamId::PARAM_ID_COUNT];
+        Queue<Midi::Channel, MPE_MEMBER_CHANNELS_MAX> available_channels;
         std::atomic<double> param_ratios_atomic[ParamId::PARAM_ID_COUNT];
         SPSCQueue<Message> messages;
         std::atomic<unsigned int> active_voices_count_atomic;
@@ -779,11 +785,10 @@ class Proxy : public Midi::EventHandler
         NoteStack::ChannelStats channel_stats;
         NoteStack::ChannelStats channel_stats_below;
         NoteStack::ChannelStats channel_stats_above;
-        unsigned int used_channels;
         Midi::Channel channel_count;
         Midi::Channel manager_channel;
         Midi::Channel channel_increment;
-        Midi::Channel next_channel;
+        Midi::Channel first_channel;
         Midi::Channel last_channel;
 
         bool is_suspended;

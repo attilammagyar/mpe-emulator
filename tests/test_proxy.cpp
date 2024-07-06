@@ -1741,3 +1741,45 @@ TEST(when_note_off_affects_rule_targets_then_affected_notes_are_reset, {
         proxy
     );
 })
+
+
+TEST(oldest_released_channel_is_reused_first, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.send_mcm.set_value(Proxy::Toggle::OFF);
+    proxy.zone_type.set_value(Proxy::ZoneType::ZT_LOWER);
+    proxy.channels.set_value(3);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 0, 48, 127);     /* channel=1 */
+    proxy.note_on(1.0, 0, 60, 127);     /* channel=2 */
+    proxy.note_on(2.0, 0, 72, 127);     /* channel=3 */
+
+    proxy.note_off(3.0, 0, 60, 64);
+    proxy.note_off(4.0, 0, 48, 64);
+    proxy.note_off(5.0, 0, 72, 64);
+
+    proxy.note_on(6.0, 0, 50, 127);
+    proxy.note_on(7.0, 0, 62, 127);
+    proxy.note_on(8.0, 0, 74, 127);
+
+    assert_out_events<9>(
+        {
+            "t=0.000 cmd=NOTE_ON ch=1 d1=0x30 d2=0x7f (v=1.000)",
+            "t=1.000 cmd=NOTE_ON ch=2 d1=0x3c d2=0x7f (v=1.000)",
+            "t=2.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
+
+            "t=3.000 cmd=NOTE_OFF ch=2 d1=0x3c d2=0x40 (v=0.504)",
+            "t=4.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
+            "t=5.000 cmd=NOTE_OFF ch=3 d1=0x48 d2=0x40 (v=0.504)",
+
+            "t=6.000 cmd=NOTE_ON ch=2 d1=0x32 d2=0x7f (v=1.000)",
+            "t=7.000 cmd=NOTE_ON ch=1 d1=0x3e d2=0x7f (v=1.000)",
+            "t=8.000 cmd=NOTE_ON ch=3 d1=0x4a d2=0x7f (v=1.000)",
+        },
+        proxy
+    );
+})

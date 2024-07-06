@@ -174,11 +174,13 @@ VSTXMLGEN_OBJS = \
 PROXY_COMPONENTS = \
 	proxy \
 	note_stack \
+	queue \
 	spscqueue
 
 TESTS_PROXY = \
 	test_math \
 	test_note_stack \
+	test_queue \
 	test_spscqueue \
 	test_proxy
 
@@ -571,6 +573,15 @@ $(DEV_DIR)/test_proxy$(DEV_EXE): \
 		$(TEST_LIBS) \
 		$(PROXY_HEADERS) \
 		$(PROXY_SOURCES) \
+		| $(DEV_DIR) show_versions
+	$(COMPILE_DEV) -o $@ $<
+	$(RUN_WITH_VALGRIND) $@
+
+$(DEV_DIR)/test_queue$(DEV_EXE): \
+		tests/test_queue.cpp \
+		src/queue.hpp src/queue.cpp \
+		src/common.hpp \
+		$(TEST_LIBS) \
 		| $(DEV_DIR) show_versions
 	$(COMPILE_DEV) -o $@ $<
 	$(RUN_WITH_VALGRIND) $@

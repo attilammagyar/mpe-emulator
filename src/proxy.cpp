@@ -30,6 +30,7 @@
 
 #include "math.cpp"
 #include "note_stack.cpp"
+#include "queue.cpp"
 #include "spscqueue.cpp"
 
 
@@ -240,7 +241,6 @@ Proxy::Proxy() noexcept
     },
     out_events(out_events_rw),
     messages(MESSAGE_QUEUE_SIZE),
-    used_channels(0),
     is_suspended(false),
     is_dirty_(false),
     had_reset(false)
@@ -275,8 +275,10 @@ Proxy::Proxy() noexcept
     channel_count = channels.get_value();
     manager_channel = ztd.manager_channel;
     channel_increment = ztd.channel_increment;
-    next_channel = manager_channel + channel_increment;
+    first_channel = manager_channel + channel_increment;
     last_channel = manager_channel + channel_increment * channel_count;
+
+    reset_available_channels();
 
     active_voices_count_atomic.store(0);
     channel_count_atomic.store(channel_count);
@@ -296,6 +298,19 @@ void Proxy::register_param(ParamId const param_id, Param& param) noexcept
     }
 
     params[(size_t)param_id] = &param;
+}
+
+
+void Proxy::reset_available_channels() noexcept
+{
+    Midi::Channel channel = first_channel;
+
+    available_channels.clear();
+
+    for (Midi::Channel i = 0; i != channel_count; ++i) {
+        available_channels.push(channel);
+        channel += channel_increment;
+    }
 }
 
 
@@ -386,29 +401,7 @@ void Proxy::note_on(
         return;
     }
 
-    unsigned int channel_flag = 0;
-    Midi::Channel allocated_channel = 0;
-    bool found_free_channel = false;
-
-    for (Midi::Channel i = 0; i != Midi::CHANNEL_MAX && !found_free_channel; ++i) {
-        channel_flag = 1 << next_channel;
-
-        if ((used_channels & channel_flag) == 0) {
-            allocated_channel = next_channel;
-            found_free_channel = true;
-        }
-
-        if (next_channel == last_channel) {
-            next_channel = manager_channel;
-        }
-
-        next_channel += channel_increment;
-    }
-
-    if (found_free_channel) {
-        used_channels |= channel_flag;
-        push_note_on(time_offset, allocated_channel, note, velocity);
-    } else {
+    if (MPE_EMULATOR_UNLIKELY(available_channels.is_empty())) {
         if (MPE_EMULATOR_UNLIKELY(note_stack.is_empty())) {
             MPE_EMULATOR_ASSERT_NOT_REACHED();
 
@@ -440,6 +433,9 @@ void Proxy::note_on(
             time_offset, steal_channel, steal_note, 64, steal_velocity
         );
         push_note_on(time_offset, steal_channel, note, velocity);
+    } else {
+        Midi::Channel allocated_channel = available_channels.pop();
+        push_note_on(time_offset, allocated_channel, note, velocity);
     }
 }
 
@@ -1032,13 +1028,11 @@ void Proxy::note_off(
         return;
     }
 
-    unsigned int const mask = ~(1 << assigned_channel);
-
-    used_channels &= mask;
-
     push_note_off(
         time_offset, assigned_channel, note, velocity, note_on_velocity
     );
+
+    available_channels.push(assigned_channel);
 }
 
 
@@ -1266,6 +1260,7 @@ void Proxy::reset() noexcept
         stop_all_notes();
         push_mcms();
         reset_rules_and_global_controllers();
+        reset_available_channels();
         had_reset = true;
     }
 }
@@ -1291,8 +1286,10 @@ bool Proxy::update_mpe_config() noexcept
     channel_count = new_channel_count;
     manager_channel = new_manager_channel;
     channel_increment = ztd.channel_increment;
-    next_channel = manager_channel + channel_increment;
+    first_channel = manager_channel + channel_increment;
     last_channel = manager_channel + channel_increment * channel_count;
+
+    reset_available_channels();
 
     push_mcms();
     reset_rules_and_global_controllers();
@@ -1326,8 +1323,6 @@ void Proxy::stop_all_notes() noexcept
     note_stack.clear();
     note_stack_below.clear();
     note_stack_above.clear();
-
-    used_channels = 0;
 }
 
 
