@@ -1,0 +1,1698 @@
+/*
+ * This file is part of MPE Emulator.
+ * Copyright (C) 2024  Attila M. Magyar
+ *
+ * MPE Emulator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MPE Emulator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+desc:MPE Emulator Lite
+tags:MPE emulator MIDI polyphonic aftertouch expression pitch bend CC
+
+in_pin:none
+out_pin:none
+
+<?
+    TPL_RESETS = "Off,Last Value,Initial Value";
+
+    TPL_TARGETS = "Global,All Below Anchor,All Above Anchor,Lowest,Highest,Oldest,Newest,Lowest Below Anchor,Highest Below Anchor,Oldest Below Anchor,Newest Below Anchor,Lowest Above Anchor,Highest Above Anchor,Oldest Above Anchor,Newest Above Anchor";
+
+    TPL_CTL_NAMES = "CC 0 (Bank Select),CC 1 (Modulation Wheel),CC 2 (Breath),CC 3,CC 4 (Foot Pedal),CC 5,CC 6 (Data Entry),CC 7 (Volume),CC 8,CC 9,CC 10 (Panning),CC 11 (Expression Pedal),CC 12,CC 13,CC 14,CC 15,CC 16,CC 17,CC 18,CC 19,CC 20,CC 21,CC 22,CC 23,CC 24,CC 25,CC 26,CC 27,CC 28,CC 29,CC 30,CC 31,CC 32 (Bank Select LSB),CC 33 (Modulation Wheel LSB),CC 34 (Breath LSB),CC 35 (CC 3 LSB),CC 36 (Foot Pedal LSB),CC 37 (CC 5 LSB),CC 38 (Data Entry LSB),CC 39 (Volume LSB),CC 40 (CC 8 LSB),CC 41 (CC 9 LSB),CC 42 (Panning LSB),CC 43 (Expression Pedal LSB),CC 44 (CC 12 LSB),CC 45 (CC 13 LSB),CC 46 (CC 14 LSB),CC 47 (CC 15 LSB),CC 48 (CC 16 LSB),CC 49 (CC 17 LSB),CC 50 (CC 18 LSB),CC 51 (CC 19 LSB),CC 52 (CC 20 LSB),CC 53 (CC 21 LSB),CC 54 (CC 22 LSB),CC 55 (CC 23 LSB),CC 56 (CC 24 LSB),CC 57 (CC 25 LSB),CC 58 (CC 26 LSB),CC 59 (CC 27 LSB),CC 60 (CC 28 LSB),CC 61 (CC 29 LSB),CC 62 (CC 30 LSB),CC 63 (CC 31 LSB),CC 64 (Sustain Pedal),CC 65,CC 66,CC 67,CC 68,CC 69,CC 70,CC 71,CC 72,CC 73,CC 74,CC 75,CC 76,CC 77,CC 78,CC 79,CC 80,CC 81,CC 82,CC 83,CC 84,CC 85,CC 86,CC 87,CC 88,CC 89,CC 90,CC 91,CC 92,CC 93,CC 94,CC 95,CC 96,CC 97,CC 98,CC 99,CC 100,CC 101,CC 102,CC 103,CC 104,CC 105,CC 106,CC 107,CC 108,CC 109,CC 110,CC 111,CC 112,CC 113,CC 114,CC 115,CC 116,CC 117,CC 118,CC 119,Pitch Bend,Channel Pressure (Aftertouch),none";
+?>
+
+slider1:p_zone_type=0<0,1,1{Lower,Upper}>Zone Type
+slider2:p_channels=14<0,14,1{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}>Channels
+slider3:p_anchor=60<0,127,1,{C -1,C# / Db -1,D -1,D# / Eb -1,E -1,F -1,F# / Gb -1,G -1,G# / Ab -1,A -1,A# / Bb -1,B -1,C 0,C# / Db 0,D 0,D# / Eb 0,E 0,F 0,F# / Gb 0,G 0,G# / Ab 0,A 0,A# / Bb 0,B 0,C 1,C# / Db 1,D 1,D# / Eb 1,E 1,F 1,F# / Gb 1,G 1,G# / Ab 1,A 1,A# / Bb 1,B 1,C 2,C# / Db 2,D 2,D# / Eb 2,E 2,F 2,F# / Gb 2,G 2,G# / Ab 2,A 2,A# / Bb 2,B 2,C 3,C# / Db 3,D 3,D# / Eb 3,E 3,F 3,F# / Gb 3,G 3,G# / Ab 3,A 3,A# / Bb 3,B 3,C 4,C# / Db 4,D 4,D# / Eb 4,E 4,F 4,F# / Gb 4,G 4,G# / Ab 4,A 4,A# / Bb 4,B 4,C 5,C# / Db 5,D 5,D# / Eb 5,E 5,F 5,F# / Gb 5,G 5,G# / Ab 5,A 5,A# / Bb 5,B 5,C 6,C# / Db 6,D 6,D# / Eb 6,E 6,F 6,F# / Gb 6,G 6,G# / Ab 6,A 6,A# / Bb 6,B 6,C 7,C# / Db 7,D 7,D# / Eb 7,E 7,F 7,F# / Gb 7,G 7,G# / Ab 7,A 7,A# / Bb 7,B 7,C 8,C# / Db 8,D 8,D# / Eb 8,E 8,F 8,F# / Gb 8,G 8,G# / Ab 8,A 8,A# / Bb 8,B 8,C 9,C# / Db 9,D 9,D# / Eb 9,E 9,F 9,F# / Gb 9,G 9}>Anchor
+
+slider4:p_r1_init_value=50<0,100,0.01>Rule 1 Initial Value (%)
+slider5:p_r1_in_cc=120<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 1 Input
+slider6:p_r1_out_cc=120<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 1 Output
+slider7:p_r1_target=6<0,14,1{<? printf(TPL_TARGETS); ?>}>Rule 1 Target
+slider8:p_r1_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 1 Reset
+
+slider9:p_r2_init_value=0<0,100,0.01>Rule 2 Initial Value (%)
+slider10:p_r2_in_cc=121<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 2 Input
+slider11:p_r2_out_cc=121<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 2 Output
+slider12:p_r2_target=6<0,14,1{<? printf(TPL_TARGETS); ?>}>Rule 2 Target
+slider13:p_r2_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 2 Reset
+
+slider14:p_r3_init_value=50<0,100,0.01>Rule 3 Initial Value (%)
+slider15:p_r3_in_cc=74<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 3 Input
+slider16:p_r3_out_cc=74<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 3 Output
+slider17:p_r3_target=6<0,14,1{<? printf(TPL_TARGETS); ?>}>Rule 3 Target
+slider18:p_r3_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 3 Reset
+
+slider19:p_r4_init_value=0<0,100,0.01>Rule 4 Initial Value (%)
+slider20:p_r4_in_cc=122<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 4 Input
+slider21:p_r4_out_cc=122<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 4 Output
+slider22:p_r4_target=6<0,14,1{<? printf(TPL_TARGETS); ?>}>Rule 4 Target
+slider23:p_r4_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 4 Reset
+
+slider24:p_r5_init_value=0<0,100,0.01>Rule 5 Initial Value (%)
+slider25:p_r5_in_cc=122<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 5 Input
+slider26:p_r5_out_cc=122<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 5 Output
+slider27:p_r5_target=6<0,14,1{<? printf(TPL_TARGETS); ?>}>Rule 5 Target
+slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
+
+
+@init
+
+    /*
+    Memory layout:
+
+           0            debug log strings
+
+        1024            available_channels (16)
+
+        1040            note_stack next (128)
+        1168            note_stack previous (128)
+        1296            note_stack channels (128)
+
+        1424            note_stack_below next (128)
+        1552            note_stack_below previous (128)
+        1680            note_stack_below channels (128)
+
+        1808            note_stack_above next (128)
+        1936            note_stack_above previous (128)
+        2064            note_stack_above channels (128)
+
+        2192            rules
+            2192        rule 1 initial value
+            2193        rule 1 in_cc
+            2194        rule 1 out_cc
+            2195        rule 1 target
+            2196        rule 1 reset
+            2197        rule 1 last value
+
+            2198        rule 2 initial value
+            ...
+
+        2222            output MIDI event time offsets and data
+            2222        first event time offset
+            2223        first event data as 24 bit integer:
+                        ((STATUS & 0xff) << 16) | ((DATA_1 & 0xff) << 8) | (DATA_2 & 0xff)
+            2224        second event time offset
+            2225        second event data
+            ...
+    */
+
+    RULES_COUNT = 5;
+    RULE_SIZE = 6;
+
+    MIDI_CHANNELS = 16;
+    MIDI_NOTES = 128;
+
+    MPE_MEMBER_CHANNELS = MIDI_CHANNELS - 1;
+
+    INVALID = -1;
+
+    ZT_LOWER = 0;
+    ZT_UPPER = 1;
+
+    CTL_PITCH_BEND = 120;
+    CTL_CHANNEL_PRESSURE = 121;
+    CTL_NONE = 122;
+
+    RST_OFF = 0;
+    RST_LAST = 1;
+    RST_INIT = 2;
+
+    TRG_GLOBAL = 0;
+    TRG_ALL_BELOW_ANCHOR = 1;
+    TRG_ALL_ABOVE_ANCHOR = 2;
+    TRG_LOWEST = 3;
+    TRG_HIGHEST = 4;
+    TRG_OLDEST = 5;
+    TRG_NEWEST = 6;
+    TRG_LOWEST_BELOW_ANCHOR = 7;
+    TRG_HIGHEST_BELOW_ANCHOR = 8;
+    TRG_OLDEST_BELOW_ANCHOR = 9;
+    TRG_NEWEST_BELOW_ANCHOR = 10;
+    TRG_LOWEST_ABOVE_ANCHOR = 11;
+    TRG_HIGHEST_ABOVE_ANCHOR = 12;
+    TRG_OLDEST_ABOVE_ANCHOR = 13;
+    TRG_NEWEST_ABOVE_ANCHOR = 14;
+
+    zone_type = ZT_LOWER;
+    channel_count = MPE_MEMBER_CHANNELS;
+    manager_channel = 0;
+    first_channel = 1;
+    last_channel = 15;
+
+    anchor = 60;
+
+    stats_nso = INVALID;
+    stats_nsn = INVALID;
+    stats_nsl = INVALID;
+    stats_nsh = INVALID;
+
+    stats_nsbo = INVALID;
+    stats_nsbn = INVALID;
+    stats_nsbl = INVALID;
+    stats_nsbh = INVALID;
+
+    stats_nsao = INVALID;
+    stats_nsan = INVALID;
+    stats_nsal = INVALID;
+    stats_nsah = INVALID;
+
+    rules = 2192;
+
+    out_events_count = 0;
+    out_events = 2222;
+
+    /*
+    Other globals:
+
+        log                 pseudo-object responsible for debug messages
+        available_channels  FIFO queue of available channels
+        note_stack          LIFO stack of currently pressed keys
+        note_stack_below    LIFO stack of currently pressed keys below the anchor
+        note_stack_above    LIFO stack of currently pressed keys above the anchor
+    */
+
+
+  // #########################################################################
+  // ## DEBUG LOG
+  // #########################################################################
+
+    function log_init()
+        local(i)
+    (
+        this.start = 0;
+        this.lines = 50;
+        this.is_dirty = 0;
+
+        i = 0;
+
+        loop(this.lines,
+            strcpy(this.start + i, "");
+            i += 1;
+        );
+    );
+
+    function log_msg(msg)
+        local(i)
+    (
+        this.is_dirty = 1;
+        i = this.lines - 1;
+
+        loop(this.lines - 1,
+            strcpy(this.start + i, this.start + i - 1);
+            i -= 1;
+        );
+
+        strcpy(this.start, msg);
+    );
+
+    function log_str(msg, str)
+        local(s)
+    (
+        s = #;
+        sprintf(s, "%s: %s", msg, str);
+        this.log_msg(s);
+    );
+
+    function log_int(msg, num)
+        local(s)
+    (
+        s = #;
+        sprintf(s, "%s: %d (0x%08x)", msg, num, num);
+        this.log_msg(s);
+    );
+
+    function log_midi(msg, byte1, byte2, byte3)
+        local(s)
+    (
+        s = #;
+        sprintf(s, "%s: 0x%02x 0x%02x 0x%02x", msg, byte1, byte2, byte3);
+        this.log_msg(s);
+    );
+
+    function log_show()
+        local(i, buf)
+    (
+        (this.is_dirty == 1) ? (
+            this.is_dirty = 0;
+            buf = #;
+            strcpy(buf, "");
+            i = 0;
+
+            loop(this.lines,
+                sprintf(buf, "%s%03d: %s\n", buf, this.lines - i, this.start + i);
+                i += 1;
+            );
+
+            gfx_set(255, 255, 255);
+            gfx_x = 3;
+            gfx_y = 3;
+            gfx_drawstr(buf);
+        );
+    );
+
+    log.log_init();
+
+
+  // #########################################################################
+  // ## AVAILABLE_CHANNELS (FIFO queue)
+  // #########################################################################
+
+    function available_channels_clear()
+    (
+        this.next_push = 0;
+        this.next_pop = 0;
+    );
+
+    function available_channels_init(items)
+    (
+        this.available_channels_clear();
+        this.items = items;
+    );
+
+    function available_channels_is_empty()
+    (
+        this.next_push == this.next_pop;
+    );
+
+    function available_channels_advance(pointer)
+        local(capacity)
+    (
+        /* Use 1 extra item for distinguishing a full queue from an empty one. */
+        capacity = MPE_MEMBER_CHANNELS + 1;
+
+        pointer += 1;
+
+        (pointer >= capacity) ? pointer - capacity : pointer;
+    );
+
+    function available_channels_push(item)
+        local(old_next_push, new_next_push, items)
+    (
+        old_next_push = this.next_push;
+        new_next_push = available_channels_advance(old_next_push);
+        items = this.items;
+
+        (this.next_pop != new_next_push) ? (
+            items[old_next_push] = item;
+            this.next_push = new_next_push;
+        ) : INVALID;
+    );
+
+    function available_channels_pop(available_channels)
+        local(items, item)
+    (
+        items = this.items;
+        item = INVALID;
+
+        (!this.available_channels_is_empty())
+            ? (
+                item = items[this.next_pop];
+                this.next_pop = available_channels_advance(this.next_pop);
+            );
+
+        item;
+    );
+
+
+  // #########################################################################
+  // ## NOTE STACK (LIFO stack)
+  // #########################################################################
+
+    /*
+    Since we have a small, finite number of possible notes, and they are
+    unique, we can represent the LIFO container as a pair of arrays which
+    contain respectively the next and previous pointers of a finite sized
+    doubly linked list, and we can use the notes themselves as indices
+    within the arrays. This way we can both add, remove, and look up
+    notes at any position of the container in constant time.
+
+    In other words:
+
+        next[X] = Y if and only if Y is the next element after X
+        previous[Y] = X if and only if next[X] = Y
+    */
+
+    function note_stack_clear()
+        local(i)
+    (
+        this.head = INVALID;
+        this.oldest = INVALID;
+        this.lowest = INVALID;
+        this.highest = INVALID;
+
+        i = 0;
+
+        loop(MIDI_NOTES,
+            this.next[i] = INVALID;
+            this.previous[i] = INVALID;
+
+            this.channel[i] = INVALID;
+            i += 1;
+        );
+    );
+
+    function note_stack_init(ptr)
+    (
+        this.next = ptr;
+        this.previous = ptr + 128;
+
+        this.channel = ptr + 256;
+
+        this.note_stack_clear();
+    );
+
+    function note_stack_is_empty()
+    (
+        this.head == INVALID;
+    );
+
+    function note_stack_active_channels_mask()
+        local(item, i, mask)
+    (
+        mask = 0;
+        i = 0;
+        item = this.head;
+
+        while (item != INVALID && i != MIDI_NOTES) (
+            mask |= 1 << this.channel[item];
+            item = this.next[item];
+            i += 1;
+        );
+
+        mask;
+    );
+
+    function note_stack_remove(note)
+        local(next_item, previous_item)
+    (
+        next_item = this.next[note];
+        previous_item = this.previous[note];
+
+        (note == this.oldest)
+            ? (this.oldest = previous_item);
+
+        (next_item != INVALID)
+            ? (this.previous[next_item] = previous_item);
+
+        (note == this.head)
+            ? (this.head = next_item;)
+            : (
+                (previous_item != INVALID)
+                    ? (this.next[previous_item] = next_item);
+
+                this.next[note] = INVALID;
+                this.previous[note] = INVALID;
+            );
+    );
+
+    function note_stack_push(note, channel)
+    (
+        (this.oldest == INVALID)
+            ? (this.oldest = note);
+
+        (this.head == note || this.previous[note] != INVALID)
+            ? (this.note_stack_remove(note));
+
+        (this.head != INVALID)
+            ? (this.previous[this.head] = note);
+
+        this.next[note] = this.head;
+        this.head = note;
+
+        this.channel[note] = channel;
+
+        (this.lowest == INVALID || note < this.lowest)
+            ? (this.lowest = note);
+
+        (this.highest == INVALID || note > this.highest)
+            ? (this.highest = note);
+    );
+
+    function note_stack_find(note)
+    (
+        (this.head == note || this.previous[note] != INVALID)
+            ? (this.channel[note] << 8 | note)
+            : INVALID;
+    );
+
+    function note_stack_top()
+    (
+        (this.note_stack_is_empty())
+            ? INVALID
+            : (this.channel[this.head] << 8 | this.head);
+    );
+
+    function note_stack_oldest()
+    (
+        (this.note_stack_is_empty())
+            ? INVALID
+            : (this.channel[this.oldest] << 8 | this.oldest);
+    );
+
+    function note_stack_lowest()
+    (
+        (this.note_stack_is_empty())
+            ? INVALID
+            : (this.channel[this.lowest] << 8 | this.lowest);
+    );
+
+    function note_stack_highest()
+    (
+        (this.note_stack_is_empty())
+            ? INVALID
+            : (this.channel[this.highest] << 8 | this.highest);
+    );
+
+    function note_stack_update_extremes_after_remove(changed_note)
+        local(can_skip, item, i)
+    (
+        (this.note_stack_is_empty())
+            ? (
+                this.lowest = INVALID;
+                this.highest = INVALID;
+            )
+            : (
+                can_skip = 1;
+
+                (changed_note == this.lowest)
+                    ? (
+                        this.lowest = INVALID;
+                        can_skip = 0;
+                    );
+
+                (changed_note == this.highest)
+                    ? (
+                        this.highest = INVALID;
+                        can_skip = 0;
+                    );
+
+                (can_skip == 0)
+                    ? (
+                        i = 0;
+                        item = this.head;
+
+                        while (item != INVALID && i != MIDI_NOTES) (
+                            (this.lowest == INVALID || item < this.lowest)
+                                ? (this.lowest = item);
+
+                            (this.highest == INVALID || item > this.highest)
+                                ? (this.highest = item);
+
+                            item = this.next[item];
+                            i += 1;
+                        );
+                    );
+            );
+    );
+
+    function note_stack_pop()
+        local(result, note)
+    (
+        result = this.note_stack_top();
+        note = this.head;
+
+        this.head = this.next[note];
+
+        (this.head != INVALID)
+            ? (this.previous[this.head] = INVALID);
+
+        this.next[note] = INVALID;
+
+        this.note_stack_update_extremes_after_remove(note);
+
+        result;
+    );
+
+
+  // #########################################################################
+  // ## RULE
+  // #########################################################################
+
+    function rule_update_config_at_base_offset(
+            base_offset,
+            init_value,
+            in_cc,
+            out_cc,
+            target,
+            reset
+    ) (
+        rules[base_offset + 0] = init_value;
+        rules[base_offset + 1] = in_cc;
+        rules[base_offset + 2] = out_cc;
+        rules[base_offset + 3] = target;
+        rules[base_offset + 4] = reset;
+    );
+
+    function rule_update_config(rule_idx, init_value, in_cc, out_cc, target, reset)
+        local(base_offset)
+    (
+        base_offset = rule_idx * RULE_SIZE;
+        rule_update_config_at_base_offset(
+            base_offset, init_value, in_cc, out_cc, target, reset
+        );
+    );
+
+    function rule_set_last_input_value(rule_idx, norm_value)
+    (
+        rules[rule_idx * RULE_SIZE + 5] = norm_value;
+    );
+
+    function rule_init(rule_idx)
+        local(base_offset)
+    (
+        base_offset = rule_idx * RULE_SIZE;
+        rule_update_config_at_base_offset(
+            base_offset, 0.0, CTL_NONE, CTL_NONE, TRG_GLOBAL, RST_OFF
+        );
+        rule_set_last_input_value(rule_id, 0.0);
+    );
+
+    function rule_get_in_cc(rule_idx)
+    (
+        rules[rule_idx * RULE_SIZE + 1];
+    );
+
+    function rule_get_out_cc(rule_idx)
+    (
+        rules[rule_idx * RULE_SIZE + 2];
+    );
+
+    function rule_get_target(rule_idx)
+    (
+        rules[rule_idx * RULE_SIZE + 3];
+    );
+
+    function rule_needs_reset_for_note_event(rule_idx, is_above_anchor)
+        local(base_offset, target, reset)
+    (
+        base_offset = rule_idx * RULE_SIZE;
+        target = rules[base_offset + 3];
+        reset = rules[base_offset + 4];
+
+        (
+            reset != RST_OFF
+            && (
+                target != TRG_GLOBAL
+                && (target != TRG_ALL_BELOW_ANCHOR || !is_above_anchor)
+                && (target != TRG_ALL_ABOVE_ANCHOR || is_above_anchor)
+            )
+        );
+    );
+
+    function rule_get_reset_value(rule_idx)
+        local(base_offset, init_value, target, reset, last_input_value)
+    (
+        base_offset = rule_idx * RULE_SIZE;
+        init_value = rules[base_offset + 0];
+        target = rules[base_offset + 3];
+        reset = rules[base_offset + 4];
+        last_input_value = rules[base_offset + 5];
+
+        (
+            reset == RST_LAST
+            || target == TRG_ALL_ABOVE_ANCHOR
+            || target == TRG_ALL_BELOW_ANCHOR
+        )
+            ? last_input_value
+            : init_value;
+    );
+
+
+  // #########################################################################
+  // ## PROXY
+  // #########################################################################
+
+    function proxy_clear()
+    (
+        out_events_count = 0;
+    );
+
+    function proxy_push_out_event(time_offset, byte_1, byte_2, byte_3)
+        local(index)
+    (
+        index = out_events_count * 2;
+
+        out_events[index] = time_offset;
+        out_events[index + 1] = (byte_1 << 16) | (byte_2 << 8) | byte_3;
+
+        out_events_count += 1;
+    );
+
+    function proxy_norm_float_to_midi_int(norm_value, mask)
+    (
+        (norm_value * mask + 0.5) & mask;
+    );
+
+    function proxy_push_controller_event(
+            time_offset,
+            channel,
+            controller_id,
+            norm_value
+    )
+        local(int_value)
+    (
+        (controller_id == CTL_PITCH_BEND)
+            ? (
+                int_value = proxy_norm_float_to_midi_int(norm_value, 0x3fff);
+                proxy_push_out_event(
+                    time_offset,
+                    0xe0 | channel,
+                    int_value & 0x7f,
+                    int_value >> 7
+                );
+            )
+        : ((controller_id == CTL_CHANNEL_PRESSURE)
+            ? proxy_push_out_event(
+                time_offset,
+                0xd0 | channel,
+                proxy_norm_float_to_midi_int(norm_value, 0x7f),
+                0x00
+            )
+        : ((controller_id < CTL_PITCH_BEND)
+            ? proxy_push_out_event(
+                time_offset,
+                0xb0 | channel,
+                controller_id,
+                proxy_norm_float_to_midi_int(norm_value, 0x7f)
+            )
+        ));
+    );
+
+    function proxy_reset_outdated_targets_if_changed(
+        rule_idx,
+        time_offset,
+        new_note_channel,
+        a_nso, a_nsn, a_nsl, a_nsh,
+        a_nsbo, a_nsbn, a_nsbl, a_nsbh,
+        a_nsao, a_nsan, a_nsal, a_nsah,
+        b_nso, b_nsn, b_nsl, b_nsh,
+        b_nsbo, b_nsbn, b_nsbl, b_nsbh,
+        b_nsao, b_nsan, b_nsal, b_nsah,
+        reset_value,
+        out_cc
+    )
+        local(target, channel)
+    (
+        channel = INVALID;
+        target = rule_get_target(rule_idx);
+
+        (target == TRG_LOWEST)
+            ? ((a_nsl != b_nsl) ? (channel = a_nsl))
+        : ((target == TRG_HIGHEST)
+            ? ((a_nsh != b_nsh) ? (channel = a_nsh))
+        : ((target == TRG_OLDEST)
+            ? ((a_nso != b_nso) ? (channel = a_nso))
+        : ((target == TRG_NEWEST)
+            ? ((a_nsn != b_nsn) ? (channel = a_nsn))
+        : ((target == TRG_LOWEST_BELOW_ANCHOR)
+            ? ((a_nsbl != b_nsbl) ? (channel = a_nsbl))
+        : ((target == TRG_HIGHEST_BELOW_ANCHOR)
+            ? ((a_nsbh != b_nsbh) ? (channel = a_nsbh))
+        : ((target == TRG_OLDEST_BELOW_ANCHOR)
+            ? ((a_nsbo != b_nsbo) ? (channel = a_nsbo))
+        : ((target == TRG_NEWEST_BELOW_ANCHOR)
+            ? ((a_nsbn != b_nsbn) ? (channel = a_nsbn))
+        : ((target == TRG_LOWEST_ABOVE_ANCHOR)
+            ? ((a_nsal != b_nsal) ? (channel = a_nsal))
+        : ((target == TRG_HIGHEST_ABOVE_ANCHOR)
+            ? ((a_nsah != b_nsah) ? (channel = a_nsah))
+        : ((target == TRG_OLDEST_ABOVE_ANCHOR)
+            ? ((a_nsao != b_nsao) ? (channel = a_nsao))
+        : ((target == TRG_NEWEST_ABOVE_ANCHOR)
+            ? ((a_nsan != b_nsan) ? (channel = a_nsan))
+        )))))))))));
+        /*
+        Global, all-below-anchor, and all-above-anchor targets are not to
+        be reset for changes in polyphonic channels, so there's nothing to
+        do if none of the above values were matched.
+        */
+
+        (channel != INVALID)
+            ? (
+                channel = channel >> 8;
+                (channel != new_note_channel)
+                    ? proxy_push_controller_event(
+                        time_offset, channel, out_cc, reset_value
+                    );
+            );
+    );
+
+    function proxy_push_resets_for_note_off(
+            time_offset,
+            was_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+    )
+        local(rule_idx)
+    (
+        rule_idx = 0;
+
+        loop(RULES_COUNT,
+            (rule_needs_reset_for_note_event(rule_idx, was_above_anchor))
+                ? (
+                    proxy_reset_outdated_targets_if_changed(
+                        rule_idx,
+                        time_offset,
+                        INVALID,
+                        stats_nso, stats_nsn, stats_nsl, stats_nsh,
+                        stats_nsbo, stats_nsbn, stats_nsbl, stats_nsbh,
+                        stats_nsao, stats_nsan, stats_nsal, stats_nsah,
+                        old_nso, old_nsn, old_nsl, old_nsh,
+                        old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+                        old_nsao, old_nsan, old_nsal, old_nsah,
+                        rule_get_reset_value(rule_idx),
+                        rule_get_out_cc(rule_idx)
+                    );
+                );
+            rule_idx += 1;
+        );
+    );
+
+    function proxy_push_note_off(time_offset, channel, note, velocity)
+        local(
+            was_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+        )
+    (
+        proxy_push_out_event(time_offset, 0x80 | channel, note, velocity);
+
+        was_above_anchor = note >= anchor;
+
+        old_nso = note_stack.note_stack_oldest();
+        old_nsn = note_stack.note_stack_top();
+        old_nsl = note_stack.note_stack_lowest();
+        old_nsh = note_stack.note_stack_highest();
+
+        old_nsbo = note_stack_below.note_stack_oldest();
+        old_nsbn = note_stack_below.note_stack_top();
+        old_nsbl = note_stack_below.note_stack_lowest();
+        old_nsbh = note_stack_below.note_stack_highest();
+
+        old_nsao = note_stack_above.note_stack_oldest();
+        old_nsan = note_stack_above.note_stack_top();
+        old_nsal = note_stack_above.note_stack_lowest();
+        old_nsah = note_stack_above.note_stack_highest();
+
+        note_stack.note_stack_remove(note);
+        note_stack.note_stack_update_extremes_after_remove(note);
+
+        note_stack_below.note_stack_remove(note);
+        note_stack_below.note_stack_update_extremes_after_remove(note);
+
+        note_stack_above.note_stack_remove(note);
+        note_stack_above.note_stack_update_extremes_after_remove(note);
+
+        stats_nso = note_stack.note_stack_oldest();
+        stats_nsn = note_stack.note_stack_top();
+        stats_nsl = note_stack.note_stack_lowest();
+        stats_nsh = note_stack.note_stack_highest();
+
+        stats_nsbo = note_stack_below.note_stack_oldest();
+        stats_nsbn = note_stack_below.note_stack_top();
+        stats_nsbl = note_stack_below.note_stack_lowest();
+        stats_nsbh = note_stack_below.note_stack_highest();
+
+        stats_nsao = note_stack_above.note_stack_oldest();
+        stats_nsan = note_stack_above.note_stack_top();
+        stats_nsal = note_stack_above.note_stack_lowest();
+        stats_nsah = note_stack_above.note_stack_highest();
+
+        proxy_push_resets_for_note_off(
+            time_offset,
+            was_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+        );
+    );
+
+    function proxy_stop_all_notes()
+        local(item, note, channel)
+    (
+        /* sustain pedal off */
+        proxy_push_controller_event(0.0, manager_channel, 64, 0.0);
+
+        while (!note_stack.note_stack_is_empty()) (
+            item = note_stack.note_stack_pop();
+            channel = item >> 8;
+            note = item & 0xff;
+
+            /* sustain pedal off */
+            proxy_push_controller_event(0.0, channel, 64, 0.0);
+
+            proxy_push_note_off(0.0, channel, note, 64);
+        );
+    );
+
+    function proxy_reset()
+        local(i, channel_delta)
+    (
+        available_channels.available_channels_clear();
+        channel_delta = (zone_type == ZT_LOWER) ? 1 : -1;
+        i = first_channel;
+        loop(channel_count,
+            available_channels.available_channels_push(i);
+            i += channel_delta;
+        );
+
+        note_stack.note_stack_clear();
+        note_stack_below.note_stack_clear();
+        note_stack_above.note_stack_clear();
+    );
+
+    function proxy_init()
+        local(i)
+    (
+        available_channels.available_channels_init(1024);
+        note_stack.note_stack_init(1040);
+        note_stack_below.note_stack_init(1424);
+        note_stack_above.note_stack_init(1808);
+
+        i = 0;
+
+        loop(RULES_COUNT,
+            rule_init(i);
+            i += 1;
+        );
+
+        proxy_clear();
+        proxy_reset();
+    );
+
+    function proxy_update_mpe_config(new_zone_type, new_channel_count, new_anchor)
+    (
+        (new_zone_type != zone_type || new_channel_count != channel_count)
+            ? (
+                proxy_clear();
+                proxy_stop_all_notes();
+
+                zone_type = new_zone_type;
+                channel_count = new_channel_count;
+
+                (zone_type == ZT_LOWER)
+                    ? (
+                        manager_channel = 0;
+                        first_channel = 1;
+                        last_channel = channel_count;
+                    )
+                    : (
+                        manager_channel = 15;
+                        first_channel = 14;
+                        last_channel = 15 - channel_count;
+                    );
+
+                proxy_reset();
+            );
+
+        anchor = new_anchor;
+    );
+
+    function proxy_push_resets_for_new_note(
+            is_pre_note_on_setup,
+            time_offset,
+            new_note_channel,
+            is_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+    )
+        local(rule_idx, reset_value, out_cc)
+    (
+        rule_idx = 0;
+
+        loop(RULES_COUNT,
+            (rule_needs_reset_for_note_event(rule_idx, is_above_anchor))
+                ? (
+                    reset_value = rule_get_reset_value(rule_idx);
+                    out_cc = rule_get_out_cc(rule_idx);
+
+                    (is_pre_note_on_setup)
+                        ? proxy_reset_outdated_targets_if_changed(
+                            rule_idx,
+                            time_offset,
+                            new_note_channel,
+                            old_nso, old_nsn, old_nsl, old_nsh,
+                            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+                            old_nsao, old_nsan, old_nsal, old_nsah,
+                            stats_nso, stats_nsn, stats_nsl, stats_nsh,
+                            stats_nsbo, stats_nsbn, stats_nsbl, stats_nsbh,
+                            stats_nsao, stats_nsan, stats_nsal, stats_nsah,
+                            reset_value,
+                            out_cc
+                        );
+
+                    proxy_push_controller_event(
+                        time_offset,
+                        new_note_channel,
+                        out_cc,
+                        reset_value
+                    );
+                );
+
+            rule_idx += 1;
+        );
+    );
+
+    function proxy_push_note_on(time_offset, channel, note, velocity)
+        local(
+            is_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+        )
+    (
+        old_nso = note_stack.note_stack_oldest();
+        old_nsn = note_stack.note_stack_top();
+        old_nsl = note_stack.note_stack_lowest();
+        old_nsh = note_stack.note_stack_highest();
+
+        old_nsbo = note_stack_below.note_stack_oldest();
+        old_nsbn = note_stack_below.note_stack_top();
+        old_nsbl = note_stack_below.note_stack_lowest();
+        old_nsbh = note_stack_below.note_stack_highest();
+
+        old_nsao = note_stack_above.note_stack_oldest();
+        old_nsan = note_stack_above.note_stack_top();
+        old_nsal = note_stack_above.note_stack_lowest();
+        old_nsah = note_stack_above.note_stack_highest();
+
+        note_stack.note_stack_push(note, channel);
+
+        stats_nso = note_stack.note_stack_oldest();
+        stats_nsn = note_stack.note_stack_top();
+        stats_nsl = note_stack.note_stack_lowest();
+        stats_nsh = note_stack.note_stack_highest();
+
+        is_above_anchor = note >= anchor;
+
+        (is_above_anchor)
+            ? (
+                note_stack_above.note_stack_push(note, channel);
+
+                stats_nsao = note_stack_above.note_stack_oldest();
+                stats_nsan = note_stack_above.note_stack_top();
+                stats_nsal = note_stack_above.note_stack_lowest();
+                stats_nsah = note_stack_above.note_stack_highest();
+            )
+            : (
+                note_stack_below.note_stack_push(note, channel);
+
+                stats_nsbo = note_stack_below.note_stack_oldest();
+                stats_nsbn = note_stack_below.note_stack_top();
+                stats_nsbl = note_stack_below.note_stack_lowest();
+                stats_nsbh = note_stack_below.note_stack_highest();
+            );
+
+        proxy_push_resets_for_new_note(
+            1,
+            time_offset,
+            channel,
+            is_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+        );
+
+        proxy_push_out_event(
+            time_offset,
+            0x90 | channel,
+            note,
+            velocity
+        );
+
+        proxy_push_resets_for_new_note(
+            0,
+            time_offset,
+            channel,
+            is_above_anchor,
+            old_nso, old_nsn, old_nsl, old_nsh,
+            old_nsbo, old_nsbn, old_nsbl, old_nsbh,
+            old_nsao, old_nsan, old_nsal, old_nsah
+        );
+    );
+
+    function proxy_note_on(time_offset, note, velocity)
+        local(allocated_channel)
+    (
+        (
+                note_stack.note_stack_find(note) == INVALID
+                && !available_channels.available_channels_is_empty()
+        )
+            ? (
+                allocated_channel = available_channels.available_channels_pop();
+                proxy_push_note_on(time_offset, allocated_channel, note, velocity);
+            );
+    );
+
+    function proxy_note_off(time_offset, note, velocity)
+        local(channel)
+    (
+        channel = note_stack.note_stack_find(note);
+
+        (channel != INVALID)
+            ? (
+                channel = channel >> 8;
+                proxy_push_note_off(time_offset, channel, note, velocity);
+                available_channels.available_channels_push(channel);
+            );
+    );
+
+    function proxy_process_controller_event(time_offset, controller_id, norm_value)
+        local(
+            rule_idx,
+            matched,
+            out_controller_id,
+            target_channels_mask,
+            target,
+            channel
+        )
+    (
+        rule_idx = 0;
+        matched = 0;
+
+        loop(RULES_COUNT,
+            (rule_get_in_cc(rule_idx) == controller_id)
+                ? (
+                    matched = 1;
+                    target_channels_mask = 0;
+
+                    rule_set_last_input_value(rule_idx, norm_value);
+
+                    out_controller_id = rule_get_out_cc(rule_idx);
+                    target = rule_get_target(rule_idx);
+
+                    (target == TRG_GLOBAL)
+                        ? (target_channels_mask = 1 << manager_channel)
+                    : ((target == TRG_ALL_BELOW_ANCHOR)
+                        ? (target_channels_mask = note_stack_below.note_stack_active_channels_mask())
+                    : ((target == TRG_ALL_ABOVE_ANCHOR)
+                        ? (target_channels_mask = note_stack_above.note_stack_active_channels_mask())
+                    : ((target == TRG_LOWEST && !note_stack.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack.note_stack_lowest() >> 8))
+                    : ((target == TRG_HIGHEST && !note_stack.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack.note_stack_highest() >> 8))
+                    : ((target == TRG_OLDEST && !note_stack.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack.note_stack_oldest() >> 8))
+                    : ((target == TRG_NEWEST && !note_stack.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack.note_stack_top() >> 8))
+                    : ((target == TRG_LOWEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_lowest() >> 8))
+                    : ((target == TRG_HIGHEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_highest() >> 8))
+                    : ((target == TRG_OLDEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_oldest() >> 8))
+                    : ((target == TRG_NEWEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_top() >> 8))
+                    : ((target == TRG_LOWEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_lowest() >> 8))
+                    : ((target == TRG_HIGHEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_highest() >> 8))
+                    : ((target == TRG_OLDEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_oldest() >> 8))
+                    : ((target == TRG_NEWEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
+                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_top() >> 8))
+                    ))))))))))))));
+
+                    channel = 0;
+
+                    loop(MIDI_CHANNELS,
+                        ((target_channels_mask & (1 << channel)) != 0)
+                            ? proxy_push_controller_event(
+                                time_offset, channel, out_controller_id, norm_value
+                            );
+                        channel += 1;
+                    );
+                );
+            rule_idx += 1;
+        );
+
+        (matched == 0)
+            ? proxy_push_controller_event(
+                time_offset, manager_channel, controller_id, norm_value
+            );
+    );
+
+    function proxy_pitch_wheel_change(time_offset, new_value)
+    (
+        proxy_process_controller_event(
+            time_offset, CTL_PITCH_BEND, new_value / 16383.0
+        );
+    );
+
+    function proxy_control_change(time_offset, ctl_number, new_value)
+    (
+        proxy_process_controller_event(
+            time_offset, ctl_number, new_value / 127.0
+        );
+    );
+
+    function proxy_channel_pressure(time_offset, pressure)
+    (
+        proxy_process_controller_event(
+            time_offset, CTL_CHANNEL_PRESSURE, pressure / 127.0
+        );
+    );
+
+
+/*/ // Insert a second asterisk and enable the gfx block to turn on tests.
+
+    proxy_init();
+
+  // #########################################################################
+  // ## TESTING
+  // #########################################################################
+
+    failed_assertions = 0;
+    total_assertions = 0;
+
+    function assert_eq(a, b, fmt, msg)
+        local(s, tpl)
+    (
+        total_assertions += 1;
+
+        (a != b) ? (
+            failed_assertions += 1;
+            tpl = #;
+            s = #;
+            sprintf(tpl, "FAIL assert_eq (%s): a=%s, b=%s", msg, fmt, fmt);
+            sprintf(s, tpl, a, b);
+            log.log_msg(s);
+        );
+    );
+
+    function assert_true(value, msg)
+        local(s)
+    (
+        total_assertions += 1;
+
+        (!value) ? (
+            failed_assertions += 1;
+            s = #;
+            sprintf(s, "FAIL assert_true (%s): value=%d", msg, value);
+            log.log_msg(s);
+        );
+    );
+
+    function assert_false(value, msg)
+        local(s)
+    (
+        total_assertions += 1;
+
+        (value) ? (
+            failed_assertions += 1;
+            s = #;
+            sprintf(s, "FAIL assert_false (%s): value=%d", msg, value);
+            log.log_msg(s);
+        );
+    );
+
+    function turn_off_rules()
+        local(i)
+    (
+        i = 0;
+
+        loop(RULES_COUNT,
+            rule_update_config(i, 0.0, CTL_NONE, CTL_NONE, TRG_GLOBAL, RST_OFF);
+            i += 1;
+        );
+    );
+
+    function assert_out_event(
+            index,
+            expected_time_offset,
+            expected_midi_bytes,
+            msg
+    )
+        local(msg_with_index)
+    (
+        msg_with_index = #;
+        sprintf(msg_with_index, "%s; index=%d", msg, index);
+
+        assert_eq(
+            expected_time_offset,
+            out_events[index * 2],
+            "%f",
+            msg_with_index
+        );
+        assert_eq(
+            expected_midi_bytes,
+            out_events[index * 2 + 1],
+            "0x%06x",
+            msg_with_index
+        );
+    );
+
+
+  // #########################################################################
+  // ## TEST available_channels
+  // #########################################################################
+
+    proxy_init();
+
+    available_channels.available_channels_clear();
+    assert_true(
+        available_channels.available_channels_is_empty(),
+        "available_channels should be empty after clearing items"
+    );
+
+    available_channels.available_channels_push(1);
+    available_channels.available_channels_push(5);
+    available_channels.available_channels_push(10);
+
+    assert_false(
+        available_channels.available_channels_is_empty(),
+        "available_channels should not be empty after pushing items"
+    );
+
+    assert_eq(1, available_channels.available_channels_pop(), "%d", "[1, 5, 10]");
+    assert_eq(5, available_channels.available_channels_pop(), "%d", "[5, 10]");
+    assert_eq(10, available_channels.available_channels_pop(), "%d", "[10]");
+
+    assert_true(
+        available_channels.available_channels_is_empty(),
+        "available_channels should be empty after popping all items"
+    );
+    assert_eq(INVALID, available_channels.available_channels_pop(), "%d", "[]");
+
+    available_channels.available_channels_push(1);
+    available_channels.available_channels_push(2);
+    available_channels.available_channels_push(3);
+    available_channels.available_channels_push(4);
+    available_channels.available_channels_push(5);
+    available_channels.available_channels_push(6);
+    available_channels.available_channels_push(7);
+    available_channels.available_channels_push(8);
+    available_channels.available_channels_push(9);
+    available_channels.available_channels_push(10);
+    available_channels.available_channels_push(11);
+    available_channels.available_channels_push(12);
+    available_channels.available_channels_push(13);
+    available_channels.available_channels_push(14);
+    available_channels.available_channels_push(15);
+    available_channels.available_channels_push(16);
+
+    assert_eq(1, available_channels.available_channels_pop(), "%d", "15 items");
+    assert_eq(2, available_channels.available_channels_pop(), "%d", "14 items");
+    assert_eq(3, available_channels.available_channels_pop(), "%d", "13 items");
+    assert_eq(4, available_channels.available_channels_pop(), "%d", "12 items");
+    assert_eq(5, available_channels.available_channels_pop(), "%d", "11 items");
+    assert_eq(6, available_channels.available_channels_pop(), "%d", "10 items");
+    assert_eq(7, available_channels.available_channels_pop(), "%d", "9 items");
+    assert_eq(8, available_channels.available_channels_pop(), "%d", "8 items");
+    assert_eq(9, available_channels.available_channels_pop(), "%d", "7 items");
+    assert_eq(10, available_channels.available_channels_pop(), "%d", "6 items");
+    assert_eq(11, available_channels.available_channels_pop(), "%d", "5 items");
+    assert_eq(12, available_channels.available_channels_pop(), "%d", "4 items");
+    assert_eq(13, available_channels.available_channels_pop(), "%d", "3 items");
+    assert_eq(14, available_channels.available_channels_pop(), "%d", "2 items");
+    assert_eq(15, available_channels.available_channels_pop(), "%d", "1 items");
+    assert_eq(INVALID, available_channels.available_channels_pop(), "%d", "0 items");
+
+  // #########################################################################
+  // ## TEST note_stack
+  // #########################################################################
+
+    proxy_init();
+
+    assert_true(
+        note_stack.note_stack_is_empty(),
+        "note stack should be empty before first use"
+    );
+
+    assert_eq(
+        0x0000,
+        note_stack.note_stack_active_channels_mask(),
+        "0x%04x",
+        "note stack channels should all be inactive before first use"
+    );
+
+    note_stack.note_stack_push(0x3c, 0x01);
+    note_stack.note_stack_push(0x48, 0x0a);
+    note_stack.note_stack_push(0x30, 0x02);
+    note_stack.note_stack_push(0x48, 0x03);
+
+    assert_false(
+        note_stack.note_stack_is_empty(),
+        "note stack should not be empty after pushing 3 elements"
+    );
+
+    assert_eq(0x013c, note_stack.note_stack_oldest(), "0x%04x", "popped 0, oldest");
+    assert_eq(0x0348, note_stack.note_stack_top(), "0x%04x", "popped 0, top");
+    assert_eq(0x0230, note_stack.note_stack_lowest(), "0x%04x", "popped 0, lowest");
+    assert_eq(0x0348, note_stack.note_stack_highest(), "0x%04x", "popped 0, highest");
+    assert_eq(
+        0x000e,
+        note_stack.note_stack_active_channels_mask(),
+        "0x%04x",
+        "popped 0, active channels mask"
+    );
+
+    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 0, find");
+    assert_eq(0x0230, note_stack.note_stack_find(0x30), "0x%04x", "popped 0, find");
+    assert_eq(0x013c, note_stack.note_stack_find(0x3c), "0x%04x", "popped 0, find");
+    assert_eq(0x0348, note_stack.note_stack_find(0x48), "0x%04x", "popped 0, find");
+
+    assert_eq(0x0348, note_stack.note_stack_pop(), "0x%04x", "popped 1");
+
+    assert_eq(0x013c, note_stack.note_stack_oldest(), "0x%04x", "popped 1, oldest");
+    assert_eq(0x0230, note_stack.note_stack_top(), "0x%04x", "popped 1, top");
+    assert_eq(0x0230, note_stack.note_stack_lowest(), "0x%04x", "popped 1, lowest");
+    assert_eq(0x013c, note_stack.note_stack_highest(), "0x%04x", "popped 1, highest");
+    assert_eq(
+        0x0006,
+        note_stack.note_stack_active_channels_mask(),
+        "0x%04x",
+        "popped 1, active channels mask"
+    );
+
+    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 1, find");
+    assert_eq(0x0230, note_stack.note_stack_find(0x30), "0x%04x", "popped 1, find");
+    assert_eq(0x013c, note_stack.note_stack_find(0x3c), "0x%04x", "popped 1, find");
+    assert_eq(INVALID, note_stack.note_stack_find(0x48), "0x%04x", "popped 1, find");
+
+    assert_eq(0x0230, note_stack.note_stack_pop(), "0x%04x", "popped 2");
+
+    assert_eq(0x013c, note_stack.note_stack_oldest(), "0x%04x", "popped 2, oldest");
+    assert_eq(0x013c, note_stack.note_stack_top(), "0x%04x", "popped 2, top");
+    assert_eq(0x013c, note_stack.note_stack_lowest(), "0x%04x", "popped 2, lowest");
+    assert_eq(0x013c, note_stack.note_stack_highest(), "0x%04x", "popped 2, highest");
+    assert_eq(
+        0x0002,
+        note_stack.note_stack_active_channels_mask(),
+        "0x%04x",
+        "popped 2, active channels mask"
+    );
+
+    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 2, find");
+    assert_eq(INVALID, note_stack.note_stack_find(0x30), "0x%04x", "popped 2, find");
+    assert_eq(0x013c, note_stack.note_stack_find(0x3c), "0x%04x", "popped 2, find");
+    assert_eq(INVALID, note_stack.note_stack_find(0x48), "0x%04x", "popped 2, find");
+
+    assert_eq(0x013c, note_stack.note_stack_pop(), "0x%04x", "popped 3");
+
+    assert_eq(
+        0x0000,
+        note_stack.note_stack_active_channels_mask(),
+        "0x%04x",
+        "popped 3, active channels mask"
+    );
+
+    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 3, find");
+    assert_eq(INVALID, note_stack.note_stack_find(0x30), "0x%04x", "popped 3, find");
+    assert_eq(INVALID, note_stack.note_stack_find(0x3c), "0x%04x", "popped 3, find");
+    assert_eq(INVALID, note_stack.note_stack_find(0x48), "0x%04x", "popped 3, find");
+
+    assert_true(
+        note_stack.note_stack_is_empty(),
+        "note stack should be empty after popping all notes"
+    );
+
+  // #########################################################################
+  // ## TEST proxy
+  // #########################################################################
+
+    test = "when note is already on, then second NOTE ON is ignored";
+    proxy_init();
+
+    turn_off_rules();
+    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    proxy_clear();
+
+    proxy_note_on(1.0, 60, 127);
+    proxy_note_on(2.0, 60, 100);
+
+    assert_out_event(0, 1.0, 0x913c7f, test);       // ON   ch=1 n=60 v=127
+    assert_eq(1, out_events_count, "%d", test);
+
+    test = "MPE config change triggers complete reset";
+    proxy_clear();
+    proxy_update_mpe_config(ZT_UPPER, 10, 60);
+
+    assert_out_event(0, 0.0, 0xb04000, test);       // CC   ch=0 ctl=64 v=0
+    assert_out_event(1, 0.0, 0xb14000, test);       // CC   ch=1 ctl=64 v=0
+    assert_out_event(2, 0.0, 0x813c40, test);       // OFF  ch=1 n=60 v=64
+    assert_eq(3, out_events_count, "%d", test);
+
+    test = "NOTE ON can trigger resets to initial value 1";
+    turn_off_rules();
+    proxy_update_mpe_config(ZT_LOWER, 2, 60);
+    proxy_init();
+    rule_update_config(
+        0, 0.7, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_NEWEST_ABOVE_ANCHOR, RST_INIT
+    );
+    rule_update_config(
+        1, 0.3, 1, CTL_CHANNEL_PRESSURE, TRG_NEWEST, RST_INIT
+    );
+    rule_update_config(2, 0.5, 7, 1, TRG_GLOBAL, RST_INIT);
+    proxy_note_on(1.0, 60, 127);
+
+    assert_out_event(0, 1.0, 0xe14c59, test);       // PB   ch=1 v=11468
+    assert_out_event(1, 1.0, 0xd12600, test);       // CHP  ch=1 v=38
+    assert_out_event(2, 1.0, 0x913c7f, test);       // ON   ch=1 n=60 v=127
+    assert_out_event(3, 1.0, 0xe14c59, test);       // PB   ch=1 v=11468
+    assert_out_event(4, 1.0, 0xd12600, test);       // CHP  ch=1 v=38
+    assert_eq(5, out_events_count, "%d", test);
+
+    test = "NOTE ON can trigger resets to initial value 2";
+    proxy_clear();
+    proxy_note_on(1.0, 48, 127);
+
+    assert_out_event(0, 1.0, 0xe24c59, test);       // PB   ch=2 v=11468
+    assert_out_event(1, 1.0, 0xd12600, test);       // CHP  ch=1 v=38
+    assert_out_event(2, 1.0, 0xd22600, test);       // CHP  ch=2 v=38
+    assert_out_event(3, 1.0, 0x92307f, test);       // ON   ch=2 n=60 v=127
+    assert_out_event(4, 1.0, 0xe24c59, test);       // PB   ch=2 v=11468
+    assert_out_event(5, 1.0, 0xd22600, test);       // CHP  ch=2 v=38
+    assert_eq(6, out_events_count, "%d", test);
+
+    test = "when note is already off then NOTE OFF is ignored";
+    proxy_clear();
+    proxy_note_off(1.0, 72, 64);
+    assert_eq(0, out_events_count, "%d", test);
+
+    test = "NOTE OFF can trigger resets to initial value";
+    proxy_clear();
+    proxy_note_off(1.0, 48, 32);
+
+    assert_out_event(0, 1.0, 0x823020, test);       // OFF  ch=2 n=48 v=32
+    assert_out_event(1, 1.0, 0xd12600, test);       // CHP  ch=1 v=38
+    assert_eq(2, out_events_count, "%d", test);
+
+    test = "channel of released note can be reused";
+    turn_off_rules();
+    proxy_clear();
+    proxy_note_on(1.0, 72, 96);
+
+    assert_out_event(0, 1.0, 0x924860, test);       // ON   ch=2 n=72 v=96
+    assert_eq(1, out_events_count, "%d", test);
+
+    test = "when all channels are used the NOTE ON is ignored";
+    proxy_clear();
+    proxy_note_on(1.0, 48, 123);
+
+    assert_eq(0, out_events_count, "%d", test);
+
+    test = "mapping and routing control events";
+    proxy_init();
+    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    rule_update_config(0, 0.5, CTL_PITCH_BEND, 74, TRG_OLDEST, RST_OFF);
+    rule_update_config(1, 0.0, 1, CTL_CHANNEL_PRESSURE, TRG_NEWEST, RST_OFF);
+    rule_update_config(2, 0.0, 74, CTL_NONE, TRG_HIGHEST, RST_OFF);
+    rule_update_config(
+        3, 0.5, 11, CTL_PITCH_BEND, TRG_LOWEST_ABOVE_ANCHOR, RST_OFF
+    );
+    rule_update_config(4, 0.0, CTL_CHANNEL_PRESSURE, 1, TRG_GLOBAL, RST_OFF);
+
+    proxy_note_on(1.0, 48, 127);                    // ch=1, oldest
+    proxy_note_on(2.0, 60, 127);                    // ch=2, lowest above anchor
+    proxy_note_on(3.0, 72, 127);                    // ch=3, highest
+    proxy_note_on(4.0, 63, 127);                    // ch=4, newest
+    proxy_clear();
+
+    proxy_pitch_wheel_change(1.0, 16383);           // rule 0
+    proxy_control_change(2.0, 1, 127);              // rule 1
+    proxy_control_change(3.0, 74, 127);             // rule 2
+    proxy_control_change(4.0, 11, 127);             // rule 3
+    proxy_channel_pressure(5.0, 127);               // rule 4
+    proxy_control_change(6.0, 7, 127);              // no match
+
+    assert_out_event(0, 1.0, 0xb14a7f, test);       // CC   ch=1 ctl=74 v=127
+    assert_out_event(1, 2.0, 0xd47f00, test);       // CHP  ch=4 v=127
+    assert_out_event(2, 4.0, 0xe27f7f, test);       // PB   ch=2 v=16383
+    assert_out_event(3, 5.0, 0xb0017f, test);       // CC   ch=0 ctl=1 v=127
+    assert_out_event(4, 6.0, 0xb0077f, test);       // CC   ch=0 ctl=7 v=127
+    assert_eq(5, out_events_count, "%d", test);
+
+    test = "NOTE ON can reset controllers to their last input value";
+    proxy_init();
+    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    rule_update_config(
+        0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_OLDEST, RST_LAST
+    );
+    rule_update_config(
+        1, 0.0, CTL_CHANNEL_PRESSURE, CTL_CHANNEL_PRESSURE, TRG_NEWEST, RST_LAST
+    );
+    rule_update_config(2, 0.0, 74, 74, TRG_HIGHEST, RST_LAST);
+
+    proxy_clear();
+    proxy_pitch_wheel_change(1.0, 16383);           // rule 0
+    proxy_channel_pressure(2.0, 127);               // rule 1
+    proxy_control_change(3.0, 74, 127);             // rule 2
+
+    assert_eq(0, out_events_count, "%d", test);
+
+    proxy_note_on(1.0, 48, 127);                    // ch=1, oldest
+    proxy_note_on(2.0, 72, 127);                    // ch=2, highest
+    proxy_note_on(3.0, 60, 127);                    // ch=3, newest
+
+    assert_out_event(0, 1.0, 0xe17f7f, test);       // PB   ch=1 v=16383
+    assert_out_event(1, 1.0, 0xd17f00, test);       // CHP  ch=1 v=127
+    assert_out_event(2, 1.0, 0xb14a7f, test);       // CC   ch=1 ctl=74 v=127
+    assert_out_event(3, 1.0, 0x91307f, test);       // ON   ch=1 n=48 v=127
+    assert_out_event(4, 1.0, 0xe17f7f, test);       // PB   ch=1 v=16383
+    assert_out_event(5, 1.0, 0xd17f00, test);       // CHP  ch=1 v=127
+    assert_out_event(6, 1.0, 0xb14a7f, test);       // CC   ch=1 ctl=74 v=127
+
+    assert_out_event(7, 2.0, 0xe27f7f, test);       // PB   ch=2 v=16383
+    assert_out_event(8, 2.0, 0xd17f00, test);       // CHP  ch=1 v=127
+    assert_out_event(9, 2.0, 0xd27f00, test);       // CHP  ch=2 v=127
+    assert_out_event(10, 2.0, 0xb14a7f, test);      // CC   ch=1 ctl=74 v=127
+    assert_out_event(11, 2.0, 0xb24a7f, test);      // CC   ch=2 ctl=74 v=127
+    assert_out_event(12, 2.0, 0x92487f, test);      // ON   ch=2 n=72 v=127
+    assert_out_event(13, 2.0, 0xe27f7f, test);      // PB   ch=2 v=16383
+    assert_out_event(14, 2.0, 0xd27f00, test);      // CHP  ch=2 v=127
+    assert_out_event(15, 2.0, 0xb24a7f, test);      // CC   ch=2 ctl=74 v=127
+
+    assert_out_event(16, 3.0, 0xe37f7f, test);      // PB   ch=3 v=16383
+    assert_out_event(17, 3.0, 0xd27f00, test);      // CHP  ch=2 v=127
+    assert_out_event(18, 3.0, 0xd37f00, test);      // CHP  ch=3 v=127
+    assert_out_event(19, 3.0, 0xb34a7f, test);      // CC   ch=3 ctl=74 v=127
+    assert_out_event(20, 3.0, 0x933c7f, test);      // ON   ch=3 n=60 v=127
+    assert_out_event(21, 3.0, 0xe37f7f, test);      // PB   ch=3 v=16383
+    assert_out_event(22, 3.0, 0xd37f00, test);      // CHP  ch=3 v=127
+    assert_out_event(23, 3.0, 0xb34a7f, test);      // CC   ch=3 ctl=74 v=127
+
+    assert_eq(24, out_events_count, "%d", test);
+
+    test = "NOTE OFF can reset controllers to their last input value";
+    proxy_clear();
+    proxy_note_off(1.0, 72, 64);                    // ch=3 becomes the highest
+    proxy_note_off(2.0, 48, 64);                    // ch=3 becomes the oldest
+    proxy_note_off(3.0, 60, 64);                    // all notes off
+
+    assert_out_event(0, 1.0, 0x824840, test);       // OFF  ch=2 n=72 v=64
+    assert_out_event(1, 1.0, 0xb34a7f, test);       // CC   ch=3 ctl=74 v=127
+
+    assert_out_event(2, 2.0, 0x813040, test);       // OFF  ch=1 n=48 v=64
+    assert_out_event(3, 2.0, 0xe37f7f, test);       // PB   ch=3 v=16383
+
+    assert_out_event(4, 3.0, 0x833c40, test);       // OFF  ch=3 n=60 v=64
+
+    assert_eq(5, out_events_count, "%d", test);
+
+    test = "can route events to all notes above or below anchor";
+    proxy_init();
+    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    rule_update_config(
+        0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_ALL_ABOVE_ANCHOR, RST_INIT
+    );
+    rule_update_config(
+        1, 0.0, CTL_CHANNEL_PRESSURE, CTL_CHANNEL_PRESSURE, TRG_ALL_BELOW_ANCHOR, RST_INIT
+    );
+    proxy_note_on(1.0, 48, 127);                    // ch=1
+    proxy_note_on(2.0, 72, 127);                    // ch=2
+    proxy_note_on(3.0, 60, 127);                    // ch=3
+    proxy_clear();
+
+    proxy_pitch_wheel_change(1.0, 16383);           // rule 0
+    proxy_channel_pressure(2.0, 127);               // rule 1
+
+    assert_out_event(0, 1.0, 0xe27f7f, test);       // PB   ch=2 v=16383
+    assert_out_event(1, 1.0, 0xe37f7f, test);       // PB   ch=3 v=16383
+    assert_out_event(2, 2.0, 0xd17f00, test);       // CHP  ch=1 v=127
+    assert_eq(3, out_events_count, "%d", test);
+
+    (failed_assertions == 0)
+        ? log.log_int("TESTS PASSED; total assertions", total_assertions)
+        : log.log_int("TESTS FAILED; failures", failed_assertions);
+
+/**/
+
+    proxy_init();
+
+
+@slider
+    rule_update_config(
+        0, p_r1_init_value / 100.0, p_r1_in_cc, p_r1_out_cc, p_r1_target, p_r1_reset
+    );
+    rule_update_config(
+        1, p_r2_init_value / 100.0, p_r2_in_cc, p_r2_out_cc, p_r2_target, p_r2_reset
+    );
+    rule_update_config(
+        2, p_r3_init_value / 100.0, p_r3_in_cc, p_r3_out_cc, p_r3_target, p_r3_reset
+    );
+    rule_update_config(
+        3, p_r4_init_value / 100.0, p_r4_in_cc, p_r4_out_cc, p_r4_target, p_r4_reset
+    );
+    rule_update_config(
+        4, p_r5_init_value / 100.0, p_r5_in_cc, p_r5_out_cc, p_r5_target, p_r5_reset
+    );
+
+    proxy_update_mpe_config(p_zone_type, p_channels, p_anchor);
+
+
+@block
+    function process()
+        local(time_offset, msg1, msg2, msg3, channel, command, i, i2, out_event)
+    (
+        proxy_clear();
+
+        while (midirecv(time_offset, msg1, msg2, msg3)) (
+            command = msg1 & 0xf0;
+            channel = msg1 & 0x0f;
+
+            (command == 0x80 || (command == 0x90 && msg3 == 0))
+                ? proxy_note_off(time_offset, msg2, msg3)
+            : ((command == 0x90)
+                ? proxy_note_on(time_offset, msg2, msg3)
+            : ((command == 0xb0)
+                ? proxy_control_change(time_offset, msg2, msg3)
+            : ((command == 0xd0)
+                ? proxy_channel_pressure(time_offset, msg2)
+            : ((command == 0xe0)
+                ? proxy_pitch_wheel_change(time_offset, (msg3 << 7) | msg2)
+            ))));
+        );
+
+        i = 0;
+
+        loop(out_events_count,
+            i2 = i * 2;
+            time_offset = out_events[i2];
+            out_event = out_events[i2 + 1];
+            msg1 = (out_event >> 16) & 0xff;
+            msg2 = (out_event >> 8) & 0xff;
+            msg3 = out_event & 0xff;
+            midisend(time_offset, msg1, msg2, msg3);
+            i += 1;
+        );
+    );
+
+    process();
+
+
+// @gfx
+    // log.log_show();
