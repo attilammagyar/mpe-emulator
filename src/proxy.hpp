@@ -734,7 +734,6 @@ class Proxy : public Midi::EventHandler
 
         void reset_outdated_targets_if_changed(
             Rule const& rule,
-            Target const target,
             double const time_offset,
             Midi::Channel const new_note_channel,
             NoteStack::ChannelStats const& a_channel_stats,

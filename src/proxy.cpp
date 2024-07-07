@@ -522,7 +522,6 @@ void Proxy::push_resets_for_new_note(
         if constexpr (is_pre_note_on_setup) {
             reset_outdated_targets_if_changed(
                 rule,
-                (Target)rule.target.get_value(),
                 time_offset,
                 new_note_channel,
                 old_channel_stats,
@@ -549,7 +548,6 @@ void Proxy::push_resets_for_new_note(
 
 void Proxy::reset_outdated_targets_if_changed(
         Rule const& rule,
-        Target const target,
         double const time_offset,
         Midi::Channel const new_note_channel,
         NoteStack::ChannelStats const& a_channel_stats,
@@ -561,6 +559,7 @@ void Proxy::reset_outdated_targets_if_changed(
         double const reset_value,
         ControllerId const out_cc
 ) noexcept {
+    Target const target = (Target)rule.target.get_value();
     Midi::Channel channel = Midi::INVALID_CHANNEL;
 
     switch (target) {
@@ -805,7 +804,6 @@ void Proxy::push_resets_for_note_off(
 
         reset_outdated_targets_if_changed(
             rule,
-            (Target)rule.target.get_value(),
             time_offset,
             Midi::INVALID_CHANNEL,
             channel_stats,
