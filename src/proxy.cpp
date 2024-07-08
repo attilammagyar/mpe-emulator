@@ -898,19 +898,27 @@ void Proxy::process_controller_event(
                 break;
 
             case Target::TRG_LOWEST:
-                note_stack.lowest(note, target_channels[target_channels_count++]);
+                if (!note_stack.is_empty()) {
+                    note_stack.lowest(note, target_channels[target_channels_count++]);
+                }
                 break;
 
             case Target::TRG_HIGHEST:
-                note_stack.highest(note, target_channels[target_channels_count++]);
+                if (!note_stack.is_empty()) {
+                    note_stack.highest(note, target_channels[target_channels_count++]);
+                }
                 break;
 
             case Target::TRG_OLDEST:
-                note_stack.oldest(note, target_channels[target_channels_count++]);
+                if (!note_stack.is_empty()) {
+                    note_stack.oldest(note, target_channels[target_channels_count++]);
+                }
                 break;
 
             case Target::TRG_NEWEST:
-                note_stack.top(note, target_channels[target_channels_count++]);
+                if (!note_stack.is_empty()) {
+                    note_stack.top(note, target_channels[target_channels_count++]);
+                }
                 break;
 
             case Target::TRG_LOWEST_BELOW_ANCHOR:

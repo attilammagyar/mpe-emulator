@@ -1783,3 +1783,39 @@ TEST(oldest_released_channel_is_reused_first, {
         proxy
     );
 })
+
+
+TEST(when_no_notes_are_active_when_mapped_cc_events_occur_then_drops_cc_events, {
+    Proxy proxy;
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_OLDEST);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_LOWEST);
+
+    proxy.rules[3].in_cc.set_value(Proxy::ControllerId::EXPRESSION_PEDAL);
+    proxy.rules[3].out_cc.set_value(Proxy::ControllerId::EXPRESSION_PEDAL);
+    proxy.rules[3].target.set_value(Proxy::Target::TRG_HIGHEST);
+
+    proxy.begin_processing();
+
+    proxy.pitch_wheel_change(1.0, 1, 12345);
+    proxy.channel_pressure(2.0, 2, 123);
+    proxy.control_change(3.0, 3, Proxy::ControllerId::MODULATION_WHEEL, 123);
+    proxy.control_change(4.0, 4, Proxy::ControllerId::EXPRESSION_PEDAL, 123);
+    proxy.control_change(5.0, 5, Proxy::ControllerId::VOLUME, 96);
+
+    assert_out_events<1>(
+        {
+            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
+        },
+        proxy
+    );
+})
