@@ -1,3 +1,13 @@
+v0.0.2 (2024-07-08)
+ * When notes are released and new notes are triggered, channel allocation will
+   avoid reusing the released channels for as long as possible so that longer
+   envelope releases have a chance to ring down.
+ * Bugfix: when no notes were being played, and there were rules with Low,
+   High, Old, or New target, and their matching control events were received,
+   then MPE Emulator could emit MIDI System Reset (0xFF) messages followed by
+   garbage data bytes. Now MPE Emulator will only emit MIDI messages that it is
+   supposed to produce.
+
 v0.0.1 (2024-07-01)
  * Retroactively add MPE functionality to non-MPE-capable MIDI input devices.
  * Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and
