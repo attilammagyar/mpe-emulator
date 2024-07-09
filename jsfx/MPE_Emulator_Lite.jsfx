@@ -30,7 +30,7 @@ out_pin:none
     TPL_CTL_NAMES = "CC 0 (Bank Select),CC 1 (Modulation Wheel),CC 2 (Breath),CC 3,CC 4 (Foot Pedal),CC 5,CC 6 (Data Entry),CC 7 (Volume),CC 8,CC 9,CC 10 (Panning),CC 11 (Expression Pedal),CC 12,CC 13,CC 14,CC 15,CC 16,CC 17,CC 18,CC 19,CC 20,CC 21,CC 22,CC 23,CC 24,CC 25,CC 26,CC 27,CC 28,CC 29,CC 30,CC 31,CC 32 (Bank Select LSB),CC 33 (Modulation Wheel LSB),CC 34 (Breath LSB),CC 35 (CC 3 LSB),CC 36 (Foot Pedal LSB),CC 37 (CC 5 LSB),CC 38 (Data Entry LSB),CC 39 (Volume LSB),CC 40 (CC 8 LSB),CC 41 (CC 9 LSB),CC 42 (Panning LSB),CC 43 (Expression Pedal LSB),CC 44 (CC 12 LSB),CC 45 (CC 13 LSB),CC 46 (CC 14 LSB),CC 47 (CC 15 LSB),CC 48 (CC 16 LSB),CC 49 (CC 17 LSB),CC 50 (CC 18 LSB),CC 51 (CC 19 LSB),CC 52 (CC 20 LSB),CC 53 (CC 21 LSB),CC 54 (CC 22 LSB),CC 55 (CC 23 LSB),CC 56 (CC 24 LSB),CC 57 (CC 25 LSB),CC 58 (CC 26 LSB),CC 59 (CC 27 LSB),CC 60 (CC 28 LSB),CC 61 (CC 29 LSB),CC 62 (CC 30 LSB),CC 63 (CC 31 LSB),CC 64 (Sustain Pedal),CC 65,CC 66,CC 67,CC 68,CC 69,CC 70,CC 71,CC 72,CC 73,CC 74,CC 75,CC 76,CC 77,CC 78,CC 79,CC 80,CC 81,CC 82,CC 83,CC 84,CC 85,CC 86,CC 87,CC 88,CC 89,CC 90,CC 91,CC 92,CC 93,CC 94,CC 95,CC 96,CC 97,CC 98,CC 99,CC 100,CC 101,CC 102,CC 103,CC 104,CC 105,CC 106,CC 107,CC 108,CC 109,CC 110,CC 111,CC 112,CC 113,CC 114,CC 115,CC 116,CC 117,CC 118,CC 119,Pitch Bend,Channel Pressure (Aftertouch),none";
 ?>
 
-slider1:p_zone_type=0<0,1,1{Lower,Upper}>Zone Type
+slider1:p_zone_type=0<0,3,1{Lower,Upper,Lower (override Release Velocity),Upper (override Release Velocity)}>Zone Type
 slider2:p_channels=14<0,14,1{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}>Channels
 slider3:p_anchor=60<0,127,1,{C -1,C# / Db -1,D -1,D# / Eb -1,E -1,F -1,F# / Gb -1,G -1,G# / Ab -1,A -1,A# / Bb -1,B -1,C 0,C# / Db 0,D 0,D# / Eb 0,E 0,F 0,F# / Gb 0,G 0,G# / Ab 0,A 0,A# / Bb 0,B 0,C 1,C# / Db 1,D 1,D# / Eb 1,E 1,F 1,F# / Gb 1,G 1,G# / Ab 1,A 1,A# / Bb 1,B 1,C 2,C# / Db 2,D 2,D# / Eb 2,E 2,F 2,F# / Gb 2,G 2,G# / Ab 2,A 2,A# / Bb 2,B 2,C 3,C# / Db 3,D 3,D# / Eb 3,E 3,F 3,F# / Gb 3,G 3,G# / Ab 3,A 3,A# / Bb 3,B 3,C 4,C# / Db 4,D 4,D# / Eb 4,E 4,F 4,F# / Gb 4,G 4,G# / Ab 4,A 4,A# / Bb 4,B 4,C 5,C# / Db 5,D 5,D# / Eb 5,E 5,F 5,F# / Gb 5,G 5,G# / Ab 5,A 5,A# / Bb 5,B 5,C 6,C# / Db 6,D 6,D# / Eb 6,E 6,F 6,F# / Gb 6,G 6,G# / Ab 6,A 6,A# / Bb 6,B 6,C 7,C# / Db 7,D 7,D# / Eb 7,E 7,F 7,F# / Gb 7,G 7,G# / Ab 7,A 7,A# / Bb 7,B 7,C 8,C# / Db 8,D 8,D# / Eb 8,E 8,F 8,F# / Gb 8,G 8,G# / Ab 8,A 8,A# / Bb 8,B 8,C 9,C# / Db 9,D 9,D# / Eb 9,E 9,F 9,F# / Gb 9,G 9}>Anchor
 
@@ -73,36 +73,35 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
            0            debug log strings
 
         1024            available_channels (16)
+        1040            channels by notes (128)
+        1168            velocities by notes (128)
 
-        1040            note_stack next (128)
-        1168            note_stack previous (128)
-        1296            note_stack channels (128)
+        1296            note_stack next (128)
+        1424            note_stack previous (128)
 
-        1424            note_stack_below next (128)
-        1552            note_stack_below previous (128)
-        1680            note_stack_below channels (128)
+        1552            note_stack_below next (128)
+        1680            note_stack_below previous (128)
 
         1808            note_stack_above next (128)
         1936            note_stack_above previous (128)
-        2064            note_stack_above channels (128)
 
-        2192            rules
-            2192        rule 1 initial value
-            2193        rule 1 in_cc
-            2194        rule 1 out_cc
-            2195        rule 1 target
-            2196        rule 1 reset
-            2197        rule 1 last value
+        2064            rules
+            2064        rule 1 initial value
+            2065        rule 1 in_cc
+            2066        rule 1 out_cc
+            2067        rule 1 target
+            2068        rule 1 reset
+            2069        rule 1 last value
 
-            2198        rule 2 initial value
+            2070        rule 2 initial value
             ...
 
-        2222            output MIDI event time offsets and data
-            2222        first event time offset
-            2223        first event data as 24 bit integer:
+        2094            output MIDI event time offsets and data
+            2094        first event time offset
+            2095        first event data as 24 bit integer:
                         ((STATUS & 0xff) << 16) | ((DATA_1 & 0xff) << 8) | (DATA_2 & 0xff)
-            2224        second event time offset
-            2225        second event data
+            2096        second event time offset
+            2097        second event data
             ...
     */
 
@@ -146,6 +145,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     zone_type = ZT_LOWER;
     channel_count = MPE_MEMBER_CHANNELS;
     manager_channel = 0;
+    override_release_velocity = 0;
     first_channel = 1;
     last_channel = 15;
 
@@ -166,10 +166,13 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     stats_nsal = INVALID;
     stats_nsah = INVALID;
 
-    rules = 2192;
+    channels_by_notes = 1040;
+    velocities_by_notes = 1168;
+
+    rules = 2064;
 
     out_events_count = 0;
-    out_events = 2222;
+    out_events = 2094;
 
     /*
     Other globals:
@@ -355,8 +358,6 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         loop(MIDI_NOTES,
             this.next[i] = INVALID;
             this.previous[i] = INVALID;
-
-            this.channel[i] = INVALID;
             i += 1;
         );
     );
@@ -365,8 +366,6 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     (
         this.next = ptr;
         this.previous = ptr + 128;
-
-        this.channel = ptr + 256;
 
         this.note_stack_clear();
     );
@@ -377,15 +376,15 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     );
 
     function note_stack_active_channels_mask()
-        local(item, i, mask)
+        local(note, i, mask)
     (
         mask = 0;
         i = 0;
-        item = this.head;
+        note = this.head;
 
-        while (item != INVALID && i != MIDI_NOTES) (
-            mask |= 1 << this.channel[item];
-            item = this.next[item];
+        while (note != INVALID && i != MIDI_NOTES) (
+            mask |= 1 << channels_by_notes[note];
+            note = this.next[note];
             i += 1;
         );
 
@@ -415,7 +414,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             );
     );
 
-    function note_stack_push(note, channel)
+    function note_stack_push(note)
     (
         (this.oldest == INVALID)
             ? (this.oldest = note);
@@ -429,8 +428,6 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         this.next[note] = this.head;
         this.head = note;
 
-        this.channel[note] = channel;
-
         (this.lowest == INVALID || note < this.lowest)
             ? (this.lowest = note);
 
@@ -438,39 +435,29 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             ? (this.highest = note);
     );
 
-    function note_stack_find(note)
+    function note_stack_contains(note)
     (
-        (this.head == note || this.previous[note] != INVALID)
-            ? (this.channel[note] << 8 | note)
-            : INVALID;
+        (this.head == note || this.previous[note] != INVALID);
     );
 
     function note_stack_top()
     (
-        (this.note_stack_is_empty())
-            ? INVALID
-            : (this.channel[this.head] << 8 | this.head);
+        this.head;
     );
 
     function note_stack_oldest()
     (
-        (this.note_stack_is_empty())
-            ? INVALID
-            : (this.channel[this.oldest] << 8 | this.oldest);
+        this.oldest;
     );
 
     function note_stack_lowest()
     (
-        (this.note_stack_is_empty())
-            ? INVALID
-            : (this.channel[this.lowest] << 8 | this.lowest);
+        this.lowest;
     );
 
     function note_stack_highest()
     (
-        (this.note_stack_is_empty())
-            ? INVALID
-            : (this.channel[this.highest] << 8 | this.highest);
+        this.highest;
     );
 
     function note_stack_update_extremes_after_remove(changed_note)
@@ -516,9 +503,8 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     );
 
     function note_stack_pop()
-        local(result, note)
+        local(note)
     (
-        result = this.note_stack_top();
         note = this.head;
 
         this.head = this.next[note];
@@ -530,7 +516,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
         this.note_stack_update_extremes_after_remove(note);
 
-        result;
+        note;
     );
 
 
@@ -637,15 +623,20 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         out_events_count = 0;
     );
 
-    function proxy_push_out_event(time_offset, byte_1, byte_2, byte_3)
+    function proxy_push_out_event(time_offset, channel, command, data_1, data_2)
         local(index)
     (
-        index = out_events_count * 2;
+        (0 <= channel && channel < MIDI_CHANNELS)
+            ? (
+                index = out_events_count * 2;
 
-        out_events[index] = time_offset;
-        out_events[index + 1] = (byte_1 << 16) | (byte_2 << 8) | byte_3;
+                out_events[index] = time_offset;
+                out_events[index + 1] = (
+                    ((command | channel) << 16) | (data_1 << 8) | data_2
+                );
 
-        out_events_count += 1;
+                out_events_count += 1;
+            );
     );
 
     function proxy_norm_float_to_midi_int(norm_value, mask)
@@ -666,7 +657,8 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
                 int_value = proxy_norm_float_to_midi_int(norm_value, 0x3fff);
                 proxy_push_out_event(
                     time_offset,
-                    0xe0 | channel,
+                    channel,
+                    0xe0,
                     int_value & 0x7f,
                     int_value >> 7
                 );
@@ -674,14 +666,16 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         : ((controller_id == CTL_CHANNEL_PRESSURE)
             ? proxy_push_out_event(
                 time_offset,
-                0xd0 | channel,
+                channel,
+                0xd0,
                 proxy_norm_float_to_midi_int(norm_value, 0x7f),
                 0x00
             )
         : ((controller_id < CTL_PITCH_BEND)
             ? proxy_push_out_event(
                 time_offset,
-                0xb0 | channel,
+                channel,
+                0xb0,
                 controller_id,
                 proxy_norm_float_to_midi_int(norm_value, 0x7f)
             )
@@ -701,35 +695,35 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         reset_value,
         out_cc
     )
-        local(target, channel)
+        local(target, note, channel)
     (
-        channel = INVALID;
+        note = INVALID;
         target = rule_get_target(rule_idx);
 
         (target == TRG_LOWEST)
-            ? ((a_nsl != b_nsl) ? (channel = a_nsl))
+            ? ((a_nsl != b_nsl) ? (note = a_nsl))
         : ((target == TRG_HIGHEST)
-            ? ((a_nsh != b_nsh) ? (channel = a_nsh))
+            ? ((a_nsh != b_nsh) ? (note = a_nsh))
         : ((target == TRG_OLDEST)
-            ? ((a_nso != b_nso) ? (channel = a_nso))
+            ? ((a_nso != b_nso) ? (note = a_nso))
         : ((target == TRG_NEWEST)
-            ? ((a_nsn != b_nsn) ? (channel = a_nsn))
+            ? ((a_nsn != b_nsn) ? (note = a_nsn))
         : ((target == TRG_LOWEST_BELOW_ANCHOR)
-            ? ((a_nsbl != b_nsbl) ? (channel = a_nsbl))
+            ? ((a_nsbl != b_nsbl) ? (note = a_nsbl))
         : ((target == TRG_HIGHEST_BELOW_ANCHOR)
-            ? ((a_nsbh != b_nsbh) ? (channel = a_nsbh))
+            ? ((a_nsbh != b_nsbh) ? (note = a_nsbh))
         : ((target == TRG_OLDEST_BELOW_ANCHOR)
-            ? ((a_nsbo != b_nsbo) ? (channel = a_nsbo))
+            ? ((a_nsbo != b_nsbo) ? (note = a_nsbo))
         : ((target == TRG_NEWEST_BELOW_ANCHOR)
-            ? ((a_nsbn != b_nsbn) ? (channel = a_nsbn))
+            ? ((a_nsbn != b_nsbn) ? (note = a_nsbn))
         : ((target == TRG_LOWEST_ABOVE_ANCHOR)
-            ? ((a_nsal != b_nsal) ? (channel = a_nsal))
+            ? ((a_nsal != b_nsal) ? (note = a_nsal))
         : ((target == TRG_HIGHEST_ABOVE_ANCHOR)
-            ? ((a_nsah != b_nsah) ? (channel = a_nsah))
+            ? ((a_nsah != b_nsah) ? (note = a_nsah))
         : ((target == TRG_OLDEST_ABOVE_ANCHOR)
-            ? ((a_nsao != b_nsao) ? (channel = a_nsao))
+            ? ((a_nsao != b_nsao) ? (note = a_nsao))
         : ((target == TRG_NEWEST_ABOVE_ANCHOR)
-            ? ((a_nsan != b_nsan) ? (channel = a_nsan))
+            ? ((a_nsan != b_nsan) ? (note = a_nsan))
         )))))))))));
         /*
         Global, all-below-anchor, and all-above-anchor targets are not to
@@ -737,9 +731,9 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         do if none of the above values were matched.
         */
 
-        (channel != INVALID)
+        (note != INVALID)
             ? (
-                channel = channel >> 8;
+                channel = channels_by_notes[note];
                 (channel != new_note_channel)
                     ? proxy_push_controller_event(
                         time_offset, channel, out_cc, reset_value
@@ -787,7 +781,13 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             old_nsao, old_nsan, old_nsal, old_nsah
         )
     (
-        proxy_push_out_event(time_offset, 0x80 | channel, note, velocity);
+        proxy_push_out_event(
+            time_offset,
+            channel,
+            0x80,
+            note,
+            override_release_velocity ? velocities_by_notes[note] : velocity
+        );
 
         was_above_anchor = note >= anchor;
 
@@ -840,15 +840,14 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     );
 
     function proxy_stop_all_notes()
-        local(item, note, channel)
+        local(note, channel)
     (
         /* sustain pedal off */
         proxy_push_controller_event(0.0, manager_channel, 64, 0.0);
 
         while (!note_stack.note_stack_is_empty()) (
-            item = note_stack.note_stack_pop();
-            channel = item >> 8;
-            note = item & 0xff;
+            note = note_stack.note_stack_pop();
+            channel = channels_by_notes[note];
 
             /* sustain pedal off */
             proxy_push_controller_event(0.0, channel, 64, 0.0);
@@ -877,8 +876,8 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         local(i)
     (
         available_channels.available_channels_init(1024);
-        note_stack.note_stack_init(1040);
-        note_stack_below.note_stack_init(1424);
+        note_stack.note_stack_init(1296);
+        note_stack_below.note_stack_init(1552);
         note_stack_above.note_stack_init(1808);
 
         i = 0;
@@ -892,8 +891,12 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         proxy_reset();
     );
 
-    function proxy_update_mpe_config(new_zone_type, new_channel_count, new_anchor)
-    (
+    function proxy_update_main_config(
+            new_zone_type,
+            new_channel_count,
+            new_anchor,
+            new_override_release_velocity
+    ) (
         (new_zone_type != zone_type || new_channel_count != channel_count)
             ? (
                 proxy_clear();
@@ -918,6 +921,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             );
 
         anchor = new_anchor;
+        override_release_velocity = new_override_release_velocity;
     );
 
     function proxy_push_resets_for_new_note(
@@ -989,7 +993,10 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         old_nsal = note_stack_above.note_stack_lowest();
         old_nsah = note_stack_above.note_stack_highest();
 
-        note_stack.note_stack_push(note, channel);
+        channels_by_notes[note] = channel;
+        velocities_by_notes[note] = velocity;
+
+        note_stack.note_stack_push(note);
 
         stats_nso = note_stack.note_stack_oldest();
         stats_nsn = note_stack.note_stack_top();
@@ -1000,7 +1007,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
         (is_above_anchor)
             ? (
-                note_stack_above.note_stack_push(note, channel);
+                note_stack_above.note_stack_push(note);
 
                 stats_nsao = note_stack_above.note_stack_oldest();
                 stats_nsan = note_stack_above.note_stack_top();
@@ -1008,7 +1015,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
                 stats_nsah = note_stack_above.note_stack_highest();
             )
             : (
-                note_stack_below.note_stack_push(note, channel);
+                note_stack_below.note_stack_push(note);
 
                 stats_nsbo = note_stack_below.note_stack_oldest();
                 stats_nsbn = note_stack_below.note_stack_top();
@@ -1028,7 +1035,8 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
         proxy_push_out_event(
             time_offset,
-            0x90 | channel,
+            channel,
+            0x90,
             note,
             velocity
         );
@@ -1048,7 +1056,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         local(allocated_channel)
     (
         (
-                note_stack.note_stack_find(note) == INVALID
+                note_stack.note_stack_contains(note) == 0
                 && !available_channels.available_channels_is_empty()
         )
             ? (
@@ -1060,11 +1068,9 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     function proxy_note_off(time_offset, note, velocity)
         local(channel)
     (
-        channel = note_stack.note_stack_find(note);
-
-        (channel != INVALID)
+        (note_stack.note_stack_contains(note))
             ? (
-                channel = channel >> 8;
+                channel = channels_by_notes[note];
                 proxy_push_note_off(time_offset, channel, note, velocity);
                 available_channels.available_channels_push(channel);
             );
@@ -1101,29 +1107,29 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
                     : ((target == TRG_ALL_ABOVE_ANCHOR)
                         ? (target_channels_mask = note_stack_above.note_stack_active_channels_mask())
                     : ((target == TRG_LOWEST && !note_stack.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack.note_stack_lowest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack.note_stack_lowest()])
                     : ((target == TRG_HIGHEST && !note_stack.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack.note_stack_highest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack.note_stack_highest()])
                     : ((target == TRG_OLDEST && !note_stack.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack.note_stack_oldest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack.note_stack_oldest()])
                     : ((target == TRG_NEWEST && !note_stack.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack.note_stack_top() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack.note_stack_top()])
                     : ((target == TRG_LOWEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_lowest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_below.note_stack_lowest()])
                     : ((target == TRG_HIGHEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_highest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_below.note_stack_highest()])
                     : ((target == TRG_OLDEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_oldest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_below.note_stack_oldest()])
                     : ((target == TRG_NEWEST_BELOW_ANCHOR && !note_stack_below.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_below.note_stack_top() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_below.note_stack_top()])
                     : ((target == TRG_LOWEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_lowest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_above.note_stack_lowest()])
                     : ((target == TRG_HIGHEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_highest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_above.note_stack_highest()])
                     : ((target == TRG_OLDEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_oldest() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_above.note_stack_oldest()])
                     : ((target == TRG_NEWEST_ABOVE_ANCHOR && !note_stack_above.note_stack_is_empty())
-                        ? (target_channels_mask = 1 << (note_stack_above.note_stack_top() >> 8))
+                        ? (target_channels_mask = 1 << channels_by_notes[note_stack_above.note_stack_top()])
                     ))))))))))))));
 
                     channel = 0;
@@ -1333,87 +1339,94 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     );
 
     assert_eq(
-        0x0000,
+        0x00,
         note_stack.note_stack_active_channels_mask(),
-        "0x%04x",
+        "0x%02x",
         "note stack channels should all be inactive before first use"
     );
 
-    note_stack.note_stack_push(0x3c, 0x01);
-    note_stack.note_stack_push(0x48, 0x0a);
-    note_stack.note_stack_push(0x30, 0x02);
-    note_stack.note_stack_push(0x48, 0x03);
+    channels_by_notes[0x3c] = 1;
+    channels_by_notes[0x30] = 2;
+    channels_by_notes[0x48] = 3;
+
+    note_stack.note_stack_push(0x3c);
+    note_stack.note_stack_push(0x48);
+    note_stack.note_stack_push(0x30);
+    note_stack.note_stack_push(0x48);
 
     assert_false(
         note_stack.note_stack_is_empty(),
         "note stack should not be empty after pushing 3 elements"
     );
 
-    assert_eq(0x013c, note_stack.note_stack_oldest(), "0x%04x", "popped 0, oldest");
-    assert_eq(0x0348, note_stack.note_stack_top(), "0x%04x", "popped 0, top");
-    assert_eq(0x0230, note_stack.note_stack_lowest(), "0x%04x", "popped 0, lowest");
-    assert_eq(0x0348, note_stack.note_stack_highest(), "0x%04x", "popped 0, highest");
+    assert_eq(0x3c, note_stack.note_stack_oldest(), "0x%02x", "popped 0, oldest");
+    assert_eq(0x48, note_stack.note_stack_top(), "0x%02x", "popped 0, top");
+    assert_eq(0x30, note_stack.note_stack_lowest(), "0x%02x", "popped 0, lowest");
+    assert_eq(0x48, note_stack.note_stack_highest(), "0x%02x", "popped 0, highest");
     assert_eq(
-        0x000e,
+        0x0e,
         note_stack.note_stack_active_channels_mask(),
-        "0x%04x",
+        "0x%02x",
         "popped 0, active channels mask"
     );
 
-    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 0, find");
-    assert_eq(0x0230, note_stack.note_stack_find(0x30), "0x%04x", "popped 0, find");
-    assert_eq(0x013c, note_stack.note_stack_find(0x3c), "0x%04x", "popped 0, find");
-    assert_eq(0x0348, note_stack.note_stack_find(0x48), "0x%04x", "popped 0, find");
+    assert_eq(0, note_stack.note_stack_contains(0x24), "%d", "popped 0, find");
+    assert_eq(1, note_stack.note_stack_contains(0x30), "%d", "popped 0, find");
+    assert_eq(1, note_stack.note_stack_contains(0x3c), "%d", "popped 0, find");
+    assert_eq(1, note_stack.note_stack_contains(0x48), "%d", "popped 0, find");
 
-    assert_eq(0x0348, note_stack.note_stack_pop(), "0x%04x", "popped 1");
+    assert_eq(0x48, note_stack.note_stack_pop(), "0x%02x", "popped 1");
+    channels_by_notes[0x48] = INVALID;
 
-    assert_eq(0x013c, note_stack.note_stack_oldest(), "0x%04x", "popped 1, oldest");
-    assert_eq(0x0230, note_stack.note_stack_top(), "0x%04x", "popped 1, top");
-    assert_eq(0x0230, note_stack.note_stack_lowest(), "0x%04x", "popped 1, lowest");
-    assert_eq(0x013c, note_stack.note_stack_highest(), "0x%04x", "popped 1, highest");
+    assert_eq(0x3c, note_stack.note_stack_oldest(), "0x%02x", "popped 1, oldest");
+    assert_eq(0x30, note_stack.note_stack_top(), "0x%02x", "popped 1, top");
+    assert_eq(0x30, note_stack.note_stack_lowest(), "0x%02x", "popped 1, lowest");
+    assert_eq(0x3c, note_stack.note_stack_highest(), "0x%02x", "popped 1, highest");
     assert_eq(
-        0x0006,
+        0x06,
         note_stack.note_stack_active_channels_mask(),
-        "0x%04x",
+        "0x%02x",
         "popped 1, active channels mask"
     );
 
-    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 1, find");
-    assert_eq(0x0230, note_stack.note_stack_find(0x30), "0x%04x", "popped 1, find");
-    assert_eq(0x013c, note_stack.note_stack_find(0x3c), "0x%04x", "popped 1, find");
-    assert_eq(INVALID, note_stack.note_stack_find(0x48), "0x%04x", "popped 1, find");
+    assert_eq(0, note_stack.note_stack_contains(0x24), "%d", "popped 1, find");
+    assert_eq(1, note_stack.note_stack_contains(0x30), "%d", "popped 1, find");
+    assert_eq(1, note_stack.note_stack_contains(0x3c), "%d", "popped 1, find");
+    assert_eq(0, note_stack.note_stack_contains(0x48), "%d", "popped 1, find");
 
-    assert_eq(0x0230, note_stack.note_stack_pop(), "0x%04x", "popped 2");
+    assert_eq(0x30, note_stack.note_stack_pop(), "0x%02x", "popped 2");
+    channels_by_notes[0x30] = INVALID;
 
-    assert_eq(0x013c, note_stack.note_stack_oldest(), "0x%04x", "popped 2, oldest");
-    assert_eq(0x013c, note_stack.note_stack_top(), "0x%04x", "popped 2, top");
-    assert_eq(0x013c, note_stack.note_stack_lowest(), "0x%04x", "popped 2, lowest");
-    assert_eq(0x013c, note_stack.note_stack_highest(), "0x%04x", "popped 2, highest");
+    assert_eq(0x3c, note_stack.note_stack_oldest(), "0x%02x", "popped 2, oldest");
+    assert_eq(0x3c, note_stack.note_stack_top(), "0x%02x", "popped 2, top");
+    assert_eq(0x3c, note_stack.note_stack_lowest(), "0x%02x", "popped 2, lowest");
+    assert_eq(0x3c, note_stack.note_stack_highest(), "0x%02x", "popped 2, highest");
     assert_eq(
         0x0002,
         note_stack.note_stack_active_channels_mask(),
-        "0x%04x",
+        "0x%02x",
         "popped 2, active channels mask"
     );
 
-    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 2, find");
-    assert_eq(INVALID, note_stack.note_stack_find(0x30), "0x%04x", "popped 2, find");
-    assert_eq(0x013c, note_stack.note_stack_find(0x3c), "0x%04x", "popped 2, find");
-    assert_eq(INVALID, note_stack.note_stack_find(0x48), "0x%04x", "popped 2, find");
+    assert_eq(0, note_stack.note_stack_contains(0x24), "%d", "popped 2, find");
+    assert_eq(0, note_stack.note_stack_contains(0x30), "%d", "popped 2, find");
+    assert_eq(1, note_stack.note_stack_contains(0x3c), "%d", "popped 2, find");
+    assert_eq(0, note_stack.note_stack_contains(0x48), "%d", "popped 2, find");
 
-    assert_eq(0x013c, note_stack.note_stack_pop(), "0x%04x", "popped 3");
+    assert_eq(0x3c, note_stack.note_stack_pop(), "0x%02x", "popped 3");
+    channels_by_notes[0x3c] = INVALID;
 
     assert_eq(
         0x0000,
         note_stack.note_stack_active_channels_mask(),
-        "0x%04x",
+        "0x%02x",
         "popped 3, active channels mask"
     );
 
-    assert_eq(INVALID, note_stack.note_stack_find(0x24), "0x%04x", "popped 3, find");
-    assert_eq(INVALID, note_stack.note_stack_find(0x30), "0x%04x", "popped 3, find");
-    assert_eq(INVALID, note_stack.note_stack_find(0x3c), "0x%04x", "popped 3, find");
-    assert_eq(INVALID, note_stack.note_stack_find(0x48), "0x%04x", "popped 3, find");
+    assert_eq(0, note_stack.note_stack_contains(0x24), "%d", "popped 3, find");
+    assert_eq(0, note_stack.note_stack_contains(0x30), "%d", "popped 3, find");
+    assert_eq(0, note_stack.note_stack_contains(0x3c), "%d", "popped 3, find");
+    assert_eq(0, note_stack.note_stack_contains(0x48), "%d", "popped 3, find");
 
     assert_true(
         note_stack.note_stack_is_empty(),
@@ -1428,7 +1441,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     proxy_init();
 
     turn_off_rules();
-    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
     proxy_clear();
 
     proxy_note_on(1.0, 60, 127);
@@ -1439,7 +1452,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "MPE config change triggers complete reset";
     proxy_clear();
-    proxy_update_mpe_config(ZT_UPPER, 10, 60);
+    proxy_update_main_config(ZT_UPPER, 10, 60, 0);
 
     assert_out_event(0, 0.0, 0xb04000, test);       // CC   ch=0 ctl=64 v=0
     assert_out_event(1, 0.0, 0xb14000, test);       // CC   ch=1 ctl=64 v=0
@@ -1448,7 +1461,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "NOTE ON can trigger resets to initial value 1";
     turn_off_rules();
-    proxy_update_mpe_config(ZT_LOWER, 2, 60);
+    proxy_update_main_config(ZT_LOWER, 2, 60, 0);
     proxy_init();
     rule_update_config(
         0, 0.7, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_NEWEST_ABOVE_ANCHOR, RST_INIT
@@ -1507,7 +1520,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "mapping and routing control events";
     proxy_init();
-    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
     rule_update_config(0, 0.5, CTL_PITCH_BEND, 74, TRG_OLDEST, RST_OFF);
     rule_update_config(1, 0.0, 1, CTL_CHANNEL_PRESSURE, TRG_NEWEST, RST_OFF);
     rule_update_config(2, 0.0, 74, CTL_NONE, TRG_HIGHEST, RST_OFF);
@@ -1538,7 +1551,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "NOTE ON can reset controllers to their last input value";
     proxy_init();
-    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
     rule_update_config(
         0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_OLDEST, RST_LAST
     );
@@ -1605,7 +1618,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "can route events to all notes above or below anchor";
     proxy_init();
-    proxy_update_mpe_config(ZT_LOWER, 15, 60);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
     rule_update_config(
         0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_ALL_ABOVE_ANCHOR, RST_INIT
     );
@@ -1623,6 +1636,28 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     assert_out_event(0, 1.0, 0xe27f7f, test);       // PB   ch=2 v=16383
     assert_out_event(1, 1.0, 0xe37f7f, test);       // PB   ch=3 v=16383
     assert_out_event(2, 2.0, 0xd17f00, test);       // CHP  ch=1 v=127
+    assert_eq(3, out_events_count, "%d", test);
+
+    test = "can override release velocity with trigger velocity";
+    proxy_init();
+    proxy_update_main_config(ZT_LOWER, 15, 60, 1);
+    turn_off_rules();
+    proxy_note_on(1.0, 48, 127);                    // ch=1
+    proxy_note_on(2.0, 72, 123);                    // ch=2
+    proxy_note_on(3.0, 60, 42);                     // ch=3
+    proxy_clear();
+
+    proxy_note_off(1.0, 72, 64);
+    proxy_note_off(2.0, 60, 64);
+    assert_out_event(0, 1.0, 0x82487b, test);       // OFF  ch=2 n=72 v=123
+    assert_out_event(1, 2.0, 0x833c2a, test);       // OFF  ch=3 n=60 v=42
+    assert_eq(2, out_events_count, "%d", test);
+
+    proxy_clear();
+    proxy_update_main_config(ZT_LOWER, 14, 60, 0);
+    assert_out_event(0, 0.0, 0xb04000, test);       // CC   ch=0 ctl=64 v=0
+    assert_out_event(1, 0.0, 0xb14000, test);       // CC   ch=1 ctl=64 v=0
+    assert_out_event(2, 0.0, 0x81307f, test);       // OFF  ch=1 n=48 v=127
     assert_eq(3, out_events_count, "%d", test);
 
     (failed_assertions == 0)
@@ -1651,15 +1686,15 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         4, p_r5_init_value / 100.0, p_r5_in_cc, p_r5_out_cc, p_r5_target, p_r5_reset
     );
 
-    proxy_update_mpe_config(p_zone_type, p_channels, p_anchor);
+    proxy_update_main_config(
+        p_zone_type & 1, p_channels, p_anchor, p_zone_type >> 1
+    );
 
 
 @block
     function process()
         local(time_offset, msg1, msg2, msg3, channel, command, i, i2, out_event)
     (
-        proxy_clear();
-
         while (midirecv(time_offset, msg1, msg2, msg3)) (
             command = msg1 & 0xf0;
             channel = msg1 & 0x0f;
@@ -1689,6 +1724,8 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             midisend(time_offset, msg1, msg2, msg3);
             i += 1;
         );
+
+        proxy_clear();
     );
 
     process();
