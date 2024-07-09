@@ -770,6 +770,8 @@ class Proxy : public Midi::EventHandler
             bool const is_note_on_setup = false
         ) noexcept;
 
+        void push_out_event(Midi::Event const& event) noexcept;
+
         OutEvents out_events_rw;
         MidiControllerMessage previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
         Param* params[ParamId::PARAM_ID_COUNT];

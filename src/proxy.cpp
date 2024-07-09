@@ -484,7 +484,7 @@ void Proxy::push_note_on(
         old_channel_stats_above
     );
 
-    out_events_rw.push_back(
+    push_out_event(
         Midi::Event(
             time_offset,
             Midi::NOTE_ON,
@@ -509,6 +509,16 @@ void Proxy::push_note_on(
         old_channel_stats_below,
         old_channel_stats_above
     );
+}
+
+
+void Proxy::push_out_event(Midi::Event const& event) noexcept
+{
+    if (MPE_EMULATOR_UNLIKELY(event.channel > Midi::CHANNEL_MAX)) {
+        return;
+    }
+
+    out_events_rw.push_back(event);
 }
 
 
@@ -706,7 +716,7 @@ void Proxy::push_controller_event(
         bool const is_pre_note_on_setup
 ) noexcept {
     if constexpr (midi_command == Midi::CHANNEL_PRESSURE) {
-        out_events_rw.push_back(
+        push_out_event(
             Midi::Event(
                 time_offset,
                 Midi::CHANNEL_PRESSURE,
@@ -722,7 +732,7 @@ void Proxy::push_controller_event(
         Midi::Byte const lsb = (Midi::Byte)(value_as_word & 0x7f);
         Midi::Byte const msb = (Midi::Byte)(value_as_word >> 7);
 
-        out_events_rw.push_back(
+        push_out_event(
             Midi::Event(
                 time_offset,
                 Midi::PITCH_BEND_CHANGE,
@@ -734,7 +744,7 @@ void Proxy::push_controller_event(
             )
         );
     } else {
-        out_events_rw.push_back(
+        push_out_event(
             Midi::Event(
                 time_offset,
                 Midi::CONTROL_CHANGE,
@@ -762,7 +772,7 @@ void Proxy::push_note_off(
             : velocity
     );
 
-    out_events_rw.push_back(
+    push_out_event(
         Midi::Event(
             time_offset,
             Midi::NOTE_OFF,
@@ -1372,13 +1382,13 @@ void Proxy::push_mcm(
         Midi::Channel const channel,
         Midi::Channel const channel_count
 ) noexcept {
-    out_events_rw.push_back(
+    push_out_event(
         Midi::Event(0.0, Midi::CONTROL_CHANGE, channel, Midi::RPN_MSB, 0x00)
     );
-    out_events_rw.push_back(
+    push_out_event(
         Midi::Event(0.0, Midi::CONTROL_CHANGE, channel, Midi::RPN_LSB, 0x06)
     );
-    out_events_rw.push_back(
+    push_out_event(
         Midi::Event(
             0.0, Midi::CONTROL_CHANGE, channel, Midi::DATA_ENTRY_MSB, channel_count
         )
