@@ -99,6 +99,7 @@ main()
         build.sh \
         Doxyfile \
         gui \
+        jsfx \
         mpe-emulator.png \
         lib \
         LICENSE.txt \
