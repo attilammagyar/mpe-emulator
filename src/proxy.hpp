@@ -774,6 +774,8 @@ class Proxy : public Midi::EventHandler
         MidiControllerMessage previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
         Param* params[ParamId::PARAM_ID_COUNT];
         Queue<Midi::Channel, MPE_MEMBER_CHANNELS_MAX> available_channels;
+        NoteStack::ChannelsByNotes channels_by_notes;
+        Midi::Byte velocities_by_notes[Midi::NOTES];
         std::atomic<double> param_ratios_atomic[ParamId::PARAM_ID_COUNT];
         SPSCQueue<Message> messages;
         std::atomic<unsigned int> active_voices_count_atomic;

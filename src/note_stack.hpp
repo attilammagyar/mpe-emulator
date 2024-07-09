@@ -62,72 +62,34 @@ class NoteStack
         };
 
         typedef Midi::Channel Channels[Midi::CHANNELS];
+        typedef Midi::Channel ChannelsByNotes[Midi::NOTES];
 
         NoteStack() noexcept;
 
         void clear() noexcept;
         bool is_empty() const noexcept;
         bool is_top(Midi::Note const note) const noexcept;
-
-        bool find(
-            Midi::Note const note,
-            Midi::Channel& channel,
-            Midi::Byte& velocity
-        ) const noexcept;
-
-        void top(
-            Midi::Note& note,
-            Midi::Channel& channel,
-            Midi::Byte& velocity
-        ) const noexcept;
-
-        void top(Midi::Note& note, Midi::Channel& channel) const noexcept;
-
-        void oldest(
-            Midi::Note& note,
-            Midi::Channel& channel,
-            Midi::Byte& velocity
-        ) const noexcept;
-
-        void oldest(Midi::Note& note, Midi::Channel& channel) const noexcept;
-
-        void lowest(
-            Midi::Note& note,
-            Midi::Channel& channel,
-            Midi::Byte& velocity
-        ) const noexcept;
-
-        void lowest(Midi::Note& note, Midi::Channel& channel) const noexcept;
-
-        void highest(
-            Midi::Note& note,
-            Midi::Channel& channel,
-            Midi::Byte& velocity
-        ) const noexcept;
-
-        void highest(Midi::Note& note, Midi::Channel& channel) const noexcept;
-
-        void push(
-            Midi::Note const note,
-            Midi::Channel const channel,
-            Midi::Byte const velocity
-        ) noexcept;
-
-        void pop(
-            Midi::Note& note,
-            Midi::Channel& channel,
-            Midi::Byte& velocity
-        ) noexcept;
-
+        bool find(Midi::Note const note) const noexcept;
+        Midi::Note top() const noexcept;
+        Midi::Note oldest() const noexcept;
+        Midi::Note lowest() const noexcept;
+        Midi::Note highest() const noexcept;
+        void push(Midi::Note const note) noexcept;
+        Midi::Note pop() noexcept;
         void remove(Midi::Note const note) noexcept;
 
-        void get_active_channels(Channels& channels, size_t& count) const noexcept;
+        void collect_active_channels(
+            ChannelsByNotes const& channels_by_notes,
+            Channels& channels,
+            size_t& count
+        ) const noexcept;
 
-        void make_stats(ChannelStats& stats) const noexcept;
+        void make_stats(
+            ChannelsByNotes const& channels_by_notes,
+            ChannelStats& stats
+        ) const noexcept;
 
     private:
-        static constexpr Midi::Word INVALID_ITEM = Midi::INVALID_NOTE;
-
         static constexpr size_t ITEMS = Midi::NOTES;
 
         // void dump() const noexcept;
@@ -135,14 +97,11 @@ class NoteStack
         bool is_invalid(Midi::Note const note) const noexcept;
 
         template<bool should_update_extremes>
-        void remove(Midi::Byte const item) noexcept;
+        void remove(Midi::Note const note) noexcept;
 
-        void update_extremes_after_remove(Midi::Byte const changed_item) noexcept;
+        void update_extremes_after_remove(Midi::Note const changed_note) noexcept;
 
         bool is_already_pushed(Midi::Note const note) const noexcept;
-
-        Midi::Byte velocities[ITEMS];
-        Midi::Channel channels[ITEMS];
 
         /*
         Since we have a small, finite number of possible elements, and they are
@@ -157,13 +116,13 @@ class NoteStack
             next[X] = Y if and only if Y is the next element after X
             previous[Y] = X if and only if next[X] = Y
         */
-        Midi::Byte next[ITEMS];
-        Midi::Byte previous[ITEMS];
+        Midi::Note next[ITEMS];
+        Midi::Note previous[ITEMS];
 
-        Midi::Byte head;
-        Midi::Byte oldest_;
-        Midi::Byte lowest_;
-        Midi::Byte highest_;
+        Midi::Note head;
+        Midi::Note oldest_;
+        Midi::Note lowest_;
+        Midi::Note highest_;
 };
 
 }

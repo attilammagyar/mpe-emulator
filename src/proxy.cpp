@@ -245,6 +245,9 @@ Proxy::Proxy() noexcept
     is_dirty_(false),
     had_reset(false)
 {
+    std::fill_n(channels_by_notes, Midi::NOTES, Midi::INVALID_CHANNEL);
+    std::fill_n(velocities_by_notes, Midi::NOTES, 0);
+
     register_param(ParamId::MCM, send_mcm);
     register_param(ParamId::Z1TYP, zone_type);
     register_param(ParamId::Z1CHN, channels);
@@ -388,12 +391,15 @@ void Proxy::note_on(
     Midi::Note steal_note;
     Midi::Channel steal_channel;
     Midi::Byte steal_velocity;
-    bool const already_on = note_stack.find(note, steal_channel, steal_velocity);
+    bool const already_on = note_stack.find(note);
 
     if (MPE_EMULATOR_UNLIKELY(already_on)) {
         if ((ExcessNoteHandling)excess_note_handling.get_value() == ExcessNoteHandling::ENH_IGNORE) {
             return;
         }
+
+        steal_channel = channels_by_notes[note];
+        steal_velocity = velocities_by_notes[note];
 
         push_note_off(time_offset, steal_channel, note, 64, steal_velocity);
         push_note_on(time_offset, steal_channel, note, velocity);
@@ -410,24 +416,27 @@ void Proxy::note_on(
 
         switch ((ExcessNoteHandling)excess_note_handling.get_value()) {
             case ExcessNoteHandling::ENH_STEAL_LOWEST:
-                note_stack.lowest(steal_note, steal_channel, steal_velocity);
+                steal_note = note_stack.lowest();
                 break;
 
             case ExcessNoteHandling::ENH_STEAL_HIGHEST:
-                note_stack.highest(steal_note, steal_channel, steal_velocity);
+                steal_note = note_stack.highest();
                 break;
 
             case ExcessNoteHandling::ENH_STEAL_OLDEST:
-                note_stack.oldest(steal_note, steal_channel, steal_velocity);
+                steal_note = note_stack.oldest();
                 break;
 
             case ExcessNoteHandling::ENH_STEAL_NEWEST:
-                note_stack.top(steal_note, steal_channel, steal_velocity);
+                steal_note = note_stack.top();
                 break;
 
             default:
                 return;
         }
+
+        steal_channel = channels_by_notes[steal_note];
+        steal_velocity = velocities_by_notes[steal_note];
 
         push_note_off(
             time_offset, steal_channel, steal_note, 64, steal_velocity
@@ -450,17 +459,20 @@ void Proxy::push_note_on(
     NoteStack::ChannelStats old_channel_stats_below(channel_stats_below);
     NoteStack::ChannelStats old_channel_stats_above(channel_stats_above);
 
-    note_stack.push(note, channel, velocity);
-    note_stack.make_stats(channel_stats);
+    note_stack.push(note);
+    channels_by_notes[note] = channel;
+    velocities_by_notes[note] = velocity;
+
+    note_stack.make_stats(channels_by_notes, channel_stats);
 
     bool const is_above_anchor = note >= (Midi::Note)anchor.get_value();
 
     if (is_above_anchor) {
-        note_stack_above.push(note, channel, velocity);
-        note_stack_above.make_stats(channel_stats_above);
+        note_stack_above.push(note);
+        note_stack_above.make_stats(channels_by_notes, channel_stats_above);
     } else {
-        note_stack_below.push(note, channel, velocity);
-        note_stack_below.make_stats(channel_stats_below);
+        note_stack_below.push(note);
+        note_stack_below.make_stats(channels_by_notes, channel_stats_below);
     }
 
     push_resets_for_new_note<true>(
@@ -771,9 +783,9 @@ void Proxy::push_note_off(
     note_stack_above.remove(note);
     note_stack_below.remove(note);
 
-    note_stack.make_stats(channel_stats);
-    note_stack_above.make_stats(channel_stats_above);
-    note_stack_below.make_stats(channel_stats_below);
+    note_stack.make_stats(channels_by_notes, channel_stats);
+    note_stack_above.make_stats(channels_by_notes, channel_stats_above);
+    note_stack_below.make_stats(channels_by_notes, channel_stats_below);
 
     push_resets_for_note_off(
         time_offset,
@@ -886,86 +898,98 @@ void Proxy::process_controller_event(
 
         switch ((Target)rule.target.get_value()) {
             case Target::TRG_ALL_BELOW_ANCHOR:
-                note_stack_below.get_active_channels(
-                    target_channels, target_channels_count
+                note_stack_below.collect_active_channels(
+                    channels_by_notes, target_channels, target_channels_count
                 );
                 break;
 
             case Target::TRG_ALL_ABOVE_ANCHOR:
-                note_stack_above.get_active_channels(
-                    target_channels, target_channels_count
+                note_stack_above.collect_active_channels(
+                    channels_by_notes, target_channels, target_channels_count
                 );
                 break;
 
             case Target::TRG_LOWEST:
                 if (!note_stack.is_empty()) {
-                    note_stack.lowest(note, target_channels[target_channels_count++]);
+                    note = note_stack.lowest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_HIGHEST:
                 if (!note_stack.is_empty()) {
-                    note_stack.highest(note, target_channels[target_channels_count++]);
+                    note = note_stack.highest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_OLDEST:
                 if (!note_stack.is_empty()) {
-                    note_stack.oldest(note, target_channels[target_channels_count++]);
+                    note = note_stack.oldest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_NEWEST:
                 if (!note_stack.is_empty()) {
-                    note_stack.top(note, target_channels[target_channels_count++]);
+                    note = note_stack.top();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_LOWEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.lowest(note, target_channels[target_channels_count++]);
+                    note = note_stack_below.lowest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_HIGHEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.highest(note, target_channels[target_channels_count++]);
+                    note = note_stack_below.highest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_OLDEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.oldest(note, target_channels[target_channels_count++]);
+                    note = note_stack_below.oldest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_NEWEST_BELOW_ANCHOR:
                 if (!note_stack_below.is_empty()) {
-                    note_stack_below.top(note, target_channels[target_channels_count++]);
+                    note = note_stack_below.top();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_LOWEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.lowest(note, target_channels[target_channels_count++]);
+                    note = note_stack_above.lowest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_HIGHEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.highest(note, target_channels[target_channels_count++]);
+                    note = note_stack_above.highest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_OLDEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.oldest(note, target_channels[target_channels_count++]);
+                    note = note_stack_above.oldest();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
             case Target::TRG_NEWEST_ABOVE_ANCHOR:
                 if (!note_stack_above.is_empty()) {
-                    note_stack_above.top(note, target_channels[target_channels_count++]);
+                    note = note_stack_above.top();
+                    target_channels[target_channels_count++] = channels_by_notes[note];
                 }
                 break;
 
@@ -1030,9 +1054,12 @@ void Proxy::note_off(
     Midi::Channel assigned_channel;
     Midi::Byte note_on_velocity;
 
-    if (!note_stack.find(note, assigned_channel, note_on_velocity)) {
+    if (!note_stack.find(note)) {
         return;
     }
+
+    assigned_channel = channels_by_notes[note];
+    note_on_velocity = velocities_by_notes[note];
 
     push_note_off(
         time_offset, assigned_channel, note, velocity, note_on_velocity
@@ -1309,19 +1336,19 @@ bool Proxy::update_mpe_config() noexcept
 void Proxy::stop_all_notes() noexcept
 {
     if (!note_stack.is_empty()) {
-        Midi::Note note;
-        Midi::Channel channel;
-        Midi::Byte velocity;
-
         push_controller_event<Midi::CONTROL_CHANGE>(
             0.0, manager_channel, ControllerId::SUSTAIN_PEDAL, 0.0
         );
 
         for (Midi::Note i = 0; !note_stack.is_empty() && i != Midi::NOTE_MAX; ++i) {
-            note_stack.pop(note, channel, velocity);
+            Midi::Note const note = note_stack.pop();
+            Midi::Channel const channel = channels_by_notes[note];
+            Midi::Byte const velocity = velocities_by_notes[note];
+
             push_controller_event<Midi::CONTROL_CHANGE>(
                 0.0, channel, ControllerId::SUSTAIN_PEDAL, 0.0
             );
+
             push_note_off(0.0, channel, note, 64, velocity);
         }
     }
