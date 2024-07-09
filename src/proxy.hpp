@@ -750,8 +750,7 @@ class Proxy : public Midi::EventHandler
             double const time_offset,
             Midi::Channel const channel,
             Midi::Note const note,
-            Midi::Byte const velocity,
-            Midi::Byte const note_on_velocity
+            Midi::Byte const velocity
         ) noexcept;
 
         template<Midi::Command midi_command>

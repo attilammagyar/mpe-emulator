@@ -388,9 +388,6 @@ void Proxy::note_on(
         return;
     }
 
-    Midi::Note steal_note;
-    Midi::Channel steal_channel;
-    Midi::Byte steal_velocity;
     bool const already_on = note_stack.find(note);
 
     if (MPE_EMULATOR_UNLIKELY(already_on)) {
@@ -398,10 +395,9 @@ void Proxy::note_on(
             return;
         }
 
-        steal_channel = channels_by_notes[note];
-        steal_velocity = velocities_by_notes[note];
+        Midi::Channel const steal_channel = channels_by_notes[note];
 
-        push_note_off(time_offset, steal_channel, note, 64, steal_velocity);
+        push_note_off(time_offset, steal_channel, note, 64);
         push_note_on(time_offset, steal_channel, note, velocity);
 
         return;
@@ -413,6 +409,8 @@ void Proxy::note_on(
 
             return;
         }
+
+        Midi::Note steal_note;
 
         switch ((ExcessNoteHandling)excess_note_handling.get_value()) {
             case ExcessNoteHandling::ENH_STEAL_LOWEST:
@@ -435,12 +433,9 @@ void Proxy::note_on(
                 return;
         }
 
-        steal_channel = channels_by_notes[steal_note];
-        steal_velocity = velocities_by_notes[steal_note];
+        Midi::Channel const steal_channel = channels_by_notes[steal_note];
 
-        push_note_off(
-            time_offset, steal_channel, steal_note, 64, steal_velocity
-        );
+        push_note_off(time_offset, steal_channel, steal_note, 64);
         push_note_on(time_offset, steal_channel, note, velocity);
     } else {
         Midi::Channel allocated_channel = available_channels.pop();
@@ -763,12 +758,11 @@ void Proxy::push_note_off(
         double const time_offset,
         Midi::Channel const channel,
         Midi::Note const note,
-        Midi::Byte const velocity,
-        Midi::Byte const note_on_velocity
+        Midi::Byte const velocity
 ) noexcept {
     Midi::Byte const note_off_velocity = (
         (Toggle)override_release_velocity.get_value() == Toggle::ON
-            ? note_on_velocity
+            ? velocities_by_notes[note]
             : velocity
     );
 
@@ -1061,19 +1055,13 @@ void Proxy::note_off(
         return;
     }
 
-    Midi::Channel assigned_channel;
-    Midi::Byte note_on_velocity;
-
     if (!note_stack.find(note)) {
         return;
     }
 
-    assigned_channel = channels_by_notes[note];
-    note_on_velocity = velocities_by_notes[note];
+    Midi::Channel const assigned_channel = channels_by_notes[note];
 
-    push_note_off(
-        time_offset, assigned_channel, note, velocity, note_on_velocity
-    );
+    push_note_off(time_offset, assigned_channel, note, velocity);
 
     available_channels.push(assigned_channel);
 }
@@ -1353,13 +1341,12 @@ void Proxy::stop_all_notes() noexcept
         for (Midi::Note i = 0; !note_stack.is_empty() && i != Midi::NOTE_MAX; ++i) {
             Midi::Note const note = note_stack.pop();
             Midi::Channel const channel = channels_by_notes[note];
-            Midi::Byte const velocity = velocities_by_notes[note];
 
             push_controller_event<Midi::CONTROL_CHANGE>(
                 0.0, channel, ControllerId::SUSTAIN_PEDAL, 0.0
             );
 
-            push_note_off(0.0, channel, note, 64, velocity);
+            push_note_off(0.0, channel, note, 64);
         }
     }
 
