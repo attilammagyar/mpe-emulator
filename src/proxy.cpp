@@ -1232,8 +1232,7 @@ void Proxy::process_message(Message const& message) noexcept
 {
     switch (message.type) {
         case MessageType::SET_PARAM:
-            handle_set_param(message.param_id, message.double_param);
-            is_dirty_ = true;
+            is_dirty_ = handle_set_param(message.param_id, message.double_param);
             break;
 
         case MessageType::REFRESH_PARAM:
@@ -1241,8 +1240,7 @@ void Proxy::process_message(Message const& message) noexcept
             break;
 
         case MessageType::CLEAR:
-            handle_clear();
-            is_dirty_ = true;
+            is_dirty_ = handle_clear();
             break;
 
         case MessageType::CLEAR_DIRTY_FLAG:
@@ -1255,10 +1253,17 @@ void Proxy::process_message(Message const& message) noexcept
 }
 
 
-void Proxy::handle_set_param(ParamId const param_id, double const ratio) noexcept
+bool Proxy::handle_set_param(ParamId const param_id, double const ratio) noexcept
 {
-    params[(size_t)param_id]->set_ratio(ratio);
+    Param& param = *(params[(size_t)param_id]);
+
+    unsigned int const old_value = param.get_value();
+
+    param.set_ratio(ratio);
+
     handle_refresh_param(param_id);
+
+    return old_value != param.get_value();
 }
 
 
@@ -1268,13 +1273,20 @@ void Proxy::handle_refresh_param(ParamId const param_id) noexcept
 }
 
 
-void Proxy::handle_clear() noexcept
+bool Proxy::handle_clear() noexcept
 {
+    bool has_changed = false;
+
     for (int i = 0; i != ParamId::PARAM_ID_COUNT; ++i) {
         ParamId const param_id = (ParamId)i;
 
-        handle_set_param(param_id, get_param_default_ratio(param_id));
+        has_changed = (
+            handle_set_param(param_id, get_param_default_ratio(param_id))
+            || has_changed
+        );
     }
+
+    return has_changed;
 }
 
 

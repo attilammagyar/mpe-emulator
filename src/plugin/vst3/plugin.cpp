@@ -971,7 +971,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
             USTRING("%"),
             0.0,
             100.0,
-            0.0,
+            100.0 * proxy.get_param_default_ratio(param_id),
             0,
             Vst::ParameterInfo::kCanAutomate,
             Vst::kRootUnitId,
@@ -990,7 +990,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
             USTRING(proxy.get_param_name(param_id).c_str())
         );
 
-        for (size_t i = 0; i != number_of_options; ++i) {
+        for (size_t i = param_id == Proxy::ParamId::Z1CHN ? 1 : 0; i != number_of_options; ++i) {
             param->appendString(USTRING(options[i]));
         }
 
@@ -1062,10 +1062,15 @@ tresult PLUGIN_API Vst3Plugin::Controller::notify(Vst::IMessage* message)
 
         if (message->getAttributes()->getInt(MSG_SHARE_PROXY_PROXY, proxy_ptr) == kResultOk) {
             proxy = (Proxy*)proxy_ptr;
+            update_params();
 
             return kResultOk;
         }
     } else if (FIDStringsEqual(message->getMessageID(), MSG_PROXY_DIRTY)) {
+        if (proxy != NULL) {
+            update_params();
+        }
+
         /*
         Calling setDirty(true) would suffice, the dummy parameter dance is done
         only to keep parameter behaviour in sync with the FST plugin.
@@ -1079,6 +1084,21 @@ tresult PLUGIN_API Vst3Plugin::Controller::notify(Vst::IMessage* message)
     }
 
     return EditControllerEx1::notify(message);
+}
+
+
+void Vst3Plugin::Controller::update_params()
+{
+    constexpr int param_begin = (int)Proxy::ParamId::MCM;
+    constexpr int param_end = (int)Proxy::ParamId::INVALID_PARAM_ID;
+
+    for (int i = param_begin; i != param_end; ++i) {
+        Proxy::ParamId const param_id = (Proxy::ParamId)i;
+        setParamNormalized(
+            proxy_param_id_to_vst3_param_tag(param_id),
+            proxy->get_param_ratio_atomic(param_id)
+        );
+    }
 }
 
 

@@ -679,13 +679,13 @@ class Proxy : public Midi::EventHandler
 
         void reset_available_channels() noexcept;
 
-        void handle_set_param(
+        bool handle_set_param(
             ParamId const param_id,
             double const ratio
         ) noexcept;
 
         void handle_refresh_param(ParamId const param_id) noexcept;
-        void handle_clear() noexcept;
+        bool handle_clear() noexcept;
         double get_param_ratio(ParamId const param_id) const noexcept;
         bool update_mpe_config() noexcept;
         void stop_all_notes() noexcept;

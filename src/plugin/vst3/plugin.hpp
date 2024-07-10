@@ -251,6 +251,8 @@ class Vst3Plugin
 
                 Vst::Parameter* set_up_patch_changed_param() const;
 
+                void update_params();
+
                 Proxy* proxy;
 
             public:

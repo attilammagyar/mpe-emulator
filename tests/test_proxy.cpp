@@ -149,6 +149,14 @@ void assert_message_dirtiness(
         "Expected proxy not to remain dirty after clearing the flag; message=%d",
         (int)message_type
     );
+
+    proxy.push_message(message_type, Proxy::ParamId::Z1ANC, 0.123);
+    proxy.process_messages();
+    assert_false(
+        proxy.is_dirty(),
+        "Expected proxy not to become dirty after setting a param again to its current value; message=%d",
+        (int)message_type
+    );
 }
 
 
