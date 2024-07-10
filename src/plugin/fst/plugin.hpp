@@ -81,7 +81,7 @@ class FstPlugin : public Midi::EventHandler
         };
 
         static constexpr size_t NUMBER_OF_PARAMETERS = (
-            + (size_t)Proxy::ControllerId::MAX_MIDI_CC
+            + (size_t)Proxy::ControllerId::MAX_MIDI_CC + 1
             + 1                                         /* Pitch Wheel */
             + 1                                         /* Channel Pressure */
             + (size_t)Proxy::ParamId::PARAM_ID_COUNT
