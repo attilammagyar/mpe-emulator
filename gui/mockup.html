@@ -207,6 +207,37 @@ body.hide-objects .knob span:nth-child(3) {
   opacity: 0.0;
 }
 
+.select-container {
+  display: inline-block;
+  width: 174px;
+  height: 58px;
+}
+
+.select {
+  display: inline-block;
+  width: 174px;
+  height: 27px;
+}
+
+.select span {
+  display: inline-block;
+  width: 30px;
+  font-size: 12px;
+  line-height: 12px;
+  height: 27px;
+  margin-right: 3px;
+  text-align: right;
+}
+
+.select div {
+  display: inline-block;
+  border: inset 2px #808098;
+  border-radius: 5px;
+  width: 130px;
+  height: 23px;
+  margin: 0;
+}
+
 .tabs {
   margin: 2px 0 0 2px;
 }
@@ -398,6 +429,25 @@ function create_knob(container, label_text, value_text)
     $(container).appendChild(knob_container);
 }
 
+function create_select(container, label_text, value_text)
+{
+    var select_container = document.createElement("div"),
+        select = document.createElement("div"),
+        label = document.createElement("span");
+
+    label.setAttribute("class", "label");
+
+    label.innerHTML = label_text;
+    select.innerHTML = value_text;
+
+    select_container.appendChild(label);
+    select_container.appendChild(select);
+
+    select_container.setAttribute("class", "select");
+
+    $(container).appendChild(select_container);
+}
+
 window.onload = function ()
 {
     var i, o, s, d, h, k1, k2, k3, l, l2, n2, l3, n3;
@@ -410,6 +460,8 @@ window.onload = function ()
     create_knob("main-body", "CHAN", "15");
     create_knob("main-body", "STEAL", "oldest");
     create_knob("main-body", "ANCH", "C4");
+    create_knob("main-body", "TR BL st", "-12");
+    create_knob("main-body", "TR AB st", "+12");
 
     for (i = 1; i <= 9; ++i) {
         d = document.createElement("div");
@@ -433,10 +485,15 @@ window.onload = function ()
         d.appendChild(h);
         d.appendChild(k1);
 
-        create_knob(k1, "IN", "CC 74");
-        create_knob(k1, "OUT", "CC 74");
+        k2 = document.createElement("div");
+        k2.setAttribute("class", "select-container");
+
+        create_select(k2, "IN", "&nbsp;");
+        create_select(k2, "OUT", "&nbsp;");
+        create_select(k2, "TRG", "&nbsp;");
+        k1.appendChild(k2);
+
         create_knob(k1, "INIT %", "63");
-        create_knob(k1, "TARGET", "HI BA");
         create_knob(k1, "DIST %", "10.00");
 
         $("zone1").appendChild(d);
