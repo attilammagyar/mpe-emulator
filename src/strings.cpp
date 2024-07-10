@@ -508,6 +508,21 @@ char const* const Strings::DISTORTIONS[] = {
 size_t const Strings::DISTORTIONS_COUNT = 4;
 
 
+char const* const Strings::TRANSPOSE_OPTIONS[] = {
+    "-48", "-47", "-46", "-45", "-44", "-43", "-42", "-41", "-40", "-39", "-38", "-37",
+    "-36", "-35", "-34", "-33", "-32", "-31", "-30", "-29", "-28", "-27", "-26", "-25",
+    "-24", "-23", "-22", "-21", "-20", "-19", "-18", "-17", "-16", "-15", "-14", "-13",
+    "-12", "-11", "-10",  "-9",  "-8",  "-7",  "-6",  "-5",  "-4",  "-3",  "-2",  "-1",
+    "0",
+     "+1",  "+2",  "+3",  "+4",  "+5",  "+6",  "+7",  "+8",  "+9", "+10", "+11", "+12",
+    "+13", "+14", "+15", "+16", "+17", "+18", "+19", "+20", "+21", "+22", "+23", "+24",
+    "+25", "+26", "+27", "+28", "+29", "+30", "+31", "+32", "+33", "+34", "+35", "+36",
+    "+37", "+38", "+39", "+40", "+41", "+42", "+43", "+44", "+45", "+46", "+47", "+48",
+};
+
+size_t const Strings::TRANSPOSE_OPTIONS_COUNT = 97;
+
+
 char const* const Strings::PARAMS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::MCM] = "Emit MCM on reset",
     [Proxy::ParamId::Z1TYP] = "Zone type",
@@ -596,6 +611,8 @@ char const* const Strings::PARAMS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R9MP] = "Rule 9 midpoint (%)",
     [Proxy::ParamId::Z1R9RS] = "Rule 9 reset on target change",
     [Proxy::ParamId::Z1R9NV] = "Rule 9 invert",
+    [Proxy::ParamId::Z1TRB] = "Transpose below anchor",
+    [Proxy::ParamId::Z1TRA] = "Transpose above anchor",
 };
 
 
@@ -696,6 +713,9 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R9MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R9RS] = {Strings::RESETS, Strings::RESETS_COUNT},
     [Proxy::ParamId::Z1R9NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+
+    [Proxy::ParamId::Z1TRB] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
+    [Proxy::ParamId::Z1TRA] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
 };
 
 

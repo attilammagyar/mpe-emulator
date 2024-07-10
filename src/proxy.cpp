@@ -228,6 +228,8 @@ Proxy::Proxy() noexcept
     ),
     anchor("Z1ANC", 0, 127, 60),
     override_release_velocity("Z1ORV", Toggle::OFF, Toggle::ON, Toggle::OFF),
+    transpose_below_anchor("Z1TRB", 0, 96, 48),
+    transpose_above_anchor("Z1TRA", 0, 96, 48),
     rules{
         Rule("Z1R1", ControllerId::PITCH_WHEEL, ControllerId::PITCH_WHEEL, Target::TRG_NEWEST, 8192),
         Rule("Z1R2", ControllerId::CHANNEL_PRESSURE, ControllerId::CHANNEL_PRESSURE, Target::TRG_NEWEST, 0),
@@ -269,12 +271,18 @@ Proxy::Proxy() noexcept
         register_param((ParamId)(param_id++), rules[i].invert);
     }
 
+    register_param(ParamId::Z1TRB, transpose_below_anchor);
+    register_param(ParamId::Z1TRA, transpose_above_anchor);
+
     for (size_t i = 0; i != (size_t)ParamId::PARAM_ID_COUNT; ++i) {
         param_ratios_atomic[i].store(params[i]->get_ratio());
     }
 
     ZoneTypeDescriptor const& ztd = ZONE_TYPES[zone_type.get_value()];
 
+    offset_below_anchor = 0;
+    offset_above_anchor = 0;
+    anchor_ = (Midi::Note)anchor.get_value();
     channel_count = channels.get_value();
     manager_channel = ztd.manager_channel;
     channel_increment = ztd.channel_increment;
@@ -460,7 +468,7 @@ void Proxy::push_note_on(
 
     note_stack.make_stats(channels_by_notes, channel_stats);
 
-    bool const is_above_anchor = note >= (Midi::Note)anchor.get_value();
+    bool const is_above_anchor = note >= anchor_;
 
     if (is_above_anchor) {
         note_stack_above.push(note);
@@ -484,7 +492,7 @@ void Proxy::push_note_on(
             time_offset,
             Midi::NOTE_ON,
             channel,
-            note,
+            transpose(note, is_above_anchor),
             velocity,
             Midi::byte_to_float<double>(velocity)
         )
@@ -504,6 +512,18 @@ void Proxy::push_note_on(
         old_channel_stats_below,
         old_channel_stats_above
     );
+}
+
+
+Midi::Note Proxy::transpose(
+        Midi::Note const note,
+        bool const is_above_anchor
+) const noexcept {
+    int const offset = (
+        is_above_anchor ? offset_above_anchor : offset_below_anchor
+    );
+
+    return (Midi::Note)std::max(0, std::min(127, (int)note + offset));
 }
 
 
@@ -765,19 +785,18 @@ void Proxy::push_note_off(
             ? velocities_by_notes[note]
             : velocity
     );
+    bool const was_above_anchor = note >= anchor_;
 
     push_out_event(
         Midi::Event(
             time_offset,
             Midi::NOTE_OFF,
             channel,
-            note,
+            transpose(note, was_above_anchor),
             note_off_velocity,
             Midi::byte_to_float<double>(note_off_velocity)
         )
     );
-
-    bool const was_above_anchor = note >= (Midi::Note)anchor.get_value();
 
     NoteStack::ChannelStats old_channel_stats(channel_stats);
     NoteStack::ChannelStats old_channel_stats_below(channel_stats_below);
@@ -1298,7 +1317,7 @@ double Proxy::get_param_ratio(ParamId const param_id) const noexcept
 
 void Proxy::reset() noexcept
 {
-    if (MPE_EMULATOR_LIKELY(!update_mpe_config())) {
+    if (MPE_EMULATOR_LIKELY(!update_zone_config())) {
         out_events_rw.clear();
         stop_all_notes();
         push_mcms();
@@ -1309,15 +1328,25 @@ void Proxy::reset() noexcept
 }
 
 
-bool Proxy::update_mpe_config() noexcept
+bool Proxy::update_zone_config() noexcept
 {
     ZoneTypeDescriptor const& ztd = ZONE_TYPES[zone_type.get_value()];
+    int const new_offset_below_anchor = (
+        (int)transpose_below_anchor.get_value() - 48
+    );
+    int const new_offset_above_anchor = (
+        (int)transpose_above_anchor.get_value() - 48
+    );
+    Midi::Note const new_anchor = (Midi::Note)anchor.get_value();
     Midi::Channel const new_manager_channel = ztd.manager_channel;
     Midi::Channel const new_channel_count = channels.get_value();
 
     if (
             new_channel_count == channel_count
             && new_manager_channel == manager_channel
+            && new_offset_below_anchor == offset_below_anchor
+            && new_offset_above_anchor == offset_above_anchor
+            && new_anchor == anchor_
     ) {
         return false;
     }
@@ -1326,6 +1355,10 @@ bool Proxy::update_mpe_config() noexcept
     stop_all_notes();
 
     channel_count_atomic.store(new_channel_count);
+
+    offset_below_anchor = new_offset_below_anchor;
+    offset_above_anchor = new_offset_above_anchor;
+    anchor_ = new_anchor;
     channel_count = new_channel_count;
     manager_channel = new_manager_channel;
     channel_increment = ztd.channel_increment;
@@ -1426,7 +1459,7 @@ void Proxy::begin_processing() noexcept
         return;
     }
 
-    update_mpe_config();
+    update_zone_config();
 
     if (MPE_EMULATOR_UNLIKELY(had_reset)) {
         had_reset = false;

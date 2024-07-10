@@ -156,7 +156,10 @@ class Proxy : public Midi::EventHandler
             Z1R9RS  = 85,           ///< Zone 1 Rule 9 reset on target change
             Z1R9NV  = 86,           ///< Zone 1 Rule 9 invert
 
-            PARAM_ID_COUNT = 87,
+            Z1TRB   = 87,           ///< Zone 1 transpose below anchor
+            Z1TRA   = 88,           ///< Zone 1 transpose above anchor
+
+            PARAM_ID_COUNT = 89,
             INVALID_PARAM_ID = PARAM_ID_COUNT,
         };
 
@@ -567,6 +570,8 @@ class Proxy : public Midi::EventHandler
         Param excess_note_handling;
         Param anchor;
         Param override_release_velocity;
+        Param transpose_below_anchor;
+        Param transpose_above_anchor;
 
         Rule rules[RULES];
 
@@ -687,7 +692,7 @@ class Proxy : public Midi::EventHandler
         void handle_refresh_param(ParamId const param_id) noexcept;
         bool handle_clear() noexcept;
         double get_param_ratio(ParamId const param_id) const noexcept;
-        bool update_mpe_config() noexcept;
+        bool update_zone_config() noexcept;
         void stop_all_notes() noexcept;
 
         void push_mcms() noexcept;
@@ -771,6 +776,11 @@ class Proxy : public Midi::EventHandler
 
         void push_out_event(Midi::Event const& event) noexcept;
 
+        Midi::Note transpose(
+            Midi::Note const note,
+            bool const is_above_anchor
+        ) const noexcept;
+
         OutEvents out_events_rw;
         MidiControllerMessage previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
         Param* params[ParamId::PARAM_ID_COUNT];
@@ -787,6 +797,9 @@ class Proxy : public Midi::EventHandler
         NoteStack::ChannelStats channel_stats;
         NoteStack::ChannelStats channel_stats_below;
         NoteStack::ChannelStats channel_stats_above;
+        int offset_below_anchor;
+        int offset_above_anchor;
+        Midi::Note anchor_;
         Midi::Channel channel_count;
         Midi::Channel manager_channel;
         Midi::Channel channel_increment;

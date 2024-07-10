@@ -60,6 +60,9 @@ class Strings
         static char const* const DISTORTIONS[];
         static size_t const DISTORTIONS_COUNT;
 
+        static char const* const TRANSPOSE_OPTIONS[];
+        static size_t const TRANSPOSE_OPTIONS_COUNT;
+
         static char const* const PARAMS[Proxy::ParamId::PARAM_ID_COUNT];
 
         static char const* const* get_options(

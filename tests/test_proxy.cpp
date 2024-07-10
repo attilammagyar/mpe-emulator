@@ -1068,6 +1068,8 @@ TEST(target_of_a_cc_may_be_below_the_anchor, {
     proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST_BELOW_ANCHOR);
 
+    proxy.begin_processing();
+
     proxy.note_on(0.1, 0, 60, 127);     /* channel=1, oldest below anchor */
     proxy.note_on(0.2, 0, 67, 127);     /* channel=2, highest below anchor */
     proxy.note_on(0.3, 0, 48, 127);     /* channel=3, lowest below anchor */
@@ -1112,6 +1114,8 @@ TEST(target_of_a_cc_may_be_above_the_anchor, {
     proxy.rules[3].in_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST_ABOVE_ANCHOR);
+
+    proxy.begin_processing();
 
     proxy.note_on(0.1, 0, 60, 127);     /* channel=1, oldest above anchor */
     proxy.note_on(0.2, 0, 67, 127);     /* channel=2, highest above anchor */
@@ -1158,6 +1162,8 @@ TEST(when_cc_target_is_below_the_anchor_but_all_notes_are_above_it_then_cc_is_dr
     proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST_BELOW_ANCHOR);
 
+    proxy.begin_processing();
+
     proxy.note_on(0.1, 0, 60, 127);
     proxy.note_on(0.2, 0, 67, 127);
     proxy.note_on(0.3, 0, 48, 127);
@@ -1198,6 +1204,8 @@ TEST(when_cc_target_is_above_the_anchor_but_all_notes_are_below_it_then_cc_is_dr
     proxy.rules[3].in_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
     proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST_ABOVE_ANCHOR);
+
+    proxy.begin_processing();
 
     proxy.note_on(0.1, 0, 60, 127);
     proxy.note_on(0.2, 0, 67, 127);
@@ -1825,5 +1833,87 @@ TEST(when_no_notes_are_active_when_mapped_cc_events_occur_then_drops_cc_events, 
             "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
         },
         proxy
+    );
+})
+
+
+TEST(can_transpose_notes_above_and_below_the_anchor_differently, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.anchor.set_value(60);
+    proxy.transpose_below_anchor.set_value(36);
+    proxy.transpose_above_anchor.set_value(60);
+
+    proxy.begin_processing();
+
+    proxy.note_on(0.0, 1, 10, 127);
+    proxy.note_on(1.0, 1, 48, 127);
+    proxy.note_on(2.0, 1, 60, 127);
+    proxy.note_on(3.0, 1, 120, 127);
+    proxy.note_off(4.0, 1, 10, 64);
+    proxy.note_off(5.0, 1, 48, 64);
+    proxy.note_off(6.0, 1, 60, 64);
+    proxy.note_off(7.0, 1, 120, 64);
+
+    assert_out_events<8>(
+        {
+            "t=0.000 cmd=NOTE_ON ch=1 d1=0x00 d2=0x7f (v=1.000)",
+            "t=1.000 cmd=NOTE_ON ch=2 d1=0x24 d2=0x7f (v=1.000)",
+            "t=2.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
+            "t=3.000 cmd=NOTE_ON ch=4 d1=0x7f d2=0x7f (v=1.000)",
+            "t=4.000 cmd=NOTE_OFF ch=1 d1=0x00 d2=0x40 (v=0.504)",
+            "t=5.000 cmd=NOTE_OFF ch=2 d1=0x24 d2=0x40 (v=0.504)",
+            "t=6.000 cmd=NOTE_OFF ch=3 d1=0x48 d2=0x40 (v=0.504)",
+            "t=7.000 cmd=NOTE_OFF ch=4 d1=0x7f d2=0x40 (v=0.504)",
+        },
+        proxy
+    );
+})
+
+
+void assert_changing_transposition_settings_triggers_reset(
+        Proxy& proxy,
+        Proxy::Param& param,
+        unsigned int new_value
+) {
+    unsigned int const old_value = param.get_value();
+
+    proxy.begin_processing();
+    proxy.note_on(1.0, 1, 60, 127);
+    proxy.begin_processing();
+
+    param.set_value(new_value);
+    proxy.begin_processing();
+
+    assert_out_events<3>(
+        {
+            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE ch=1 d1=0x40 d2=0x00 (v=0.000)",
+            "t=0.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x40 (v=0.504)",
+        },
+        proxy
+    );
+
+    param.set_value(old_value);
+}
+
+
+TEST(changing_transposition_settings_triggers_reset, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+    proxy.send_mcm.set_value(Proxy::Toggle::OFF);
+    proxy.begin_processing();
+
+    assert_changing_transposition_settings_triggers_reset(
+        proxy, proxy.anchor, 72
+    );
+    assert_changing_transposition_settings_triggers_reset(
+        proxy, proxy.transpose_below_anchor, 36
+    );
+    assert_changing_transposition_settings_triggers_reset(
+        proxy, proxy.transpose_above_anchor, 60
     );
 })
