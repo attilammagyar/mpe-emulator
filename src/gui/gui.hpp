@@ -38,6 +38,7 @@ class KnobParamEditor;
 class StatusLine;
 class TabBody;
 class TabSelector;
+class OptionSelector;
 class DiscreteParamEditor;
 class ToggleSwitchParamEditor;
 class TuningSelector;
@@ -176,9 +177,11 @@ class GUI
         void build_about_body(char const* sdk_version);
 
         void build_zone_1_body(
-            ParamStateImages const* knob_states,
-            ParamStateImages const* distortions,
-            ParamStateImages const* midpoint_states
+            ParamStateImages const* const knob_states,
+            ParamStateImages const* const distortions,
+            ParamStateImages const* const midpoint_states,
+            OptionSelector* const controller_selector,
+            OptionSelector* const target_selector
         );
 
         bool const show_vst_logo;
@@ -195,6 +198,8 @@ class GUI
         ParamStateImages const* distortions;
         ParamStateImages const* midpoint_states;
         Background* background;
+        OptionSelector* controller_selector;
+        OptionSelector* target_selector;
         TabBody* about_body;
         TabBody* zone_1_body;
         StatusLine* status_line;
@@ -227,6 +232,8 @@ class WidgetBase
             STATUS_LINE = 1 << 9,
             TOGGLE_SWITCH = 1 << 10,
             DISCRETE_PARAM_EDITOR = 1 << 11,
+            OPTION_SELECTOR = 1 << 12,
+            OPTION = 1 << 13,
         };
 
         enum TextAlignment {

@@ -287,6 +287,254 @@ void TabSelector::click()
 }
 
 
+OptionSelector::OptionSelector(
+        Background& background,
+        Proxy& proxy,
+        char const* const title
+) : Widget(title, LEFT, TOP, WIDTH, HEIGHT, Type::OPTION_SELECTOR),
+    background(background),
+    proxy(proxy),
+    param_editor(NULL),
+    options_count(0),
+    selected_option_index(OPTIONS_SIZE),
+    next_option_left(5),
+    next_option_top(TITLE_HEIGHT),
+    param_id(Proxy::ParamId::INVALID_PARAM_ID)
+{
+    std::fill_n(options, OPTIONS_SIZE, (Option*)NULL);
+    std::fill_n(options_by_value, OPTIONS_SIZE, (Option*)NULL);
+}
+
+
+void OptionSelector::add_option(unsigned int value, char const* const name)
+{
+    constexpr int max_top = HEIGHT - Option::HEIGHT;
+
+    if (
+            MPE_EMULATOR_UNLIKELY(
+                this->parent == NULL
+                || options_count == OPTIONS_SIZE
+                || value >= (unsigned int)OPTIONS_SIZE
+            )
+    ) {
+        return;
+    }
+
+    Option* option = new Option(
+        *this, options_count, name, next_option_left, next_option_top, value
+    );
+
+    this->own(option);
+
+    options[options_count] = option;
+    options_by_value[value] = option;
+
+    ++options_count;
+
+    next_option_top += Option::HEIGHT;
+
+    if (next_option_top >= max_top) {
+        next_option_top = TITLE_HEIGHT;
+        next_option_left += Option::WIDTH;
+    }
+}
+
+
+void OptionSelector::select_option(
+        Proxy::ParamId const param_id,
+        DiscreteParamEditor* param_editor
+) {
+    double const ratio = proxy.get_param_ratio_atomic(param_id);
+    unsigned int value = proxy.param_ratio_to_value(param_id, ratio);
+
+    if (MPE_EMULATOR_UNLIKELY(value >= (unsigned int)OPTIONS_SIZE)) {
+        return;
+    }
+
+    Option* selected_option = options_by_value[value];
+
+    if (MPE_EMULATOR_UNLIKELY(selected_option == NULL)) {
+        return;
+    }
+
+    if (selected_option_index < OPTIONS_SIZE) {
+        Option* previously_selected_option = options[selected_option_index];
+
+        if (previously_selected_option != NULL) {
+            previously_selected_option->unselect();
+        }
+    }
+
+    selected_option->select();
+
+    snprintf(
+        title, TITLE_SIZE, "Select value for \"%s\"", Strings::PARAMS[param_id]
+    );
+
+    this->param_id = param_id;
+    this->param_editor = param_editor;
+    this->selected_option_index = selected_option->index;
+
+    redraw();
+    Widget::show();
+    background.hide_body();
+    bring_to_top();
+}
+
+
+void OptionSelector::hide()
+{
+    background.show_body();
+    Widget::hide();
+}
+
+
+void OptionSelector::handle_selection_change(unsigned int const new_value)
+{
+    hide();
+
+    if (
+            MPE_EMULATOR_UNLIKELY(
+                param_editor == NULL
+                || param_id >= Proxy::Proxy::ParamId::INVALID_PARAM_ID
+            )
+    ) {
+        return;
+    }
+
+    param_editor->set_ratio(proxy.param_value_to_ratio(param_id, new_value));
+}
+
+
+bool OptionSelector::paint()
+{
+    Widget::paint();
+
+    fill_rectangle(0, 0, width, height, GUI::TEXT_BACKGROUND);
+    draw_text(
+        title,
+        12,
+        0,
+        0,
+        WIDTH,
+        TITLE_HEIGHT,
+        GUI::TEXT_COLOR,
+        GUI::TEXT_BACKGROUND,
+        FontWeight::BOLD,
+        10,
+        TextAlignment::LEFT
+    );
+
+    return true;
+}
+
+
+OptionSelector::Option::Option(
+        OptionSelector& option_selector,
+        size_t const index,
+        char const* const text,
+        int const left,
+        int const top,
+        unsigned int value
+) : Widget(text, left, top, WIDTH, HEIGHT, Type::OPTION),
+    index(index),
+    value(value),
+    option_selector(option_selector),
+    is_selected(false),
+    is_mouse_over(false)
+{
+}
+
+
+void OptionSelector::Option::select()
+{
+    is_selected = true;
+    redraw();
+}
+
+
+void OptionSelector::Option::unselect()
+{
+    is_selected = false;
+    redraw();
+}
+
+
+bool OptionSelector::Option::paint()
+{
+    Widget::paint();
+
+    GUI::Color background;
+    GUI::Color color;
+
+    if (is_mouse_over) {
+        background = GUI::TEXT_HIGHLIGHT_BACKGROUND;
+        color = GUI::TEXT_HIGHLIGHT_COLOR;
+    } else if (is_selected) {
+        background = GUI::TEXT_COLOR;
+        color = GUI::TEXT_BACKGROUND;
+    } else {
+        background = GUI::TEXT_BACKGROUND;
+        color = GUI::TEXT_COLOR;
+    }
+
+    draw_text(
+        text,
+        12,
+        0,
+        0,
+        width,
+        height,
+        color,
+        background,
+        FontWeight::BOLD,
+        3,
+        TextAlignment::LEFT
+    );
+
+    return true;
+}
+
+
+bool OptionSelector::Option::mouse_up(int const x, int const y)
+{
+    Widget::mouse_up(x, y);
+
+    option_selector.handle_selection_change(value);
+
+    return true;
+}
+
+
+bool OptionSelector::Option::mouse_move(
+        int const x,
+        int const y,
+        bool const modifier
+) {
+    Widget::mouse_move(x, y, modifier);
+
+    if (!is_mouse_over) {
+        is_mouse_over = true;
+        redraw();
+    }
+
+    return true;
+}
+
+
+bool OptionSelector::Option::mouse_leave(int const x, int const y)
+{
+    Widget::mouse_leave(x, y);
+
+    if (is_mouse_over) {
+        is_mouse_over = false;
+        redraw();
+    }
+
+    return 0;
+}
+
+
 ParamStateImages::ParamStateImages(
         WidgetBase* widget,
         GUI::Image image,
@@ -1013,9 +1261,44 @@ DiscreteParamEditor::DiscreteParamEditor(
     ratio(0.0),
     step_size(1.001 / (double)proxy.get_param_max_value(param_id)),
     state_images(state_images),
+    option_selector(NULL),
     value_left(value_left),
     value_width(value_width),
     is_editing_(false)
+{
+    set_gui(gui);
+}
+
+
+DiscreteParamEditor::DiscreteParamEditor(
+        GUI& gui,
+        int const left,
+        int const top,
+        int const width,
+        int const height,
+        int const value_left,
+        int const value_width,
+        Proxy& proxy,
+        Proxy::ParamId const param_id,
+        OptionSelector* const option_selector
+) : TransparentWidget(
+        Strings::PARAMS[param_id],
+        left,
+        top,
+        width,
+        height,
+        Type::DISCRETE_PARAM_EDITOR
+    ),
+    param_id(param_id),
+    proxy(proxy),
+    ratio(0.0),
+    step_size(1.001 / (double)proxy.get_param_max_value(param_id)),
+    state_images(NULL),
+    option_selector(option_selector),
+    value_left(value_left),
+    value_width(value_width),
+    is_editing_(false),
+    is_selecting(false)
 {
     set_gui(gui);
 }
@@ -1124,7 +1407,12 @@ bool DiscreteParamEditor::mouse_up(int const x, int const y)
 {
     TransparentWidget::mouse_up(x, y);
 
-    set_ratio(ratio + step_size);
+    if (option_selector == NULL) {
+        set_ratio(ratio + step_size);
+    } else if (!is_selecting) {
+        is_selecting = true;
+        option_selector->select_option(param_id, this);
+    }
 
     return false;
 }
@@ -1133,6 +1421,12 @@ bool DiscreteParamEditor::mouse_up(int const x, int const y)
 void DiscreteParamEditor::set_ratio(double const new_ratio)
 {
     double const old_ratio = ratio;
+
+    is_selecting = false;
+
+    if (option_selector != NULL) {
+        is_editing_ = false;
+    }
 
     if (
             (new_ratio > 1.0 && old_ratio > 0.999999)
@@ -1170,8 +1464,10 @@ bool DiscreteParamEditor::mouse_leave(int const x, int const y)
 {
     TransparentWidget::mouse_leave(x, y);
 
-    gui->set_status_line("");
-    stop_editing();
+    if (!is_selecting) {
+        gui->set_status_line("");
+        stop_editing();
+    }
 
     return true;
 }
@@ -1181,7 +1477,9 @@ bool DiscreteParamEditor::mouse_wheel(double const delta, bool const modifier)
 {
     TransparentWidget::mouse_wheel(delta, modifier);
 
-    set_ratio(ratio + (delta < 0 ? - step_size : step_size));
+    if (option_selector == NULL) {
+        set_ratio(ratio + (delta < 0 ? - step_size : step_size));
+    }
 
     return false;
 }

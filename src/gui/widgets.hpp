@@ -184,6 +184,92 @@ class TabSelector : public TransparentWidget
 };
 
 
+class OptionSelector : public Widget
+{
+    public:
+        static constexpr int LEFT = 0;
+        static constexpr int TOP = 0;
+        static constexpr int WIDTH = GUI::WIDTH;
+        static constexpr int HEIGHT = GUI::HEIGHT;
+        static constexpr int TITLE_HEIGHT = 30;
+
+        OptionSelector(
+            Background& background,
+            Proxy& proxy,
+            char const* const title
+        );
+
+        /**
+         * @warning Has no effect if called before passing the \c OptionSelector
+         *          to its parent's \c WidgetBase::own() method.
+         */
+        void add_option(unsigned int value, char const* const name);
+
+        void select_option(
+            Proxy::ParamId const param_id,
+            DiscreteParamEditor* param_editor
+        );
+
+        virtual void hide() override;
+
+        void handle_selection_change(unsigned int new_value);
+
+    protected:
+        virtual bool paint() override;
+
+    private:
+        static constexpr int TITLE_SIZE = 128;
+
+        static constexpr size_t OPTIONS_SIZE = 128;
+
+        class Option : public Widget
+        {
+            public:
+                static constexpr int HEIGHT = 18;
+                static constexpr int WIDTH = 242;
+
+                Option(
+                    OptionSelector& option_selector,
+                    size_t const index,
+                    char const* const text,
+                    int const left,
+                    int const top,
+                    unsigned int value
+                );
+
+                void select();
+                void unselect();
+
+                size_t const index;
+
+            protected:
+                virtual bool paint() override;
+                virtual bool mouse_up(int const x, int const y) override;
+                virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+                virtual bool mouse_leave(int const x, int const y) override;
+
+            private:
+                unsigned int const value;
+
+                OptionSelector& option_selector;
+                bool is_selected;
+                bool is_mouse_over;
+        };
+
+        char title[TITLE_SIZE];
+        Background& background;
+        Proxy& proxy;
+        DiscreteParamEditor* param_editor;
+        Option* options[OPTIONS_SIZE];
+        Option* options_by_value[OPTIONS_SIZE];
+        size_t options_count;
+        size_t selected_option_index;
+        int next_option_left;
+        int next_option_top;
+        Proxy::ParamId param_id;
+};
+
+
 class ParamStateImages
 {
     public:
@@ -494,7 +580,22 @@ class DiscreteParamEditor : public TransparentWidget
             ParamStateImages const* state_images = NULL
         );
 
+        DiscreteParamEditor(
+            GUI& gui,
+            int const left,
+            int const top,
+            int const width,
+            int const height,
+            int const value_left,
+            int const value_width,
+            Proxy& proxy,
+            Proxy::ParamId const param_id,
+            OptionSelector* const option_selector
+        );
+
         virtual void refresh();
+
+        void set_ratio(double const new_ratio);
 
         Proxy::ParamId const param_id;
 
@@ -509,8 +610,6 @@ class DiscreteParamEditor : public TransparentWidget
         virtual bool mouse_move(int const x, int const y, bool const modifier) override;
         virtual bool mouse_leave(int const x, int const y) override;
         virtual bool mouse_wheel(double const delta, bool const modifier) override;
-
-        void set_ratio(double const new_ratio);
 
         virtual void update();
         void update_value_str(unsigned char const value);
@@ -531,11 +630,13 @@ class DiscreteParamEditor : public TransparentWidget
         double const step_size;
 
         ParamStateImages const* const state_images;
+        OptionSelector* const option_selector;
 
         int const value_left;
         int const value_width;
 
         bool is_editing_;
+        bool is_selecting;
 };
 
 }

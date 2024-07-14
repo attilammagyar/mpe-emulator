@@ -1208,6 +1208,14 @@ unsigned int Proxy::param_ratio_to_value(
 }
 
 
+double Proxy::param_value_to_ratio(
+        ParamId const param_id,
+        unsigned int const value
+) const noexcept {
+    return params[(size_t)param_id]->value_to_ratio(value);
+}
+
+
 unsigned int Proxy::get_param_max_value(ParamId const param_id) const noexcept
 {
     return params[(size_t)param_id]->get_max_value();

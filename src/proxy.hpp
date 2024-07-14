@@ -512,6 +512,11 @@ class Proxy : public Midi::EventHandler
             double const ratio
         ) const noexcept;
 
+        double param_value_to_ratio(
+            ParamId const param_id,
+            unsigned int value
+        ) const noexcept;
+
         unsigned int get_param_max_value(ParamId const param_id) const noexcept;
         double get_param_ratio_atomic(ParamId const param_id) const noexcept;
         double get_param_default_ratio(ParamId const param_id) const noexcept;

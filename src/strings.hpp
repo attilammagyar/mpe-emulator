@@ -48,7 +48,8 @@ class Strings
         static char const* const EXCESS_NOTE_HANDLINGS[];
         static size_t const EXCESS_NOTE_HANDLINGS_COUNT;
 
-        static char const* const TARGETS[];
+        static char const* const TARGETS_SHORT[];
+        static char const* const TARGETS_LONG[];
         static size_t const TARGETS_COUNT;
 
         static char const* const RESETS[];
