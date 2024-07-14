@@ -460,7 +460,7 @@ char const* const Strings::EXCESS_NOTE_HANDLINGS[] = {
 size_t const Strings::EXCESS_NOTE_HANDLINGS_COUNT = 5;
 
 
-char const* const Strings::TARGETS[] = {
+char const* const Strings::TARGETS_SHORT[] = {
     [Proxy::Target::TRG_GLOBAL] = "Global",
     [Proxy::Target::TRG_ALL_BELOW_ANCHOR] = "All BA",
     [Proxy::Target::TRG_ALL_ABOVE_ANCHOR] = "All AA",
@@ -476,6 +476,24 @@ char const* const Strings::TARGETS[] = {
     [Proxy::Target::TRG_HIGHEST_ABOVE_ANCHOR] = "Hi AA",
     [Proxy::Target::TRG_OLDEST_ABOVE_ANCHOR] = "Old AA",
     [Proxy::Target::TRG_NEWEST_ABOVE_ANCHOR] = "New AA",
+};
+
+char const* const Strings::TARGETS_LONG[] = {
+    [Proxy::Target::TRG_GLOBAL] = "Global",
+    [Proxy::Target::TRG_ALL_BELOW_ANCHOR] = "All below anchor",
+    [Proxy::Target::TRG_ALL_ABOVE_ANCHOR] = "All above anchor",
+    [Proxy::Target::TRG_LOWEST] = "Lowest",
+    [Proxy::Target::TRG_HIGHEST] = "Highest",
+    [Proxy::Target::TRG_OLDEST] = "Oldest",
+    [Proxy::Target::TRG_NEWEST] = "Newest",
+    [Proxy::Target::TRG_LOWEST_BELOW_ANCHOR] = "Lowest below anchor",
+    [Proxy::Target::TRG_HIGHEST_BELOW_ANCHOR] = "Highest below anchor",
+    [Proxy::Target::TRG_OLDEST_BELOW_ANCHOR] = "Oldest below anchor",
+    [Proxy::Target::TRG_NEWEST_BELOW_ANCHOR] = "Newest below anchor",
+    [Proxy::Target::TRG_LOWEST_ABOVE_ANCHOR] = "Lowest above anchor",
+    [Proxy::Target::TRG_HIGHEST_ABOVE_ANCHOR] = "Highest above anchor",
+    [Proxy::Target::TRG_OLDEST_ABOVE_ANCHOR] = "Oldest above anchor",
+    [Proxy::Target::TRG_NEWEST_ABOVE_ANCHOR] = "Newest above anchor",
 };
 
 size_t const Strings::TARGETS_COUNT = 15;
@@ -627,7 +645,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R1IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R1OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R1IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R1TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R1TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R1DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R1DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R1MP] = {"%.2f%%", 100.0},
@@ -637,7 +655,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R2IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R2OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R2IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R2TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R2TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R2DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R2DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R2MP] = {"%.2f%%", 100.0},
@@ -647,7 +665,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R3IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R3OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R3IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R3TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R3TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R3DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R3DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R3MP] = {"%.2f%%", 100.0},
@@ -657,7 +675,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R4IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R4OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R4IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R4TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R4TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R4DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R4DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R4MP] = {"%.2f%%", 100.0},
@@ -667,7 +685,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R5IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R5OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R5IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R5TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R5TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R5DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R5DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R5MP] = {"%.2f%%", 100.0},
@@ -677,7 +695,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R6IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R6OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R6IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R6TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R6TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R6DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R6DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R6MP] = {"%.2f%%", 100.0},
@@ -687,7 +705,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R7IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R7OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R7IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R7TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R7TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R7DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R7DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R7MP] = {"%.2f%%", 100.0},
@@ -697,7 +715,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R8IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R8OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R8IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R8TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R8TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R8DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R8DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R8MP] = {"%.2f%%", 100.0},
@@ -707,7 +725,7 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R9IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R9OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
     [Proxy::ParamId::Z1R9IV] = {"%.2f%%", 100.0},
-    [Proxy::ParamId::Z1R9TR] = {Strings::TARGETS, Strings::TARGETS_COUNT},
+    [Proxy::ParamId::Z1R9TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT, Strings::TARGETS_LONG},
     [Proxy::ParamId::Z1R9DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
     [Proxy::ParamId::Z1R9DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R9MP] = {"%.2f%%", 100.0},
@@ -747,7 +765,8 @@ void Strings::param_ratio_to_str(
         Proxy::ParamId const param_id,
         double const ratio,
         char* const buffer,
-        size_t const buffer_size
+        size_t const buffer_size,
+        Length const length
 ) noexcept {
     if (
             MPE_EMULATOR_UNLIKELY(
@@ -761,7 +780,7 @@ void Strings::param_ratio_to_str(
     }
 
     PARAM_FORMATS[(size_t)param_id].ratio_to_str(
-        proxy, param_id, ratio, buffer, buffer_size
+        proxy, param_id, ratio, buffer, buffer_size, length
     );
 }
 
@@ -769,6 +788,7 @@ void Strings::param_ratio_to_str(
 constexpr Strings::ParamFormat::ParamFormat() noexcept
     : format(NULL),
     options(NULL),
+    long_options(NULL),
     scale(1.0),
     number_of_options(0)
 {
@@ -781,6 +801,7 @@ constexpr Strings::ParamFormat::ParamFormat(
 ) noexcept
     : format(format),
     options(NULL),
+    long_options(NULL),
     scale(scale),
     number_of_options(0)
 {
@@ -789,10 +810,12 @@ constexpr Strings::ParamFormat::ParamFormat(
 
 constexpr Strings::ParamFormat::ParamFormat(
         char const* const* const options,
-        size_t const number_of_options
+        size_t const number_of_options,
+        char const* const* const long_options
 ) noexcept
     : format(NULL),
     options(options),
+    long_options(long_options != NULL ? long_options : options),
     scale(1.0),
     number_of_options(number_of_options)
 {
@@ -804,12 +827,15 @@ void Strings::ParamFormat::ratio_to_str(
         Proxy::ParamId const param_id,
         double const ratio,
         char* const buffer,
-        size_t const buffer_size
+        size_t const buffer_size,
+        Length const length
 ) const noexcept {
     if (format != NULL) {
         ratio_to_str_float(ratio, buffer, buffer_size);
     } else if (options != NULL) {
-        ratio_to_str_options(proxy, param_id, ratio, buffer, buffer_size);
+        ratio_to_str_options(
+            proxy, param_id, ratio, buffer, buffer_size, length
+        );
     } else {
         ratio_to_str_int(proxy, param_id, ratio, buffer, buffer_size);
     }
@@ -850,7 +876,8 @@ void Strings::ParamFormat::ratio_to_str_options(
         Proxy::ParamId const param_id,
         double const ratio,
         char* const buffer,
-        size_t const buffer_size
+        size_t const buffer_size,
+        Length const length
 ) const noexcept {
     size_t const value = (size_t)proxy.param_ratio_to_value(param_id, ratio);
 
@@ -860,7 +887,11 @@ void Strings::ParamFormat::ratio_to_str_options(
         return;
     }
 
-    strncpy(buffer, options[value], buffer_size);
+    strncpy(
+        buffer,
+        length == Length::SHORT ? options[value] : long_options[value],
+        buffer_size
+    );
     buffer[buffer_size - 1] = '\x00';
 }
 

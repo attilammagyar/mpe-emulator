@@ -32,6 +32,11 @@ namespace MpeEmulator
 class Strings
 {
     public:
+        enum Length {
+            SHORT = 0,
+            LONG = 1,
+        };
+
         static char const* const CONTROLLERS_SHORT[];
         static char const* const CONTROLLERS_LONG[];
         static size_t const CONTROLLERS_COUNT;
@@ -48,7 +53,8 @@ class Strings
         static char const* const EXCESS_NOTE_HANDLINGS[];
         static size_t const EXCESS_NOTE_HANDLINGS_COUNT;
 
-        static char const* const TARGETS[];
+        static char const* const TARGETS_SHORT[];
+        static char const* const TARGETS_LONG[];
         static size_t const TARGETS_COUNT;
 
         static char const* const RESETS[];
@@ -75,7 +81,8 @@ class Strings
             Proxy::ParamId const param_id,
             double const ratio,
             char* const buffer,
-            size_t const buffer_size
+            size_t const buffer_size,
+            Length const length = Length::SHORT
         ) noexcept;
 
     private:
@@ -91,7 +98,8 @@ class Strings
 
                 constexpr ParamFormat(
                     char const* const* const options,
-                    size_t const number_of_options
+                    size_t const number_of_options,
+                    char const* const* const long_options = NULL
                 ) noexcept;
 
                 void ratio_to_str(
@@ -99,11 +107,13 @@ class Strings
                     Proxy::ParamId const param_id,
                     double const ratio,
                     char* const buffer,
-                    size_t const buffer_size
+                    size_t const buffer_size,
+                    Length const length
                 ) const noexcept;
 
                 char const* const format;
                 char const* const* const options;
+                char const* const* const long_options;
 
                 double const scale;
                 size_t const number_of_options;
@@ -120,7 +130,8 @@ class Strings
                     Proxy::ParamId const param_id,
                     double const ratio,
                     char* const buffer,
-                    size_t const buffer_size
+                    size_t const buffer_size,
+                    Length const length
                 ) const noexcept;
 
                 void ratio_to_str_int(
