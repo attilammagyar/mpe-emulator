@@ -564,6 +564,11 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         rule_set_last_input_value(rule_id, 0.0);
     );
 
+    function rule_get_init_value(rule_idx)
+    (
+        rules[rule_idx * RULE_SIZE + 0];
+    );
+
     function rule_get_in_cc(rule_idx)
     (
         rules[rule_idx * RULE_SIZE + 1];
@@ -873,6 +878,12 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         loop(channel_count,
             available_channels.available_channels_push(i);
             i += channel_delta;
+        );
+
+        i = 0;
+        loop(RULES_COUNT,
+            rule_set_last_input_value(i, rule_get_init_value(i));
+            i += 1;
         );
 
         note_stack.note_stack_clear();
