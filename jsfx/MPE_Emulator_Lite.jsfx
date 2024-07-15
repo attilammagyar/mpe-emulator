@@ -17,7 +17,21 @@
  */
 
 desc:MPE Emulator Lite
+author:Attila M. Magyar
 tags:MPE emulator MIDI polyphonic aftertouch expression pitch bend CC
+version:1.0.0
+about:
+  A plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules.
+
+  MPE Emulator Lite is a MIDI proxy: an intermediary plugin which turns non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or any MIDI Control Change (CC) message into polyphonic.
+
+  Key features:
+  - Add MPE capabilities to a non-MPE MIDI keyboard.
+  - Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and vice-versa.
+  - Use the trigger velocity of notes as release velocity for synths that utilize it.
+  - Split the keyboard and route polyphonic expressions to the two halves with different rules.
+  - Extend the range of small keyboards by transposing the two sides of the split point independently from each other.
+  - Route various expressions and controllers to the lowest, highest, oldest, or newest note globally, or across the split halves of the keyboard.
 
 in_pin:none
 out_pin:none
