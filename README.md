@@ -83,6 +83,8 @@ Features
    utilize it.
  * Split the keyboard and route polyphonic expressions to the two halves with
    different rules.
+ * Extend the range of small keyboards by transposing the two sides of the
+   split point independently from each other.
  * Route various expressions and controllers to the lowest, highest, oldest, or
    newest note globally, or across the split halves of the keyboard.
  * MIDI Learn.
@@ -355,7 +357,7 @@ or don't bother, because the synthesizer would just ignore them anyways.
 
 #### Zone Type (ZONE, Z1TYP)
 
-Select the channel layout used by MPE Emulator:
+Click on the switch to change the channel layout used by MPE Emulator:
 
  * **Lower**: channel 1 is the manager channel, channel 2-16 can be used as
    member channels.
@@ -391,10 +393,26 @@ voices are in use:
 
 #### Anchor (ANCH, Z1ANC)
 
-A split point for the keyboard. Expression and controller events can be applied
-differently to each side of the split point. For example, one may want to send
-channel pressure (aftertouch) events only to the newest or the highest note
-above A3, but not to bass notes or chords played with the left hand.
+A split point for the keyboard. Each side of the keyboard can be
+[transposed](#usage-zone-transpose-below) independently from each other, and
+expression and controller events can be applied differently to them. For
+example, one may want to send channel pressure (aftertouch) events only to the
+newest or the highest note above A3, but not to bass notes or chords played
+with the left hand.
+
+<a id="usage-zone-transpose-below"></a>
+
+#### Transpose Below Anchor (TR BA, Z1TRB)
+
+Select how many semitones notes below the [anchor](#usage-zone-anchor) should
+be transposed up or down. This can be useful for extending the range of small
+keyboards with only a few octaves.
+
+#### Transpose Above Anchor (TR AA, Z1TRA)
+
+Select how many semitones notes above the [anchor](#usage-zone-anchor) should
+be transposed up or down. This can be useful for extending the range of small
+keyboards with only a few octaves.
 
 <a href="#toc">Table of Contents</a>
 
@@ -406,38 +424,48 @@ above A3, but not to bass notes or chords played with the left hand.
 
 #### Input (IN, Z1RxIN)
 
-The input controller (MIDI CC) type for the rule. CC events that are not
-matched by any rule's input settings are sent globally on the manager channel,
-and those that are matched by one or more rules are handled as the rules
-specify. The possible values are:
-
- * **CC0** - *CC119*: normal MIDI CC numbers that are usually assigned to various
-   knobs and faders on a MIDI keyboard. (Note: the mod wheel is *CC1*.)
-
- * **Pitch**: the pitch wheel.
-
- * **Ch AT**: channel pressure, also known as channel aftertouch.
-
- * **Learn**: MIDI learn, which means that the first controller message that is
-   received after setting this option will be assigned to the input of the
-   rule.
+Click on the box next to the "IN" label to select an input controller (MIDI CC)
+for the rule. CC events that are not matched by any rule's input settings are
+sent globally on the manager channel, and those that are matched by one or more
+rules are handled as the rules specify. The possible values are:
 
  * **none**: turn off the rule entirely.
+
+ * **MIDI Learn**: the first controller message that is received after
+   selecting this option will be assigned to the input of the rule.
+
+ * **Pitch Wheel**: the pitch wheel.
+
+ * **Channel Pressure (Aftertouch)**: channel pressure, also known as channel
+   aftertouch.
+
+ * **CC0** - *CC119*: normal MIDI CC numbers that are usually assigned to
+   various knobs and faders on a MIDI keyboard. (Note: the mod wheel is *CC1*.)
+
+**Note**: if you accidentally open the controller selector, just click on the
+already selected item to close it.
 
 <a id="usage-rule-out"></a>
 
 #### Output (OUT, Z1RxOU)
 
-The output controller (MIDI CC) type for the rule. Usually it should be the
-same as the [input](#usage-rule-in), but in some cases, you might want to remap
-a particular controller to another. For example, if your MIDI keyboard does not
-have channel pressure (aftertouch) functionality, but it has some special
-function in a particular synthesizer, then you can remap e.g. mod wheel events
-to be sent as channel pressure: assign the mod wheel to the input, and select
-channel aftertouch for the output, and then whenever you turn the mod wheel,
-the synthesizer will receive an aftertouch message instead of it.
-(Unfortunately, aftertouch is known to have some
+Click on the box next to the "OUT" label to select the output controller (MIDI
+CC) for the rule. Usually it should be the same as the [input](#usage-rule-in),
+but in some cases, you might want to remap a particular controller to another.
+For example, if your MIDI keyboard does not have channel pressure (aftertouch)
+functionality, but aftertouch is assigned to some functionality in a particular
+synthesizer, then you can remap e.g. mod wheel events to be sent as channel
+pressure: assign the mod wheel to the input, and select channel aftertouch for
+the output, and then whenever you turn the mod wheel, the synthesizer will
+receive an aftertouch message instead of it. (Unfortunately, aftertouch is
+known to have some
 [bugs and quirks in some plugin type and host combinations](#bugs-known).)
+
+The available options are the same as for the [input](#usage-rule-in), but the
+**MIDI Learn** option is ignored for this parameter.
+
+**Note**: if you accidentally open the controller selector, just click on the
+already selected item to close it.
 
 <a id="usage-rule-init"></a>
 
