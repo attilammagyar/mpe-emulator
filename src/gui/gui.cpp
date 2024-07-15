@@ -212,6 +212,14 @@ GUI::GUI(
         48
     );
 
+    rocker_switch = new ParamStateImages(
+        dummy_widget,
+        dummy_widget->load_image(this->platform_data, "ROCKERSWITCH"),
+        2,
+        48,
+        48
+    );
+
     distortions = new ParamStateImages(
         dummy_widget,
         dummy_widget->load_image(this->platform_data, "DISTORTIONS"),
@@ -247,6 +255,7 @@ GUI::GUI(
     build_about_body(sdk_version);
     build_zone_1_body(
         knob_states,
+        rocker_switch,
         distortions,
         midpoint_states,
         controller_selector
@@ -320,6 +329,7 @@ void GUI::build_about_body(char const* sdk_version)
 
 void GUI::build_zone_1_body(
         ParamStateImages const* const knob_states,
+        ParamStateImages const* const rocker_switch,
         ParamStateImages const* const distortions,
         ParamStateImages const* const midpoint_states,
         OptionSelector* const controller_selector
@@ -341,7 +351,7 @@ void GUI::build_zone_1_body(
         )
     );
 
-    KNOBD(zone_1_body, 38 + KNOB_W * 0, 30, Proxy::ParamId::Z1TYP, knob_states);
+    KNOBD(zone_1_body, 38 + KNOB_W * 0, 30, Proxy::ParamId::Z1TYP, rocker_switch);
     KNOBD(zone_1_body, 38 + KNOB_W * 1, 30, Proxy::ParamId::Z1CHN, knob_states);
     KNOBD(zone_1_body, 38 + KNOB_W * 2, 30, Proxy::ParamId::Z1ENH, knob_states);
     KNOBD(zone_1_body, 38 + KNOB_W * 3, 30, Proxy::ParamId::Z1ANC, knob_states);
@@ -507,6 +517,7 @@ GUI::~GUI()
     delete parent_window;
 
     delete knob_states;
+    delete rocker_switch;
     delete distortions;
     delete midpoint_states;
 

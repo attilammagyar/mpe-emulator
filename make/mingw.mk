@@ -44,6 +44,7 @@ GUI_IMAGES = \
 	gui/img/distortions.bmp \
 	gui/img/midpoint_states.bmp \
 	gui/img/knob_states.bmp \
+	gui/img/rocker_switch.bmp \
 	gui/img/vst_logo.bmp \
 	gui/img/zone1.bmp
 

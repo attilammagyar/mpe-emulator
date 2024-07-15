@@ -178,6 +178,7 @@ class GUI
 
         void build_zone_1_body(
             ParamStateImages const* const knob_states,
+            ParamStateImages const* const rocker_switch,
             ParamStateImages const* const distortions,
             ParamStateImages const* const midpoint_states,
             OptionSelector* const controller_selector
@@ -194,6 +195,7 @@ class GUI
         Image vst_logo_image;
 
         ParamStateImages const* knob_states;
+        ParamStateImages const* rocker_switch;
         ParamStateImages const* distortions;
         ParamStateImages const* midpoint_states;
         Background* background;

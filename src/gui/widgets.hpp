@@ -415,6 +415,7 @@ class KnobParamEditor : public TransparentWidget
                 double ratio;
                 double mouse_move_delta;
                 bool is_editing_;
+                bool is_switch;
         };
 
         void update_value_str();

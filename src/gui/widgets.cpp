@@ -812,7 +812,8 @@ KnobParamEditor::Knob::Knob(
     knob_state(NULL),
     ratio(0.0),
     mouse_move_delta(0.0),
-    is_editing_(false)
+    is_editing_(false),
+    is_switch(!editor.is_continuous && knob_states->count == 2)
 {
     set_gui(gui);
 }
@@ -873,7 +874,7 @@ bool KnobParamEditor::Knob::double_click()
 {
     Widget::double_click();
 
-    if (!is_clicking) {
+    if (!(is_switch || is_clicking)) {
         editor.reset_default();
     }
 
@@ -885,9 +886,11 @@ bool KnobParamEditor::Knob::mouse_down(int const x, int const y)
 {
     Widget::mouse_down(x, y);
 
-    prev_x = (double)x;
-    prev_y = (double)y;
-    mouse_move_delta = 0.0;
+    if (!is_switch) {
+        prev_x = (double)x;
+        prev_y = (double)y;
+        mouse_move_delta = 0.0;
+    }
 
     return true;
 }
@@ -896,6 +899,10 @@ bool KnobParamEditor::Knob::mouse_down(int const x, int const y)
 bool KnobParamEditor::Knob::mouse_up(int const x, int const y)
 {
     Widget::mouse_up(x, y);
+
+    if (is_switch) {
+        editor.handle_ratio_change(ratio < 0.5 ? 1.0 : 0.0);
+    }
 
     focus();
 
@@ -914,7 +921,7 @@ bool KnobParamEditor::Knob::mouse_move(
 
     start_editing();
 
-    if (is_clicking) {
+    if (!is_switch && is_clicking) {
         double const scale = (
             modifier ? MOUSE_MOVE_FINE_SCALE : MOUSE_MOVE_COARSE_SCALE
         );
@@ -957,14 +964,16 @@ bool KnobParamEditor::Knob::mouse_wheel(double const delta, bool const modifier)
 {
     Widget::mouse_wheel(delta, modifier);
 
-    double const scale = (
-        modifier ? MOUSE_WHEEL_FINE_SCALE : MOUSE_WHEEL_COARSE_SCALE
-    );
+    if (!is_switch) {
+        double const scale = (
+            modifier ? MOUSE_WHEEL_FINE_SCALE : MOUSE_WHEEL_COARSE_SCALE
+        );
 
-    if (steps > 0.0) {
-        editor.adjust_ratio(delta * scale * 10.0);
-    } else {
-        editor.adjust_ratio(delta * scale);
+        if (steps > 0.0) {
+            editor.adjust_ratio(delta * scale * 10.0);
+        } else {
+            editor.adjust_ratio(delta * scale);
+        }
     }
 
     return true;

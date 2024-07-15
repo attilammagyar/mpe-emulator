@@ -59,6 +59,7 @@ OBJ_TARGET_GUI_EXTRA = \
 	$(BUILD_DIR)/img_distortions.o \
 	$(BUILD_DIR)/img_midpoint_states.o \
 	$(BUILD_DIR)/img_knob_states.o \
+	$(BUILD_DIR)/img_rocker_switch.o \
 	$(BUILD_DIR)/img_vst_logo.o \
 	$(BUILD_DIR)/img_zone1.o
 
