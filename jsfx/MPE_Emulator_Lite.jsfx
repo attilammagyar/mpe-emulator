@@ -30,9 +30,9 @@ out_pin:none
     TPL_CTL_NAMES = "CC 0 (Bank Select),CC 1 (Modulation Wheel),CC 2 (Breath),CC 3,CC 4 (Foot Pedal),CC 5,CC 6 (Data Entry),CC 7 (Volume),CC 8,CC 9,CC 10 (Panning),CC 11 (Expression Pedal),CC 12,CC 13,CC 14,CC 15,CC 16,CC 17,CC 18,CC 19,CC 20,CC 21,CC 22,CC 23,CC 24,CC 25,CC 26,CC 27,CC 28,CC 29,CC 30,CC 31,CC 32 (Bank Select LSB),CC 33 (Modulation Wheel LSB),CC 34 (Breath LSB),CC 35 (CC 3 LSB),CC 36 (Foot Pedal LSB),CC 37 (CC 5 LSB),CC 38 (Data Entry LSB),CC 39 (Volume LSB),CC 40 (CC 8 LSB),CC 41 (CC 9 LSB),CC 42 (Panning LSB),CC 43 (Expression Pedal LSB),CC 44 (CC 12 LSB),CC 45 (CC 13 LSB),CC 46 (CC 14 LSB),CC 47 (CC 15 LSB),CC 48 (CC 16 LSB),CC 49 (CC 17 LSB),CC 50 (CC 18 LSB),CC 51 (CC 19 LSB),CC 52 (CC 20 LSB),CC 53 (CC 21 LSB),CC 54 (CC 22 LSB),CC 55 (CC 23 LSB),CC 56 (CC 24 LSB),CC 57 (CC 25 LSB),CC 58 (CC 26 LSB),CC 59 (CC 27 LSB),CC 60 (CC 28 LSB),CC 61 (CC 29 LSB),CC 62 (CC 30 LSB),CC 63 (CC 31 LSB),CC 64 (Sustain Pedal),CC 65,CC 66,CC 67,CC 68,CC 69,CC 70,CC 71,CC 72,CC 73,CC 74,CC 75,CC 76,CC 77,CC 78,CC 79,CC 80,CC 81,CC 82,CC 83,CC 84,CC 85,CC 86,CC 87,CC 88,CC 89,CC 90,CC 91,CC 92,CC 93,CC 94,CC 95,CC 96,CC 97,CC 98,CC 99,CC 100,CC 101,CC 102,CC 103,CC 104,CC 105,CC 106,CC 107,CC 108,CC 109,CC 110,CC 111,CC 112,CC 113,CC 114,CC 115,CC 116,CC 117,CC 118,CC 119,Pitch Bend,Channel Pressure (Aftertouch),none";
 ?>
 
-slider1:p_zone_type=0<0,3,1{Lower,Upper,Lower (override Release Velocity),Upper (override Release Velocity)}>Zone Type
-slider2:p_channels=14<0,14,1{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}>Channels
-slider3:p_anchor=60<0,127,1,{C -1,C# / Db -1,D -1,D# / Eb -1,E -1,F -1,F# / Gb -1,G -1,G# / Ab -1,A -1,A# / Bb -1,B -1,C 0,C# / Db 0,D 0,D# / Eb 0,E 0,F 0,F# / Gb 0,G 0,G# / Ab 0,A 0,A# / Bb 0,B 0,C 1,C# / Db 1,D 1,D# / Eb 1,E 1,F 1,F# / Gb 1,G 1,G# / Ab 1,A 1,A# / Bb 1,B 1,C 2,C# / Db 2,D 2,D# / Eb 2,E 2,F 2,F# / Gb 2,G 2,G# / Ab 2,A 2,A# / Bb 2,B 2,C 3,C# / Db 3,D 3,D# / Eb 3,E 3,F 3,F# / Gb 3,G 3,G# / Ab 3,A 3,A# / Bb 3,B 3,C 4,C# / Db 4,D 4,D# / Eb 4,E 4,F 4,F# / Gb 4,G 4,G# / Ab 4,A 4,A# / Bb 4,B 4,C 5,C# / Db 5,D 5,D# / Eb 5,E 5,F 5,F# / Gb 5,G 5,G# / Ab 5,A 5,A# / Bb 5,B 5,C 6,C# / Db 6,D 6,D# / Eb 6,E 6,F 6,F# / Gb 6,G 6,G# / Ab 6,A 6,A# / Bb 6,B 6,C 7,C# / Db 7,D 7,D# / Eb 7,E 7,F 7,F# / Gb 7,G 7,G# / Ab 7,A 7,A# / Bb 7,B 7,C 8,C# / Db 8,D 8,D# / Eb 8,E 8,F 8,F# / Gb 8,G 8,G# / Ab 8,A 8,A# / Bb 8,B 8,C 9,C# / Db 9,D 9,D# / Eb 9,E 9,F 9,F# / Gb 9,G 9}>Anchor
+slider1:p_zone_config=0<0,60,1{Lower 15 channels,Lower 14 channels,Lower 13 channels,Lower 12 channels,Lower 11 channels,Lower 10 channels,Lower 9 channels,Lower 8 channels,Lower 7 channels,Lower 6 channels,Lower 5 channels,Lower 4 channels,Lower 3 channels,Lower 2 channels,Lower 1 channel,Upper 15 channels,Upper 14 channels,Upper 13 channels,Upper 12 channels,Upper 11 channels,Upper 10 channels,Upper 9 channels,Upper 8 channels,Upper 7 channels,Upper 6 channels,Upper 5 channels,Upper 4 channels,Upper 3 channels,Upper 2 channels,Upper 1 channel,Lower 15 channels / override Release Velocity,Lower 14 channels / override Release Velocity,Lower 13 channels / override Release Velocity,Lower 12 channels / override Release Velocity,Lower 11 channels / override Release Velocity,Lower 10 channels / override Release Velocity,Lower 9 channels / override Release Velocity,Lower 8 channels / override Release Velocity,Lower 7 channels / override Release Velocity,Lower 6 channels / override Release Velocity,Lower 5 channels / override Release Velocity,Lower 4 channels / override Release Velocity,Lower 3 channels / override Release Velocity,Lower 2 channels / override Release Velocity,Lower 1 channel / override Release Velocity,Upper 15 channels / override Release Velocity,Upper 14 channels / override Release Velocity,Upper 13 channels / override Release Velocity,Upper 12 channels / override Release Velocity,Upper 11 channels / override Release Velocity,Upper 10 channels / override Release Velocity,Upper 9 channels / override Release Velocity,Upper 8 channels / override Release Velocity,Upper 7 channels / override Release Velocity,Upper 6 channels / override Release Velocity,Upper 5 channels / override Release Velocity,Upper 4 channels / override Release Velocity,Upper 3 channels / override Release Velocity,Upper 2 channels / override Release Velocity,Upper 1 channel / override Release Velocity}>Zone Config
+slider2:p_anchor=60<0,127,1,{C -1,C# / Db -1,D -1,D# / Eb -1,E -1,F -1,F# / Gb -1,G -1,G# / Ab -1,A -1,A# / Bb -1,B -1,C 0,C# / Db 0,D 0,D# / Eb 0,E 0,F 0,F# / Gb 0,G 0,G# / Ab 0,A 0,A# / Bb 0,B 0,C 1,C# / Db 1,D 1,D# / Eb 1,E 1,F 1,F# / Gb 1,G 1,G# / Ab 1,A 1,A# / Bb 1,B 1,C 2,C# / Db 2,D 2,D# / Eb 2,E 2,F 2,F# / Gb 2,G 2,G# / Ab 2,A 2,A# / Bb 2,B 2,C 3,C# / Db 3,D 3,D# / Eb 3,E 3,F 3,F# / Gb 3,G 3,G# / Ab 3,A 3,A# / Bb 3,B 3,C 4,C# / Db 4,D 4,D# / Eb 4,E 4,F 4,F# / Gb 4,G 4,G# / Ab 4,A 4,A# / Bb 4,B 4,C 5,C# / Db 5,D 5,D# / Eb 5,E 5,F 5,F# / Gb 5,G 5,G# / Ab 5,A 5,A# / Bb 5,B 5,C 6,C# / Db 6,D 6,D# / Eb 6,E 6,F 6,F# / Gb 6,G 6,G# / Ab 6,A 6,A# / Bb 6,B 6,C 7,C# / Db 7,D 7,D# / Eb 7,E 7,F 7,F# / Gb 7,G 7,G# / Ab 7,A 7,A# / Bb 7,B 7,C 8,C# / Db 8,D 8,D# / Eb 8,E 8,F 8,F# / Gb 8,G 8,G# / Ab 8,A 8,A# / Bb 8,B 8,C 9,C# / Db 9,D 9,D# / Eb 9,E 9,F 9,F# / Gb 9,G 9}>Anchor
+slider3:p_transpose_below=0<-48,48,1>Transpose Below Anchor (st)
 
 slider4:p_r1_init_value=50<0,100,0.01>Rule 1 Initial Value (%)
 slider5:p_r1_in_cc=120<0,122,1{<? printf(TPL_CTL_NAMES); ?>}>Rule 1 Input
@@ -146,6 +146,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     channel_count = MPE_MEMBER_CHANNELS;
     manager_channel = 0;
     override_release_velocity = 0;
+    transpose_below_anchor = 0;
     first_channel = 1;
     last_channel = 15;
 
@@ -773,6 +774,13 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         );
     );
 
+    function proxy_transpose(note, is_above_anchor)
+    (
+        note += is_above_anchor ? 0 : transpose_below_anchor;
+
+        (note < 0) ? 0 : ((note > 127) ? 127 : note);
+    );
+
     function proxy_push_note_off(time_offset, channel, note, velocity)
         local(
             was_above_anchor,
@@ -781,15 +789,15 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             old_nsao, old_nsan, old_nsal, old_nsah
         )
     (
+        was_above_anchor = note >= anchor;
+
         proxy_push_out_event(
             time_offset,
             channel,
             0x80,
-            note,
+            proxy_transpose(note, was_above_anchor),
             override_release_velocity ? velocities_by_notes[note] : velocity
         );
-
-        was_above_anchor = note >= anchor;
 
         old_nso = note_stack.note_stack_oldest();
         old_nsn = note_stack.note_stack_top();
@@ -895,9 +903,14 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             new_zone_type,
             new_channel_count,
             new_anchor,
-            new_override_release_velocity
+            new_override_release_velocity,
+            new_transpose_below_anchor
     ) (
-        (new_zone_type != zone_type || new_channel_count != channel_count)
+        (
+                new_zone_type != zone_type
+                || new_channel_count != channel_count
+                || new_transpose_below_anchor != transpose_below_anchor
+        )
             ? (
                 proxy_clear();
                 proxy_stop_all_notes();
@@ -922,6 +935,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
         anchor = new_anchor;
         override_release_velocity = new_override_release_velocity;
+        transpose_below_anchor = new_transpose_below_anchor;
     );
 
     function proxy_push_resets_for_new_note(
@@ -1037,7 +1051,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
             time_offset,
             channel,
             0x90,
-            note,
+            proxy_transpose(note, is_above_anchor),
             velocity
         );
 
@@ -1441,7 +1455,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     proxy_init();
 
     turn_off_rules();
-    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, 0);
     proxy_clear();
 
     proxy_note_on(1.0, 60, 127);
@@ -1452,7 +1466,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "MPE config change triggers complete reset";
     proxy_clear();
-    proxy_update_main_config(ZT_UPPER, 10, 60, 0);
+    proxy_update_main_config(ZT_UPPER, 10, 60, 0, 0);
 
     assert_out_event(0, 0.0, 0xb04000, test);       // CC   ch=0 ctl=64 v=0
     assert_out_event(1, 0.0, 0xb14000, test);       // CC   ch=1 ctl=64 v=0
@@ -1461,7 +1475,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "NOTE ON can trigger resets to initial value 1";
     turn_off_rules();
-    proxy_update_main_config(ZT_LOWER, 2, 60, 0);
+    proxy_update_main_config(ZT_LOWER, 2, 60, 0, 0);
     proxy_init();
     rule_update_config(
         0, 0.7, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_NEWEST_ABOVE_ANCHOR, RST_INIT
@@ -1520,7 +1534,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "mapping and routing control events";
     proxy_init();
-    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, 0);
     rule_update_config(0, 0.5, CTL_PITCH_BEND, 74, TRG_OLDEST, RST_OFF);
     rule_update_config(1, 0.0, 1, CTL_CHANNEL_PRESSURE, TRG_NEWEST, RST_OFF);
     rule_update_config(2, 0.0, 74, CTL_NONE, TRG_HIGHEST, RST_OFF);
@@ -1551,7 +1565,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "NOTE ON can reset controllers to their last input value";
     proxy_init();
-    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, 0);
     rule_update_config(
         0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_OLDEST, RST_LAST
     );
@@ -1618,7 +1632,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "can route events to all notes above or below anchor";
     proxy_init();
-    proxy_update_main_config(ZT_LOWER, 15, 60, 0);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, 0);
     rule_update_config(
         0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_ALL_ABOVE_ANCHOR, RST_INIT
     );
@@ -1640,7 +1654,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
     test = "can override release velocity with trigger velocity";
     proxy_init();
-    proxy_update_main_config(ZT_LOWER, 15, 60, 1);
+    proxy_update_main_config(ZT_LOWER, 15, 60, 1, 0);
     turn_off_rules();
     proxy_note_on(1.0, 48, 127);                    // ch=1
     proxy_note_on(2.0, 72, 123);                    // ch=2
@@ -1654,10 +1668,57 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     assert_eq(2, out_events_count, "%d", test);
 
     proxy_clear();
-    proxy_update_main_config(ZT_LOWER, 14, 60, 0);
+    proxy_update_main_config(ZT_LOWER, 14, 60, 0, 0);
     assert_out_event(0, 0.0, 0xb04000, test);       // CC   ch=0 ctl=64 v=0
     assert_out_event(1, 0.0, 0xb14000, test);       // CC   ch=1 ctl=64 v=0
     assert_out_event(2, 0.0, 0x81307f, test);       // OFF  ch=1 n=48 v=127
+    assert_eq(3, out_events_count, "%d", test);
+
+    test = "can transpose notes below the anchor";
+    proxy_init();
+    turn_off_rules();
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, -12);
+    proxy_clear();
+
+    proxy_note_on(1.0, 48, 127);
+    proxy_note_on(2.0, 60, 127);
+    proxy_note_on(3.0, 2, 127);
+    proxy_note_off(4.0, 48, 127);
+    proxy_note_off(5.0, 60, 127);
+    proxy_note_off(6.0, 2, 127);
+
+    assert_out_event(0, 1.0, 0x91247f, test);       // ON   ch=1 n=36 v=127
+    assert_out_event(1, 2.0, 0x923c7f, test);       // ON   ch=2 n=60 v=127
+    assert_out_event(2, 3.0, 0x93007f, test);       // ON   ch=3 n=0  v=127
+    assert_out_event(3, 4.0, 0x81247f, test);       // OFF  ch=1 n=48 v=127
+    assert_out_event(4, 5.0, 0x823c7f, test);       // OFF  ch=2 n=60 v=127
+    assert_out_event(5, 6.0, 0x83007f, test);       // OFF  ch=3 n=0  v=127
+    assert_eq(6, out_events_count, "%d", test);
+
+    test = "transposed notes stay below maximum note value";
+    proxy_update_main_config(ZT_LOWER, 15, 127, 0, 48);
+    proxy_clear();
+
+    proxy_note_on(1.0, 120, 127);
+    proxy_note_off(2.0, 120, 127);
+
+    assert_out_event(0, 1.0, 0x917f7f, test);       // ON   ch=1 n=127 v=127
+    assert_out_event(1, 2.0, 0x817f7f, test);       // OFF  ch=1 n=127 v=127
+    assert_eq(2, out_events_count, "%d", test);
+
+    test = "changing transposing triggers complete reset";
+    proxy_init();
+    turn_off_rules();
+    proxy_update_main_config(ZT_LOWER, 15, 72, 0, -12);
+    proxy_clear();
+    proxy_note_on(1.0, 60, 127);
+    proxy_clear();
+
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, 12);
+
+    assert_out_event(0, 0.0, 0xb04000, test);       // CC   ch=0 ctl=64 v=0
+    assert_out_event(1, 0.0, 0xb14000, test);       // CC   ch=1 ctl=64 v=0
+    assert_out_event(2, 0.0, 0x813040, test);       // OFF  ch=1 n=48 v=64
     assert_eq(3, out_events_count, "%d", test);
 
     (failed_assertions == 0)
@@ -1670,25 +1731,42 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
 
 @slider
-    rule_update_config(
-        0, p_r1_init_value / 100.0, p_r1_in_cc, p_r1_out_cc, p_r1_target, p_r1_reset
-    );
-    rule_update_config(
-        1, p_r2_init_value / 100.0, p_r2_in_cc, p_r2_out_cc, p_r2_target, p_r2_reset
-    );
-    rule_update_config(
-        2, p_r3_init_value / 100.0, p_r3_in_cc, p_r3_out_cc, p_r3_target, p_r3_reset
-    );
-    rule_update_config(
-        3, p_r4_init_value / 100.0, p_r4_in_cc, p_r4_out_cc, p_r4_target, p_r4_reset
-    );
-    rule_update_config(
-        4, p_r5_init_value / 100.0, p_r5_in_cc, p_r5_out_cc, p_r5_target, p_r5_reset
+    function update_config()
+        local(zone_config, channels, transpose)
+    (
+        rule_update_config(
+            0, p_r1_init_value / 100.0, p_r1_in_cc, p_r1_out_cc, p_r1_target, p_r1_reset
+        );
+        rule_update_config(
+            1, p_r2_init_value / 100.0, p_r2_in_cc, p_r2_out_cc, p_r2_target, p_r2_reset
+        );
+        rule_update_config(
+            2, p_r3_init_value / 100.0, p_r3_in_cc, p_r3_out_cc, p_r3_target, p_r3_reset
+        );
+        rule_update_config(
+            3, p_r4_init_value / 100.0, p_r4_in_cc, p_r4_out_cc, p_r4_target, p_r4_reset
+        );
+        rule_update_config(
+            4, p_r5_init_value / 100.0, p_r5_in_cc, p_r5_out_cc, p_r5_target, p_r5_reset
+        );
+
+        zone_config = floor(p_zone_config / 15);
+        channels = 15 - p_zone_config % 15;
+        transpose = floor(p_transpose_below + 0.5);
+
+        proxy_update_main_config(
+            zone_config & 1,
+            channels,
+            p_anchor,
+            zone_config >> 1,
+            transpose
+        );
+
+        p_transpose_below = transpose;
+        sliderchange(p_transpose_below);
     );
 
-    proxy_update_main_config(
-        p_zone_type & 1, p_channels, p_anchor, p_zone_type >> 1
-    );
+    update_config();
 
 
 @block
