@@ -209,14 +209,17 @@ body.hide-objects .knob span:nth-child(3) {
 
 .select-container {
   display: inline-block;
-  width: 174px;
-  height: 58px;
+  width: 116px;
+  height: 68px;
+  overflow: hidden;
 }
 
 .select {
   display: inline-block;
-  width: 174px;
+  width: 116px;
   height: 27px;
+  margin-bottom: 4px;
+  margin-top: 4px;
 }
 
 .select span {
@@ -233,7 +236,7 @@ body.hide-objects .knob span:nth-child(3) {
   display: inline-block;
   border: inset 2px #808098;
   border-radius: 5px;
-  width: 130px;
+  width: 72px;
   height: 23px;
   margin: 0;
 }
@@ -490,10 +493,10 @@ window.onload = function ()
 
         create_select(k2, "IN", "&nbsp;");
         create_select(k2, "OUT", "&nbsp;");
-        create_select(k2, "TRG", "&nbsp;");
         k1.appendChild(k2);
 
         create_knob(k1, "INIT %", "63");
+        create_knob(k1, "TARGET", "New");
         create_knob(k1, "DIST %", "10.00");
 
         $("zone1").appendChild(d);

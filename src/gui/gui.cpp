@@ -243,15 +243,13 @@ GUI::GUI(
     status_line->set_text("");
 
     controller_selector = new OptionSelector(*background, proxy, "Select controller");
-    target_selector = new OptionSelector(*background, proxy, "Select target");
 
     build_about_body(sdk_version);
     build_zone_1_body(
         knob_states,
         distortions,
         midpoint_states,
-        controller_selector,
-        target_selector
+        controller_selector
     );
 
     background->own(
@@ -279,9 +277,6 @@ GUI::GUI(
     background->own(controller_selector);
     controller_selector->hide();
 
-    background->own(target_selector);
-    target_selector->hide();
-
     controller_selector->add_option(
         (unsigned int)Proxy::ControllerId::NONE,
         Strings::CONTROLLERS_LONG[Proxy::ControllerId::NONE]
@@ -306,10 +301,6 @@ GUI::GUI(
             (unsigned int)i, Strings::CONTROLLERS_LONG[i]
         );
     }
-
-    for (size_t i = 0; i != Strings::TARGETS_COUNT; ++i) {
-        target_selector->add_option((unsigned int)i, Strings::TARGETS_LONG[i]);
-    }
 }
 
 
@@ -331,8 +322,7 @@ void GUI::build_zone_1_body(
         ParamStateImages const* const knob_states,
         ParamStateImages const* const distortions,
         ParamStateImages const* const midpoint_states,
-        OptionSelector* const controller_selector,
-        OptionSelector* const target_selector
+        OptionSelector* const controller_selector
 ) {
     zone_1_body = new TabBody(*this, "Settings");
 
@@ -366,10 +356,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(19, 149);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R1IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R1OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R1TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R1IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R1IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R1OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R1IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R1TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R1DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R1NV);
@@ -382,10 +372,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(339, 149);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R2IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R2OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R2TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R2IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R2IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R2OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R2IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R2TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R2DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R2NV);
@@ -398,10 +388,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(659, 149);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R3IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R3OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R3TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R3IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R3IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R3OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R3IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R3TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R3DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R3NV);
@@ -414,10 +404,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(19, 287);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R4IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R4OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R4TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R4IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R4IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R4OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R4IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R4TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R4DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R4NV);
@@ -430,10 +420,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(339, 287);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R5IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R5OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R5TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R5IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R5IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R5OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R5IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R5TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R5DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R5NV);
@@ -446,10 +436,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(659, 287);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R6IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R6OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R6TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R6IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R6IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R6OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R6IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R6TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R6DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R6NV);
@@ -462,10 +452,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(19, 425);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R7IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R7OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R7TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R7IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R7IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R7OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R7IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R7TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R7DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R7NV);
@@ -478,10 +468,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(339, 425);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R8IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R8OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R8TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R8IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R8IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R8OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R8IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R8TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R8DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R8NV);
@@ -494,10 +484,10 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(659, 425);
 
-    DPETO(zone_1_body, 42, 35, 128, 23, 0, 128, Proxy::ParamId::Z1R9IN, controller_selector);
-    DPETO(zone_1_body, 42, 62, 128, 23, 0, 128, Proxy::ParamId::Z1R9OU, controller_selector);
-    DPETO(zone_1_body, 42, 89, 128, 23, 0, 128, Proxy::ParamId::Z1R9TR, target_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R9IV, knob_states);
+    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R9IN, controller_selector);
+    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R9OU, controller_selector);
+    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R9IV, knob_states);
+    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R9TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R9DL, knob_states);
 
     TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R9NV);

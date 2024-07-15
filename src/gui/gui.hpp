@@ -180,8 +180,7 @@ class GUI
             ParamStateImages const* const knob_states,
             ParamStateImages const* const distortions,
             ParamStateImages const* const midpoint_states,
-            OptionSelector* const controller_selector,
-            OptionSelector* const target_selector
+            OptionSelector* const controller_selector
         );
 
         bool const show_vst_logo;
