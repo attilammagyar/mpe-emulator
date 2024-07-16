@@ -45,6 +45,12 @@ main()
                 plugin_type="$(get_plugin_type "$REPLY")"
                 print_link "$REPLY" "$arch-bit, $plugin_type"
             done
+
+        find dist -name "MPE_Emulator_Lite-v*.jsfx" \
+          | while read
+            do
+                print_link "$REPLY" "MPE Emulator Lite for REAPER (JS)"
+            done
     done
 
     find dist -name "mpe-emulator-*-src.zip" \
