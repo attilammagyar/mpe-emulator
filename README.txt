@@ -23,6 +23,13 @@ Public License Version 3.)
 VST® is a trademark of Steinberg Media Technologies GmbH, registered in
 Europe and other countries.
 
+MPE Emulator Lite
+-----------------
+
+MPE Emulator Lite is a platform-independent JS plugin for REAPER
+(see https://http://reaper.fm/) v6.74 and above which provides the most
+fundamental of MPE Emulator.
+
 System Requirements
 -------------------
 
@@ -31,6 +38,9 @@ System Requirements
  * RAM: around 30 MB per instance
 
 The plugin can also be compiled for RISC-V 64 from its source code.
+
+MPE Emulator Lite runs on any operating system and CPU where REAPER runs. The
+required minimum version of REAPER is v6.74.
 
 Dependencies on Windows
 -----------------------
@@ -125,6 +135,10 @@ These are the file names that you will find on GitHub on the "Releases" page:
     * "mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single_file.zip": for
       32 bit CPUs with SSE2 support.
 
+ * MPE Emulator Lite for any platform that is supported by REAPER:
+
+    * "MPE_Emulator_Lite-vX_Y_Z.jsfx"
+
  * Source:
 
     * "mpe-emulator-X_Y_Z-src.zip": the source code of the plugin which you can
@@ -189,6 +203,15 @@ Installing the VST 3 Single File Version on Linux
 2. Extract the ZIP archive.
 3. Copy the "mpe-emulator.vst3" file to your VST 3 directory which is usually
    "~/.vst3".
+
+Installing MPE Emulator Lite
+----------------------------
+
+1. Download MPE Emulator Lite from https://attilammagyar.github.io/mpe-emulator
+2. Copy "MPE_Emulator_Lite-vX_Y_Z.jsfx" to the "Effects" folder of REAPER.
+
+Refer to REAPER's User Guide at https://reaper.fm/userguide.php for more
+information on installing JS plugins.
 
 Usage
 -----

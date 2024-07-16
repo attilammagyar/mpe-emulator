@@ -38,6 +38,7 @@ Table of Contents
 
  * [Table of Contents](#toc)
  * [Features](#features)
+ * [MPE Emulator Lite](#lite)
  * [Installation](#install)
     * [Before Installing: Choosing a Distribution](#install-dist)
     * [System Requirements](#system-reqs)
@@ -49,6 +50,7 @@ Table of Contents
     * [VST 3 Bundle on Linux](#vst3-bundle-linux)
     * [VST 3 Single File on Windows](#vst3-single-windows)
     * [VST 3 Single File on Linux](#vst3-single-linux)
+    * [MPE Emulator Lite](#install-lite)
  * [Usage](#usage)
     * [Knobs](#usage-knobs)
     * [Zone Configuration](#usage-zone)
@@ -90,6 +92,15 @@ Features
  * MIDI Learn.
 
 <a href="#toc">Table of Contents</a>
+
+<a id="lite"></a>
+
+MPE Emulator Lite
+-----------------
+
+MPE Emulator Lite is a platform-independent JS plugin for
+[REAPER](https://http://reaper.fm/) v6.74 and above which provides the most
+fundamental [features](#features) of MPE Emulator.
 
 <a id="install"></a>
 
@@ -163,6 +174,11 @@ These are the file names that you will find on GitHub on the "Releases" page:
     * `mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single_file.zip`: for
       32 bit CPUs with SSE2 support.
 
+ * MPE Emulator Lite for any platform that is supported by
+   [REAPER](https://reaper.fm/):
+
+    * `MPE_Emulator_Lite-vX_Y_Z.jsfx`
+
  * Source:
 
     * `mpe-emulator-X_Y_Z-src.zip`: the source code of the plugin which you can
@@ -181,6 +197,9 @@ These are the file names that you will find on GitHub on the "Releases" page:
 The plugin can also be compiled for RISC-V 64 from its source code.
 
 Tested with [REAPER](https://www.reaper.fm/) 7.17.
+
+MPE Emulator Lite runs on any operating system and CPU where REAPER runs. The
+required minimum version of REAPER is v6.74.
 
 <a id="windows-deps"></a>
 
@@ -275,6 +294,16 @@ Note: VST 2.4 plugins are usually put in the `~/.vst` directory.
 2. Extract the ZIP archive.
 3. Copy the `mpe-emulator.vst3` file to your VST 3 directory which is usually
    `~/.vst3`.
+
+<a id="install-lite"></a>
+
+### MPE Emulator Lite
+
+1. [Download MPE Emulator Lite](https://attilammagyar.github.io/mpe-emulator).
+2. Copy `MPE_Emulator_Lite-vX_Y_Z.jsfx` to the `Effects` folder of REAPER.
+
+Refer to [REAPER's User Guide](https://reaper.fm/userguide.php) for more
+information on installing JS plugins.
 
 <a href="#toc">Table of Contents</a>
 
@@ -728,6 +757,12 @@ MacOS would be available (at a reasonable price) for installing it in a virtual
 machine that could be used for testing, I'd consider that. But as long as it
 cannot be obtained (legally) without also buying a Mac, and I'm happy with my
 current computer, I'm not going to invest in a new one.
+
+If you use [REAPER](https://www.reaper.fm/) (or any DAW which supports REAPER's
+[JSFX](https://www.reaper.fm/sdk/js/js.php) plugin format), then you should try
+[MPE Emulator Lite](#lite) which implements most of MPE Emulator's features,
+and it runs on any platform that is supported by REAPER, including various Mac
+configurations.
 
 <a href="#toc">Table of Contents</a>
 
