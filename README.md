@@ -85,8 +85,9 @@ Features
    utilize it.
  * Split the keyboard and route polyphonic expressions to the two halves with
    different rules.
- * Extend the range of small keyboards by transposing the two sides of the
-   split point independently from each other.
+ * Transpose the two sides of the split point independently from each other.
+   (E.g. extend the range of small keyboards, or play the same note with
+   different expression settings.)
  * Route various expressions and controllers to the lowest, highest, oldest, or
    newest note globally, or across the split halves of the keyboard.
  * MIDI Learn.
@@ -434,14 +435,16 @@ with the left hand.
 #### Transpose Below Anchor (TR BA, Z1TRB)
 
 Select how many semitones notes below the [anchor](#usage-zone-anchor) should
-be transposed up or down. This can be useful for extending the range of small
-keyboards with only a few octaves.
+be transposed up or down. This can be useful e.g. for extending the range of
+small keyboards with only a few octaves, or for playing the same note with
+different expression settings.
 
 #### Transpose Above Anchor (TR AA, Z1TRA)
 
 Select how many semitones notes above the [anchor](#usage-zone-anchor) should
-be transposed up or down. This can be useful for extending the range of small
-keyboards with only a few octaves.
+be transposed up or down. This can be useful e.g. for extending the range of
+small keyboards with only a few octaves, or for playing the same note with
+different expression settings.
 
 <a href="#toc">Table of Contents</a>
 
