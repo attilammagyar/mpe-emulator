@@ -1817,11 +1817,10 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
 
 @block
     function process()
-        local(time_offset, msg1, msg2, msg3, channel, command, i, i2, out_event)
+        local(time_offset, msg1, msg2, msg3, command, i, i2, out_event)
     (
         while (midirecv(time_offset, msg1, msg2, msg3)) (
             command = msg1 & 0xf0;
-            channel = msg1 & 0x0f;
 
             (command == 0x80 || (command == 0x90 && msg3 == 0))
                 ? proxy_note_off(time_offset, msg2, msg3)
