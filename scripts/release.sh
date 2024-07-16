@@ -30,6 +30,8 @@ TEXT_FILES="LICENSE.txt README.txt NEWS.txt"
 DIST_DIR_BASE="dist"
 README_HTML="$DIST_DIR_BASE/README.html"
 
+MPE_EMULATOR_LITE="jsfx/MPE_Emulator_Lite.jsfx"
+
 main()
 {
     local version_tag
@@ -43,6 +45,7 @@ main()
     local date
     local build_platform
     local target_platforms="${@:-$TARGET_PLATFORMS}"
+    local lite_version
 
     log "Verifying repository"
 
@@ -114,6 +117,9 @@ main()
         "$DIST_DIR_BASE/$source_dir/"
 
     find "$DIST_DIR_BASE/$source_dir/" -name ".*.swp" -delete
+
+    lite_version="$(get_lite_version)"
+    cp --verbose "$MPE_EMULATOR_LITE" "$DIST_DIR_BASE/MPE_Emulator_Lite-v$lite_version.jsfx"
 
     log "Generating $README_HTML"
 
@@ -450,6 +456,13 @@ copy_vst3()
     cp --verbose \
         "$DIST_DIR_BASE/mpe-emulator-$version_as_file_name-$src_dir-vst3_single_file/mpe-emulator.vst3" \
         "$dir/$dst_file"
+}
+
+get_lite_version()
+{
+    grep --extended-regexp "^version:[0-9]+\\.[0-9]+\\.[0-9]+\$" "$MPE_EMULATOR_LITE" \
+        | cut -d ":" -f 2 \
+        | sed "s/\\./_/g"
 }
 
 main "$@"
