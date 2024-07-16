@@ -21,7 +21,7 @@ author:Attila M. Magyar
 tags:MPE emulator MIDI polyphonic aftertouch expression pitch bend CC
 version:1.0.0
 about:
-  A plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules.
+  A plugin for REAPER v6.74 and above for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules.
 
   MPE Emulator Lite is a MIDI proxy: an intermediary plugin which turns non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or any MIDI Control Change (CC) message into polyphonic.
 
