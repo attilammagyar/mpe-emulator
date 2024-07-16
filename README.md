@@ -14,7 +14,7 @@ whole keyboard or restricted to a range of keys based on a configurable
 keyboard split point. It can also remap and reshape controller data, and do
 various other tricks to increase the expressiveness of a musical performance.
 
-<img src="https://raw.githubusercontent.com/attilammagyar/mpe-emulator/master/mpe-emulator.png" alt="Screenshot of MPE Emulator" />
+<img src="https://raw.githubusercontent.com/attilammagyar/mpe-emulator/main/mpe-emulator.png" alt="Screenshot of MPE Emulator" />
 
 To download MPE Emulator, visit its website at
 [https://attilammagyar.github.io/mpe-emulator](https://attilammagyar.github.io/mpe-emulator),
