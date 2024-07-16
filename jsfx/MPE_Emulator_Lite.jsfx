@@ -30,7 +30,7 @@ about:
   - Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and vice-versa.
   - Use the trigger velocity of notes as release velocity for synths that utilize it.
   - Split the keyboard and route polyphonic expressions to the two halves with different rules.
-  - Extend the range of small keyboards by transposing the two sides of the split point independently from each other.
+  - Transpose the lower side of the split point. (E.g. extend the range of small keyboards, or play the same note with different expression settings.)
   - Route various expressions and controllers to the lowest, highest, oldest, or newest note globally, or across the split halves of the keyboard.
 
 in_pin:none
