@@ -866,19 +866,21 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         );
     );
 
+    function proxy_push_sustain_pedal_off(time_offset, channel)
+    (
+        proxy_push_controller_event(0.0, channel, 64, 0.0);
+    );
+
     function proxy_stop_all_notes()
         local(note, channel)
     (
-        /* sustain pedal off */
-        proxy_push_controller_event(0.0, manager_channel, 64, 0.0);
+        proxy_push_sustain_pedal_off(0.0, manager_channel);
 
         while (!note_stack.note_stack_is_empty()) (
             note = note_stack.note_stack_pop();
             channel = channels_by_notes[note];
 
-            /* sustain pedal off */
-            proxy_push_controller_event(0.0, channel, 64, 0.0);
-
+            proxy_push_sustain_pedal_off(0.0, channel);
             proxy_push_note_off(0.0, channel, note, 64);
         );
     );
