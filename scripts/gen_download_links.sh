@@ -124,9 +124,14 @@ HTML
 get_version()
 {
     local file_name="$1"
+    local version="$(printf "%s\n" "$file_name" | cut -d "-" -f 3)"
 
-    printf "v%s\n" "$file_name" \
-        | cut -d "-" -f 3 \
+    if [[ "$version" = "" ]]
+    then
+        version="$(find dist -name "mpe-emulator-*-src.zip" | cut -d "-" -f 3)"
+    fi
+
+    printf "%s\n" "$version" \
         | sed "s/_/./g"
 }
 
