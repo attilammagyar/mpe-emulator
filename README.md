@@ -103,6 +103,8 @@ MPE Emulator Lite is a platform-independent JS plugin for
 [REAPER](https://http://reaper.fm/) v6.74 and above which provides the most
 fundamental [features](#features) of MPE Emulator.
 
+<a href="#toc">Table of Contents</a>
+
 <a id="install"></a>
 
 Installation
