@@ -659,7 +659,7 @@ the raw MIDI input regardless of whether the "_Replaces MIDI bus_" or the
 "_Merges with MIDI bus_" setting is selected. This makes the VST 3 version of
 MPE Emulator unusable in REAPER. This is a
 [bug in REAPER](https://forum.cockos.com/showthread.php?t=292338) which
-might get fixed in 7.18.
+might get fixed in 7.19.
 
 The FST (VST 2.4) version of MPE Emulator works fine in all versions of REAPER.
 
