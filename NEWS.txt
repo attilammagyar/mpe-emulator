@@ -1,3 +1,16 @@
+v1.0.0 (2024-07-17)
+ * Transpose the two sides of the split point independently from each other.
+   (E.g. extend the range of small keyboards, or play the same note with
+   different expression settings.)
+ * The user interface has been revised in order to make it easier to select
+   controllers.
+ * MPE Emulator Lite is a JS plugin for REAPER which implements most of
+   MPE Emulator's features, and it runs on any platform where REAPER runs
+   (including various Mac configurations).
+ * Bugfix: the FST (VST 2) plugin will now export all its parameters.
+ * Bugfix: the VST 3 plugin will now initialize and update its exported
+   parameters correctly.
+
 v0.0.2 (2024-07-08)
  * When notes are released and new notes are triggered, channel allocation will
    avoid reusing the released channels for as long as possible so that longer
