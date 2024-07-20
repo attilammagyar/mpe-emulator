@@ -204,6 +204,8 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
   // ## DEBUG LOG
   // #########################################################################
 
+    /* Uncomment the gfx block at the end of the file to see the log. */
+
     function log_init()
         local(i)
     (
@@ -1214,13 +1216,17 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     );
 
 
-/*/ // Insert a second asterisk and enable the gfx block to turn on tests.
-
-    proxy_init();
-
   // #########################################################################
   // ## TESTING
   // #########################################################################
+
+    /*
+    Insert a second asterisk below and uncomment the gfx block at the end of
+    the file to see the results of the tests.
+    */
+
+/*/
+    proxy_init();
 
     failed_assertions = 0;
     total_assertions = 0;
