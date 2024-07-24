@@ -57,7 +57,7 @@ Table of Contents
     * [Rules](#usage-rule)
  * [Bugs](#bugs)
     * [Known Issues and Quirks](#bugs-known)
-       * [REAPER 7.17 lets raw MIDI control data pass through the VST 3 version](#bugs-known-reaper-7-17)
+       * [REAPER 7.18 (and below) lets raw MIDI control data pass through the VST 3 version](#bugs-known-reaper-7-18)
        * [Ardour 8.6 ignores Channel Pressure (Aftertouch) events emitted by plugins](#bugs-known-ardour)
        * [FL Studio does not support MPE at all (as of July 2024)](#bugs-known-fl-studio)
        * [VST 3 Note On and CC event ordering issues](#bugs-known-vst3)
@@ -649,17 +649,17 @@ If you find bugs that are not mentioned in the
 
 ### Known Issues and Quirks
 
-<a id="bugs-known-reaper-7-17"></a>
+<a id="bugs-known-reaper-7-18"></a>
 
-#### REAPER 7.17 lets raw MIDI control data pass through the VST 3 version
+#### REAPER 7.18 (and below) lets raw MIDI control data pass through the VST 3 version
 
 When a VST 3 plugin outputs MIDI controller messages in
-[REAPER](https://www.reaper.fm/) 7.17 and below versions, they get merged with
+[REAPER](https://www.reaper.fm/) 7.18 and below versions, they get merged with
 the raw MIDI input regardless of whether the "_Replaces MIDI bus_" or the
 "_Merges with MIDI bus_" setting is selected. This makes the VST 3 version of
-MPE Emulator unusable in REAPER. This is a
-[bug in REAPER](https://forum.cockos.com/showthread.php?t=292338) which
-might get fixed in 7.19.
+MPE Emulator unusable in the affected REAPER versions. The developers were
+[notified about the bug](https://forum.cockos.com/showthread.php?t=292338), and
+it got fixed in 7.19.
 
 The FST (VST 2.4) version of MPE Emulator works fine in all versions of REAPER.
 
