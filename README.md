@@ -786,12 +786,13 @@ As of July 2024, [MPE in FL Studio is not supported](#bugs-known-fl-studio).
 > VST® is a trademark of Steinberg Media Technologies GmbH, registered in
 > Europe and other countries.
 
-I'm not a lawyer, so I have no idea if it would count as trademark infringement
-if I claimed VST 2.4 compatibility for MPE Emulator without obtaining a license
-from Steinberg Media Technologies GmbH, so I don't do it, especially since they
-no longer issue new licenses for VST 2 to anybody. Instead, I use the name of
-an open source programming library which makes it possible to build plugins
-that can be loaded into VST 2.4 hosts without that license:
+I'm not a lawyer, so I have no idea if it would be trademark infringement for
+me to claim VST 2.4 compatibility for JS80P without obtaining a license from
+Steinberg Media Technologies GmbH, so I don't do it; especially since they no
+longer issue new licenses for VST 2 to anybody. Instead, I use the name of an
+open source programming library which makes it possible to build plugins that
+can be loaded into VST 2.4 hosts without requiring, violating, or otherwise
+having anything to do with that license:
 [FST](https://git.iem.at/zmoelnig/FST).
 
 <a href="#toc">Table of Contents</a>
