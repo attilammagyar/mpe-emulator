@@ -879,24 +879,31 @@ tresult PLUGIN_API Vst3Plugin::Controller::initialize(FUnknown* context)
 
     constexpr int midi_cc_begin = (int)Proxy::ControllerId::BANK_SELECT;
     constexpr int midi_cc_end = (int)Proxy::ControllerId::MAX_MIDI_CC + 1;
+    constexpr int cc_sound_5 = (int)Proxy::ControllerId::SOUND_5;
 
     for (int cc = midi_cc_begin; cc != midi_cc_end; ++cc) {
         parameters.addParameter(
-            create_midi_ctl_param((Proxy::ControllerId)cc, (Vst::ParamID)cc)
+            create_midi_ctl_param(
+                (Proxy::ControllerId)cc,
+                (Vst::ParamID)cc,
+                cc == cc_sound_5 ? 0.5 : 0.0
+            )
         );
     }
 
     parameters.addParameter(
         create_midi_ctl_param(
             Proxy::ControllerId::PITCH_WHEEL,
-            (Vst::ParamID)Vst::ControllerNumbers::kPitchBend
+            (Vst::ParamID)Vst::ControllerNumbers::kPitchBend,
+            0.5
         )
     );
 
     parameters.addParameter(
         create_midi_ctl_param(
             Proxy::ControllerId::CHANNEL_PRESSURE,
-            (Vst::ParamID)Vst::ControllerNumbers::kAfterTouch
+            (Vst::ParamID)Vst::ControllerNumbers::kAfterTouch,
+            0.0
         )
     );
 
@@ -937,7 +944,8 @@ Proxy::ParamId Vst3Plugin::vst3_param_tag_to_proxy_param_id(
 
 Vst::Parameter* Vst3Plugin::Controller::create_midi_ctl_param(
         Proxy::ControllerId const controller_id,
-        Vst::ParamID const param_tag
+        Vst::ParamID const param_tag,
+        double const default_value
 ) const {
     Vst::RangeParameter* param = new Vst::RangeParameter(
         USTRING(Strings::CONTROLLERS_LONG[(size_t)controller_id]),
@@ -945,7 +953,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_midi_ctl_param(
         USTRING("%"),
         0.0,
         100.0,
-        0.0,
+        default_value * 100.0,
         0,
         Vst::ParameterInfo::kCanAutomate,
         Vst::kRootUnitId,

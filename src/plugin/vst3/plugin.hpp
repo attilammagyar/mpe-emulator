@@ -241,7 +241,8 @@ class Vst3Plugin
             private:
                 Vst::Parameter* create_midi_ctl_param(
                     Proxy::ControllerId const controller_id,
-                    Vst::ParamID const param_id
+                    Vst::ParamID const param_id,
+                    double const default_value
                 ) const;
 
                 Vst::Parameter* create_exported_param(

@@ -401,14 +401,21 @@ void FstPlugin::populate_parameters(
 
     constexpr int midi_cc_begin = (int)Proxy::ControllerId::BANK_SELECT;
     constexpr int midi_cc_end = (int)Proxy::ControllerId::MAX_MIDI_CC + 1;
+    constexpr int cc_sound_5 = (int)Proxy::ControllerId::SOUND_5;
 
     for (int controller_id = midi_cc_begin; controller_id != midi_cc_end; ++controller_id) {
-        parameters[index++] = Parameter(
+        Parameter parameter(
             Strings::CONTROLLERS_SHORT[controller_id],
             Strings::CONTROLLERS_LONG[controller_id],
             Proxy::ParamId::INVALID_PARAM_ID,
             (Proxy::ControllerId)controller_id
         );
+
+        if (controller_id == cc_sound_5) {
+            parameter.set_value(0.5f);
+        }
+
+        parameters[index++] = parameter;
     }
 
     Parameter pitch_wheel(
@@ -448,8 +455,6 @@ void FstPlugin::populate_parameters(
         Proxy::ParamId::INVALID_PARAM_ID,
         Proxy::ControllerId::INVALID_CONTROLLER_ID
     );
-
-    patch_changed.set_value(0.0f);
 
     parameters[PATCH_CHANGED_PARAMETER_INDEX] = patch_changed;
 }
