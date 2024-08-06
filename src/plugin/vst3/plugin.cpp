@@ -23,10 +23,12 @@
 #include <vst3sdk/base/source/fstreamer.h>
 #include <vst3sdk/base/source/fstring.h>
 #include <vst3sdk/pluginterfaces/base/fstrdefs.h>
+#include <vst3sdk/pluginterfaces/base/funknown.h>
 #include <vst3sdk/pluginterfaces/base/futils.h>
 #include <vst3sdk/pluginterfaces/base/ibstream.h>
 #include <vst3sdk/pluginterfaces/base/ustring.h>
 #include <vst3sdk/pluginterfaces/vst/ivstevents.h>
+#include <vst3sdk/pluginterfaces/vst/ivsthostapplication.h>
 #include <vst3sdk/pluginterfaces/vst/ivstparameterchanges.h>
 #include <vst3sdk/public.sdk/source/vst/vstaudioprocessoralgo.h>
 #include <vst3sdk/public.sdk/source/vst/vsteventshelper.h>
@@ -869,6 +871,12 @@ tresult PLUGIN_API Vst3Plugin::Controller::initialize(FUnknown* context)
 
     if (result != kResultTrue) {
         return result;
+    }
+
+    FUnknownPtr<Vst::IVst3WrapperMPESupport> mpe_support(getHostContext());
+
+    if (mpe_support) {
+        mpe_support->enableMPEInputProcessing(false);
     }
 
     addUnit(
