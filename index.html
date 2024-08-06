@@ -488,8 +488,7 @@ small {
 <ul>
 <li><a href="#bugs-known-reaper-7-18">REAPER 7.18 (and below) lets raw MIDI control data pass through the VST 3 version</a></li>
 <li><a href="#bugs-known-ardour">Ardour 8.6 ignores Channel Pressure (Aftertouch) events emitted by plugins</a></li>
-<li><a href="#bugs-known-fl-studio-21">FL Studio v21 (and below) does not support MPE at all</a></li>
-<li><a href="#bugs-known-fl-studio-2024">FL Studio v2024 quirks (e.g. VST 3 Pitch Bend problems)</a></li>
+<li><a href="#bugs-known-fl-studio">FL Studio quirks (e.g. VST 3 Pitch Bend problems)</a></li>
 <li><a href="#bugs-known-vst3">VST 3 Note On and CC event ordering issues</a></li>
 <li><a href="#bugs-known-ccpoly">The mod wheel or a CC event is not handled with polyphony despite matching one of the rules</a></li>
 </ul></li>
@@ -1122,35 +1121,18 @@ events (and Program Change events in case of VST 2).
 
 <p><a href="#toc">Table of Contents</a></p>
 
-<p><a id="bugs-known-fl-studio-21"></a></p>
+<p><a id="bugs-known-fl-studio"></a></p>
 
-<h4>FL Studio v21 (and below) does not support MPE at all</h4>
+<h4>FL Studio quirks (e.g. VST 3 Pitch Bend problems)</h4>
 
-<p>In fact, MIDI is not a first-class citizen in <a href="https://www.image-line.com/">FL Studio</a>,
-and getting even basic MIDI to work with plugins (e.g. using controllers other
-than the mod wheel and the pitch bend wheel) requires digging through various
-settings dialogs and manually setting up controller links to plugin parameters.
-By the way, those MIDI CC helper parameters that many plugin developers and
-even the VST 3 standard use are not MIDI CC support, they are just workarounds
-to mimic MIDI CC support.</p>
-
-<p>MPE in FL Studio v21 and previous versions seems hopeless.</p>
-
-<p><a href="#toc">Table of Contents</a></p>
-
-<p><a id="bugs-known-fl-studio-2024"></a></p>
-
-<h4>FL Studio v2024 quirks (e.g. VST 3 Pitch Bend problems)</h4>
-
-<p>FL Studio v2024.1.1 (build 4239) seems to contain several improvements over
-<a href="#bugs-known-fl-studio-21">v21</a>, but there are a few quirks:</p>
+<p>FL Studio v2024.1.1 build 4239 (and below) seems to have a few quirks:</p>
 
 <ul>
 <li><p>Control messages emitted by the VST 3 version of MPE Emulator are lost when
 the synthesizer is a VST 2 plugin.</p></li>
-<li><p>FL Studio seems to misinterpret Pitch Bend messages emitted by VST 3 version
-of MPE Emulator, resulting in random (and sometimes invalid) values being
-sent to synthesizer plugins.</p></li>
+<li><p>FL Studio seems to misinterpret Pitch Bend messages emitted by the VST 3
+version of MPE Emulator, resulting in random (and sometimes invalid) values
+being sent to synthesizer plugins.</p></li>
 <li><p><a href="#faq-flstudio">Setting up plugins that output MIDI requires a few steps</a>.</p></li>
 </ul>
 
@@ -1180,12 +1162,12 @@ plugins as parameter automation.</p>
 of VST 3 decided to take several steps backward and break MIDI by implementing
 controller handling based on a workaround that was used by VST 2 plugin
 developers to mimic MIDI CC support for host applications that don't implement
-it properly (like, for example, some versions of
-<a href="#bugs-known-fl-studio-21">FL Studio</a>). Then when both plugin developers and
-MIDI plugin users pushed them, they added another workaround (named
-<code>LegacyMIDICCOutEvent</code>) to the protocol, which makes it possible for VST 3
-plugins to output MIDI CC events, but now the sequentiality of MIDI events is
-broken for VST 3 plugins both on the input and consequently on the output side.</p>
+it properly (like, for example, <a href="#bugs-known-fl-studio">FL Studio</a>). Then when
+both plugin developers and MIDI plugin users pushed them, they added another
+workaround (named <code>LegacyMIDICCOutEvent</code>) to the protocol, which makes it
+possible for VST 3 plugins to output MIDI CC events, but now the sequentiality
+of MIDI events is broken for VST 3 plugins both on the input and consequently
+on the output side.</p>
 
 <p><a href="#toc">Table of Contents</a></p>
 
@@ -1238,12 +1220,6 @@ configurations.</p>
 
 <h3>FL Studio: How to set up MPE Emulator?</h3>
 
-<p><strong>Note</strong>: These steps apply to FL Studio v2024.1.1 (build 4239). Versions below
-that one <a href="#bugs-known-fl-studio-21">don't seem to support features that MPE Emulator requires</a>,
-and even <a href="#bugs-known-fl-studio-2024">v2024.1.1 seems to have some quirks</a> when
-it comes to MPE (e.g. Pitch Bend messages emitted by the VST 3 version of MPE
-Emulator get messed up by FL Studio).</p>
-
 <p>Create an instance of MPE Emulator and create an instance of the synthesizer
 that you want to use with MPE. Then you will have to connect these two, and you
 will also have to set up the CC inputs of MPE Emulator. You may need to adjust
@@ -1290,10 +1266,18 @@ the right mouse button.</p></li>
 recognizes it.</p></li>
 </ol>
 
-<p><strong>Note</strong>: Make sure that MPE Emulator is selected in the "Channel rack" window
-when you want to play the synthesizer with MPE, otherwise the data from your
+<p><strong>Note</strong>:</p>
+
+<ul>
+<li><p>Make sure that MPE Emulator is selected in the "<em>Channel rack</em>" window
+when you want to play a synthesizer with MPE, otherwise the data from your
 MIDI input device will go directly to the selected synthesizer, without MPE
-Emulator getting a chance to enhance it.</p>
+Emulator getting a chance to enhance it.</p></li>
+<li><p>As of its v2024.1.1 build 4239 version,
+<a href="#bugs-known-fl-studio">FL Studio seems to have some quirks</a> when it comes
+to MIDI plugins (e.g. Pitch Bend messages emitted by the VST 3 version of
+MPE Emulator get messed up by FL Studio).</p></li>
+</ul>
 
 <p><a href="#toc">Table of Contents</a></p>
 
