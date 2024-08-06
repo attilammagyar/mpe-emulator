@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #ifdef MPE_EMULATOR_ASSERTIONS
+#include <cstdio>
 #include <cstring>
 #endif
 

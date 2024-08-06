@@ -19,6 +19,7 @@
 #ifndef MPE_EMULATOR__STRINGS_CPP
 #define MPE_EMULATOR__STRINGS_CPP
 
+#include <cstdio>
 #include <cstring>
 
 #include "strings.hpp"

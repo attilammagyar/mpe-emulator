@@ -20,6 +20,7 @@
 #define MPE_EMULATOR__GUI__GUI_CPP
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 
 #include "strings.hpp"

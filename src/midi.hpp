@@ -25,6 +25,7 @@
 #include <cstdint>
 
 #ifdef MPE_EMULATOR_ASSERTIONS
+#include <cstdio>
 #include <cstring>
 #include <string>
 #endif
