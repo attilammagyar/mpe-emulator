@@ -1,6 +1,9 @@
 v1.0.1 (2024-08-07)
  * Correct documentation about FL Studio usage and quirks.
  * Update documentation about REAPER quirks to reflect the fixes in 7.19.
+ * Bugfix: MPE Emulator Lite will now use the correct reset value for rules
+   with Global, All Below Anchor, or All Above Anchor target after plugin
+   reinitialization.
  * FST (VST 2.4): Initialize the MIDI helper parameters for CC 74 and
    Pitch Bend to 50%.
  * VST 3: Initialize the MIDI helper parameters for CC 74 and

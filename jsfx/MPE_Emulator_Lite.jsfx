@@ -19,7 +19,7 @@
 desc:MPE Emulator Lite
 author:Attila M. Magyar
 tags:MPE emulator MIDI polyphonic aftertouch expression pitch bend CC
-version:1.0.0
+version:1.0.1
 about:
   A plugin for REAPER v6.74 and above for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic Expression) capabilities based on user-defined mappings and rules.
 
@@ -32,6 +32,10 @@ about:
   - Split the keyboard and route polyphonic expressions to the two halves with different rules.
   - Transpose the lower side of the split point. (E.g. extend the range of small keyboards, or play the same note with different expression settings.)
   - Route various expressions and controllers to the lowest, highest, oldest, or newest note globally, or across the split halves of the keyboard.
+
+  Changes in 1.0.1:
+  - Documentation improvements.
+  - Bugfix: rules with Global, All Below Anchor, or All Above Anchor targets used incorrect reset values after plugin reinitialization when Initial Value was configured for reset.
 
 in_pin:none
 out_pin:none
@@ -554,6 +558,7 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
         rules[base_offset + 2] = out_cc;
         rules[base_offset + 3] = target;
         rules[base_offset + 4] = reset;
+        rules[base_offset + 5] = init_value;
     );
 
     function rule_update_config(rule_idx, init_value, in_cc, out_cc, target, reset)
@@ -1764,6 +1769,29 @@ slider28:p_r5_reset=2<0,2,1{<? printf(TPL_RESETS); ?>}>Rule 5 Reset
     proxy_note_on(1.0, 60, 127);                    // ch=1
     proxy_pitch_wheel_change(1.0, 16383);           // rule 0
     proxy_update_main_config(ZT_LOWER, 15, 60, 0, -12);
+    proxy_clear();
+
+    proxy_note_on(1.0, 60, 127);                    // ch=1
+
+    assert_out_event(0, 1.0, 0xe10040, test);       // PB   ch=1 v=8192
+    assert_out_event(1, 1.0, 0x913c7f, test);       // ON   ch=1 n=60 v=127
+    assert_out_event(2, 1.0, 0xe10040, test);       // PB   ch=1 v=8192
+    assert_eq(3, out_events_count, "%d", test);
+
+    test = "rule config update will set init value as last input for rules";
+    proxy_init();
+    turn_off_rules();
+    proxy_update_main_config(ZT_LOWER, 15, 60, 0, 0);
+    rule_update_config(
+        0, 0.6, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_NEWEST, RST_LAST
+    );
+    proxy_note_on(1.0, 48, 127);                    // ch=1
+    proxy_pitch_wheel_change(1.1, 16383);           // rule 0
+    proxy_note_off(1.2, 48, 127);                   // ch=1
+    proxy_init();
+    rule_update_config(
+        0, 0.5, CTL_PITCH_BEND, CTL_PITCH_BEND, TRG_NEWEST, RST_LAST
+    );
     proxy_clear();
 
     proxy_note_on(1.0, 60, 127);                    // ch=1
