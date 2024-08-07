@@ -1,3 +1,14 @@
+v1.0.1 (2024-08-07)
+ * Correct documentation about FL Studio usage and quirks.
+ * Update documentation about REAPER quirks to reflect the fixes in 7.19.
+ * FST (VST 2.4): Initialize the MIDI helper parameters for CC 74 and
+   Pitch Bend to 50%.
+ * VST 3: Initialize the MIDI helper parameters for CC 74 and
+   Pitch Bend to 50%.
+ * VST 3: turn off MPE to VST 3 Note Expression conversion in hosts which do it
+   by default.
+ * VST 3: update SDK to 3.7.12 build 20.
+
 v1.0.0 (2024-07-17)
  * Transpose the two sides of the split point independently from each other.
    (E.g. extend the range of small keyboards, or play the same note with
