@@ -199,7 +199,7 @@ These are the file names that you will find on GitHub on the "Releases" page:
 
 The plugin can also be compiled for RISC-V 64 from its source code.
 
-Tested with [REAPER](https://www.reaper.fm/) 7.17.
+Tested with [REAPER](https://www.reaper.fm/) 7.19.
 
 MPE Emulator Lite runs on any operating system and CPU where REAPER runs. The
 required minimum version of REAPER is v6.74.
