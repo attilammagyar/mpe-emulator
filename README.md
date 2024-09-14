@@ -58,7 +58,7 @@ Table of Contents
  * [Bugs](#bugs)
     * [Known Issues and Quirks](#bugs-known)
        * [REAPER 7.18 (and below) lets raw MIDI control data pass through the VST 3 version](#bugs-known-reaper-7-18)
-       * [Ardour 8.6 ignores Channel Pressure (Aftertouch) events emitted by plugins](#bugs-known-ardour)
+       * [Ardour 8.6 (and below) ignores Channel Pressure (Aftertouch) events emitted by plugins](#bugs-known-ardour)
        * [FL Studio quirks (e.g. VST 3 Pitch Bend problems)](#bugs-known-fl-studio)
        * [VST 3 Note On and CC event ordering issues](#bugs-known-vst3)
        * [The mod wheel or a CC event is not handled with polyphony despite matching one of the rules](#bugs-known-ccpoly)
@@ -657,9 +657,8 @@ When a VST 3 plugin outputs MIDI controller messages in
 [REAPER](https://www.reaper.fm/) 7.18 and below versions, they get merged with
 the raw MIDI input regardless of whether the "_Replaces MIDI bus_" or the
 "_Merges with MIDI bus_" setting is selected. This makes the VST 3 version of
-MPE Emulator unusable in the affected REAPER versions. The developers were
-[notified about the bug](https://forum.cockos.com/showthread.php?t=292338), and
-it got fixed in 7.19.
+MPE Emulator unusable in the affected REAPER versions. The
+[bug](https://forum.cockos.com/showthread.php?t=292338) was fixed in 7.19.
 
 The FST (VST 2.4) version of MPE Emulator works fine in all versions of REAPER.
 
@@ -667,12 +666,12 @@ The FST (VST 2.4) version of MPE Emulator works fine in all versions of REAPER.
 
 <a id="bugs-known-ardour"></a>
 
-#### Ardour 8.6 ignores Channel Pressure (Aftertouch) events emitted by plugins
+#### Ardour 8.6 (and below) ignores Channel Pressure (Aftertouch) events emitted by plugins
 
 There's a bug in both the VST 2 and the VST 3 implementation in
-[Ardour](https://ardour.org/) which makes it drop Channel Pressure (Aftertouch)
-events (and Program Change events in case of VST 2).
-[The status of the fix can be tracked here](https://github.com/Ardour/ardour/pull/899).
+[Ardour](https://ardour.org/) 8.6 and below versions which makes it drop
+Channel Pressure (Aftertouch) events (and Program Change events in case of VST
+2).  [The bug](https://github.com/Ardour/ardour/pull/899) was fixed in 8.7.
 
 <a href="#toc">Table of Contents</a>
 
