@@ -47,19 +47,19 @@ void Math::init_distortions() noexcept
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[0][i] = dist_smooth_smooth(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH][i] = dist_smooth_smooth(xs[i]);
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[1][i] = dist_smooth_sharp(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SMOOTH_SHARP][i] = dist_smooth_sharp(xs[i]);
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[2][i] = dist_sharp_smooth(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SHARP_SMOOTH][i] = dist_sharp_smooth(xs[i]);
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[3][i] = dist_sharp_sharp(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SHARP_SHARP][i] = dist_sharp_sharp(xs[i]);
     }
 }
 
