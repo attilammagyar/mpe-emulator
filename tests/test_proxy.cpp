@@ -1377,7 +1377,7 @@ TEST(cc_can_be_distorted, {
     proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
     proxy.rules[1].target.set_value(Proxy::Target::TRG_GLOBAL);
     proxy.rules[1].distortion_type.set_value(
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SHARP
     );
     proxy.rules[1].distortion_level.set_ratio(1.0);
 
@@ -1430,7 +1430,7 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
     proxy.rules[0].midpoint.set_ratio(0.75);
     proxy.rules[0].invert.set_value(Proxy::Toggle::ON);
     proxy.rules[0].distortion_type.set_value(
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SHARP
     );
     proxy.rules[0].distortion_level.set_ratio(1.0);
 
@@ -1440,7 +1440,7 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
     proxy.rules[1].reset.set_value(Proxy::Reset::RST_INIT);
     proxy.rules[1].init_value.set_ratio(0.15);
     proxy.rules[1].distortion_type.set_value(
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SHARP
     );
     proxy.rules[1].distortion_level.set_ratio(1.0);
 
@@ -1487,7 +1487,7 @@ TEST(distortions_are_applied_for_last_value_on_reset, {
     proxy.rules[0].midpoint.set_ratio(0.75);
     proxy.rules[0].invert.set_value(Proxy::Toggle::ON);
     proxy.rules[0].distortion_type.set_value(
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SHARP
     );
     proxy.rules[0].distortion_level.set_ratio(1.0);
 
@@ -1497,7 +1497,7 @@ TEST(distortions_are_applied_for_last_value_on_reset, {
     proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
     proxy.rules[1].init_value.set_ratio(1.0);
     proxy.rules[1].distortion_type.set_value(
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SHARP
     );
     proxy.rules[1].distortion_level.set_ratio(1.0);
 

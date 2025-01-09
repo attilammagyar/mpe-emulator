@@ -518,10 +518,10 @@ size_t const Strings::TOGGLE_STATES_COUNT = 2;
 
 
 char const* const Strings::DISTORTIONS[] = {
-    [Math::DistortionShape::DIST_SHAPE_SMOOTH_SMOOTH] = "SMT-SMT",
-    [Math::DistortionShape::DIST_SHAPE_SMOOTH_SHARP] = "SMT-SHP",
-    [Math::DistortionShape::DIST_SHAPE_SHARP_SMOOTH] = "SHP-SMT",
-    [Math::DistortionShape::DIST_SHAPE_SHARP_SHARP] = "SHP-SHP",
+    [Math::DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH] = "SMT-SMT",
+    [Math::DistortionCurve::DIST_CURVE_SMOOTH_SHARP] = "SMT-SHP",
+    [Math::DistortionCurve::DIST_CURVE_SHARP_SMOOTH] = "SHP-SMT",
+    [Math::DistortionCurve::DIST_CURVE_SHARP_SHARP] = "SHP-SHP",
 };
 
 size_t const Strings::DISTORTIONS_COUNT = 4;

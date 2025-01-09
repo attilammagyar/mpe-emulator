@@ -148,7 +148,7 @@ double Math::combine(
 double Math::distort(
         double const level,
         double const number,
-        DistortionShape const shape
+        DistortionCurve const curve
 ) noexcept {
     if (level < 0.0001) {
         return number;
@@ -157,7 +157,7 @@ double Math::distort(
     return combine(
         level,
         lookup(
-            math.distortions[(size_t)shape],
+            math.distortions[(size_t)curve],
             DISTORTION_TABLE_MAX_INDEX,
             number * DISTORTION_SCALE
         ),

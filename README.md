@@ -629,7 +629,7 @@ into different controllers, and to misuse it in various creative ways.
 
 Click on the second function graph icon at the top right corner of a rule, or
 use the mouse wheel while holding the mouse cursor over it to select the
-non-linearity shape that the rule will use when its
+non-linearity curve that the rule will use when its
 [distortion level](#usage-rule-dist) parameter is set to a value above 0%.
 
 <a href="#toc">Table of Contents</a>

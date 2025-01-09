@@ -153,9 +153,9 @@ Proxy::Rule::Rule(
     ),
     distortion_type(
         name + "DT",
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SMOOTH,
-        Math::DistortionShape::DIST_SHAPE_SHARP_SHARP,
-        Math::DistortionShape::DIST_SHAPE_SMOOTH_SMOOTH
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH,
+        Math::DistortionCurve::DIST_CURVE_SHARP_SHARP,
+        Math::DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH
     ),
     distortion_level(name + "DL", 0, 16383, 0),
     midpoint(name + "MP", 0, 20000, 10000),
@@ -176,7 +176,7 @@ double Proxy::Rule::distort(double const value) const noexcept
     return Math::distort(
         distortion_level.get_ratio(),
         (Toggle)invert.get_value() == Toggle::ON ? 1.0 - shifted : shifted,
-        (Math::DistortionShape)distortion_type.get_value()
+        (Math::DistortionCurve)distortion_type.get_value()
     );
 }
 

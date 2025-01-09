@@ -34,11 +34,11 @@ namespace MpeEmulator
 class Math
 {
     public:
-        enum DistortionShape {
-            DIST_SHAPE_SMOOTH_SMOOTH = 0,
-            DIST_SHAPE_SMOOTH_SHARP = 1,
-            DIST_SHAPE_SHARP_SMOOTH = 2,
-            DIST_SHAPE_SHARP_SHARP = 3,
+        enum DistortionCurve {
+            DIST_CURVE_SMOOTH_SMOOTH = 0,
+            DIST_CURVE_SMOOTH_SHARP = 1,
+            DIST_CURVE_SHARP_SMOOTH = 2,
+            DIST_CURVE_SHARP_SHARP = 3,
         };
 
         static constexpr size_t DISTORTIONS = 4;
@@ -59,7 +59,7 @@ class Math
         static double distort(
             double const level,
             double const number,
-            DistortionShape const shape = DistortionShape::DIST_SHAPE_SMOOTH_SMOOTH
+            DistortionCurve const curve = DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH
         ) noexcept;
 
         /**
