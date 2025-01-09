@@ -253,7 +253,7 @@ class Proxy : public Midi::EventHandler
             UNDEFINED_18 =              86,         ///< Undefined 18 (CC 86)
             UNDEFINED_19 =              87,         ///< Undefined 19 (CC 87)
             UNDEFINED_20 =              88,         ///< Undefined 20 (CC 88)
-            UNDEFINED_21 =              89,         ///< Undefined 21 (CC 90)
+            UNDEFINED_21 =              89,         ///< Undefined 21 (CC 89)
             UNDEFINED_22 =              90,         ///< Undefined 22 (CC 90)
             FX_1 =                      91,         ///< Effect 1 (CC 91)
             FX_2 =                      92,         ///< Effect 2 (CC 92)
