@@ -1,3 +1,7 @@
+v1.0.2 (2025-01-12)
+ * Bugfix: CC 89 was displayed on the user interface as CC 90, this is now
+   fixed.
+
 v1.0.1 (2024-08-07)
  * Correct documentation about FL Studio usage and quirks.
  * Update documentation about REAPER quirks to reflect the fixes in 7.19.
