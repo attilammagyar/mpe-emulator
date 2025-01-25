@@ -1,3 +1,7 @@
+v1.0.3 (2025-01-25)
+ * Bugfix: the VST 3 plugin used to ignore certain requests by the host to
+   clear its state (https://github.com/attilammagyar/mpe-emulator/issues/2).
+
 v1.0.2 (2025-01-12)
  * Bugfix: CC 89 was displayed on the user interface as CC 90, this is now
    fixed.
