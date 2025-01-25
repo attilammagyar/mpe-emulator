@@ -1,6 +1,6 @@
 /*
  * This file is part of MPE Emulator.
- * Copyright (C) 2023, 2024  Attila M. Magyar
+ * Copyright (C) 2023, 2024, 2025  Attila M. Magyar
  *
  * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,13 +224,27 @@ tresult PLUGIN_API Vst3Plugin::Processor::setupProcessing(Vst::ProcessSetup& set
 }
 
 
-tresult PLUGIN_API Vst3Plugin::Processor::setActive(TBool state)
+tresult PLUGIN_API Vst3Plugin::Processor::setProcessing(TBool state)
 {
-    if (state) {
+    reset_for_state_change(state);
+
+    return kResultOk;
+}
+
+
+void Vst3Plugin::Processor::reset_for_state_change(TBool const new_state) noexcept
+{
+    if (new_state) {
         proxy.resume();
     } else {
         proxy.suspend();
     }
+}
+
+
+tresult PLUGIN_API Vst3Plugin::Processor::setActive(TBool state)
+{
+    reset_for_state_change(state);
 
     return AudioEffect::setActive(state);
 }
