@@ -657,8 +657,8 @@ When a VST 3 plugin outputs MIDI controller messages in
 [REAPER](https://www.reaper.fm/) 7.18 and below versions, they get merged with
 the raw MIDI input regardless of whether the "_Replaces MIDI bus_" or the
 "_Merges with MIDI bus_" setting is selected. This makes the VST 3 version of
-MPE Emulator unusable in the affected REAPER versions. The
-[bug](https://forum.cockos.com/showthread.php?t=292338) was fixed in 7.19.
+MPE Emulator unusable in the affected REAPER versions.
+[The bug](https://forum.cockos.com/showthread.php?t=292338) was fixed in 7.19.
 
 The FST (VST 2.4) version of MPE Emulator works fine in all versions of REAPER.
 
@@ -702,26 +702,23 @@ because MIDI support is fundamentally broken in the VST 3 protocol.
 
 MPE Emulator does what can be done to work around this, but since the
 protocol's design makes it impossible to ensure the sequentiality between note
-events and controller events, there might be cases where the VST 3 version of
-MPE Emulator cannot fully satisfy the requirements of a synthesizer which
-expects CC and note events to come in a particular well defined order. Note
-that the FST (VST 2.4) version does not suffer from this problem.
+events and controller events which need to occur at the same moment, there might
+be cases where the VST 3 version of MPE Emulator cannot fully satisfy the
+requirements of a synthesizer which expects CC and note events that belong
+together to come in a particular well defined order.
 
 The reason for this is that the VST 3 protocol separates the continuous and
 consistent MIDI stream that comes out of MIDI input devices into separate
 streams of note-related events and controller events, and passes the latter to
-plugins as parameter automation.
+plugins masqueraded as parameter automation. On the output side, a VST 3 plugin
+needs to emit its outgoing MIDI CC messages wrapped into a special event type
+(`LegacyMIDICCOutEvent`), also separated from note events, and these then get
+converted to the expected input format of the next plugin in the chain by the
+host application.
 
-While VST 2 has full support for MIDI (and extensions like MPE), the developers
-of VST 3 decided to take several steps backward and break MIDI by implementing
-controller handling based on a workaround that was used by VST 2 plugin
-developers to mimic MIDI CC support for host applications that don't implement
-it properly (like, for example, [FL Studio](#bugs-known-fl-studio)). Then when
-both plugin developers and MIDI plugin users pushed them, they added another
-workaround (named `LegacyMIDICCOutEvent`) to the protocol, which makes it
-possible for VST 3 plugins to output MIDI CC events, but now the sequentiality
-of MIDI events is broken for VST 3 plugins both on the input and consequently
-on the output side.
+Note that the FST (VST 2.4) version does not suffer from these problems (as
+long as the host implements MIDI properly), since the VST 2 standard has full
+support for MIDI and its extensions like MPE.
 
 <a href="#toc">Table of Contents</a>
 
