@@ -694,7 +694,7 @@ void Vst3Plugin::Processor::initialize_cc_event(
 
     (Well, if a Note On event comes right at the very last sample of a block,
     then there's not much we can do, we can only hope that the ordering will
-    not be messed up noticably.)
+    not be messed up noticeably.)
     */
     vst_event.sampleOffset = std::max(
         last_sample_offset,
