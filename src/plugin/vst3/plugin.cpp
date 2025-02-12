@@ -276,7 +276,7 @@ tresult PLUGIN_API Vst3Plugin::Processor::process(Vst::ProcessData& data)
         MPE_EMULATOR_VST3_SEND_EMPTY_MSG(MSG_PROXY_DIRTY);
     }
 
-    if (data.numOutputs == 0 || data.numSamples < 1) {
+    if (data.numOutputs <= 0 || data.numSamples < 1) {
         return kResultOk;
     }
 
