@@ -28,7 +28,7 @@
 #include "proxy.hpp"
 
 
-bool read_settings(char const* file_path, std::string& result)
+bool read_settings(char const* const file_path, std::string& result)
 {
     std::ifstream settings_file(file_path, std::ios::in | std::ios::binary);
 
@@ -36,7 +36,7 @@ bool read_settings(char const* file_path, std::string& result)
         return false;
     }
 
-    char* buffer = new char[MpeEmulator::Serializer::MAX_SIZE];
+    char* const buffer = new char[MpeEmulator::Serializer::MAX_SIZE];
 
     std::fill_n(buffer, MpeEmulator::Serializer::MAX_SIZE, '\x00');
     settings_file.read(buffer, MpeEmulator::Serializer::MAX_SIZE);
@@ -61,7 +61,7 @@ bool is_whole_line_comment_or_white_space(std::string const& line)
 
 void collect_comments(std::string const& settings, MpeEmulator::Serializer::Lines& comments)
 {
-    MpeEmulator::Serializer::Lines* lines = MpeEmulator::Serializer::parse_lines(settings);
+    MpeEmulator::Serializer::Lines* const lines = MpeEmulator::Serializer::parse_lines(settings);
 
     for (MpeEmulator::Serializer::Lines::const_iterator it = lines->begin(); it != lines->end(); ++it) {
         std::string const& line = *it;
@@ -74,7 +74,7 @@ void collect_comments(std::string const& settings, MpeEmulator::Serializer::Line
 
 
 bool write_settings(
-        char const* file_path,
+        char const* const file_path,
         std::string const& settings,
         MpeEmulator::Serializer::Lines const& comments
 ) {
@@ -100,7 +100,7 @@ bool write_settings(
 }
 
 
-int error(char const* message, char const* file_path)
+int error(char const* const message, char const* const file_path)
 {
     std::cerr
         << "ERROR: "

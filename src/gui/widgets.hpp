@@ -75,7 +75,7 @@ class ImportSettingsButton : public TransparentWidget
             TabBody* const tab_body
         );
 
-        void import_settings(char const* buffer, int const size) const;
+        void import_settings(char const* const buffer, int const size) const;
 
     protected:
         virtual void click() override;
@@ -123,9 +123,9 @@ class TabBody : public TransparentWidget
 
         using TransparentWidget::own;
 
-        KnobParamEditor* own(KnobParamEditor* knob_param_editor);
-        ToggleSwitchParamEditor* own(ToggleSwitchParamEditor* toggle_switch_param_editor);
-        DiscreteParamEditor* own(DiscreteParamEditor* discrete_param_editor);
+        KnobParamEditor* own(KnobParamEditor* const knob_param_editor);
+        ToggleSwitchParamEditor* own(ToggleSwitchParamEditor* const toggle_switch_param_editor);
+        DiscreteParamEditor* own(DiscreteParamEditor* const discrete_param_editor);
 
         void stop_editing();
 
@@ -144,7 +144,7 @@ class Background : public Widget
         Background();
         ~Background();
 
-        void replace_body(TabBody* new_body);
+        void replace_body(TabBody* const new_body);
         void hide_body();
         void show_body();
         void refresh();
@@ -166,9 +166,9 @@ class TabSelector : public TransparentWidget
         static constexpr int HEIGHT = 28;
 
         TabSelector(
-            Background* background,
+            Background* const background,
             GUI::Image tab_image,
-            TabBody* tab_body,
+            TabBody* const tab_body,
             char const* const text,
             int const left
         );
@@ -177,8 +177,8 @@ class TabSelector : public TransparentWidget
         virtual void click() override;
 
     private:
-        Background* background;
-        TabBody* tab_body;
+        Background* const background;
+        TabBody* const tab_body;
 
         GUI::Image tab_image;
 };
@@ -207,7 +207,7 @@ class OptionSelector : public Widget
 
         void select_option(
             Proxy::ParamId const param_id,
-            DiscreteParamEditor* param_editor
+            DiscreteParamEditor* const param_editor
         );
 
         virtual void hide() override;
@@ -274,7 +274,7 @@ class ParamStateImages
 {
     public:
         ParamStateImages(
-            WidgetBase* widget,
+            WidgetBase* const widget,
             GUI::Image image,
             size_t const count,
             int const width,
@@ -297,7 +297,7 @@ class ParamStateImages
 
     private:
         GUI::Image* split_image(GUI::Image image) const;
-        GUI::Image* free_images(GUI::Image* images) const;
+        GUI::Image* free_images(GUI::Image* const images) const;
 
         size_t const last_index;
         double const last_index_float;
@@ -321,7 +321,7 @@ class KnobParamEditor : public TransparentWidget
             int const knob_top,
             Proxy& proxy,
             Proxy::ParamId const param_id,
-            ParamStateImages const* knob_states,
+            ParamStateImages const* const knob_states,
             KnobType const type
         );
 
@@ -343,7 +343,7 @@ class KnobParamEditor : public TransparentWidget
     protected:
         virtual void set_up(
             GUI::PlatformData platform_data,
-            WidgetBase* parent
+            WidgetBase* const parent
         ) override;
 
         virtual bool paint() override;
@@ -378,7 +378,7 @@ class KnobParamEditor : public TransparentWidget
                     int const left,
                     int const top,
                     double const steps,
-                    ParamStateImages const* knob_states
+                    ParamStateImages const* const knob_states
                 );
 
                 virtual ~Knob();
@@ -393,7 +393,7 @@ class KnobParamEditor : public TransparentWidget
             protected:
                 virtual void set_up(
                     GUI::PlatformData platform_data,
-                    WidgetBase* parent
+                    WidgetBase* const parent
                 ) override;
 
                 virtual bool double_click() override;
@@ -422,7 +422,7 @@ class KnobParamEditor : public TransparentWidget
 
         double const discrete_step_size;
 
-        ParamStateImages const* knob_states;
+        ParamStateImages const* const knob_states;
 
         int const value_font_size;
 
@@ -485,7 +485,7 @@ class AboutText : public Widget
             "Double click on a knob to reset it to its default value.\n"
         );
 
-        AboutText(char const* sdk_version, GUI::Image logo);
+        AboutText(char const* const sdk_version, GUI::Image logo);
 
     protected:
         virtual bool paint() override;
@@ -506,7 +506,7 @@ class StatusLine : public TransparentWidget
 
         StatusLine();
 
-        virtual void set_text(char const* text) override;
+        virtual void set_text(char const* const text) override;
 
     protected:
         virtual bool paint() override;
@@ -536,7 +536,7 @@ class ToggleSwitchParamEditor: public TransparentWidget
     protected:
         virtual void set_up(
             GUI::PlatformData platform_data,
-            WidgetBase* parent
+            WidgetBase* const parent
         ) override;
 
         virtual bool paint() override;
@@ -578,7 +578,7 @@ class DiscreteParamEditor : public TransparentWidget
             int const value_width,
             Proxy& proxy,
             Proxy::ParamId const param_id,
-            ParamStateImages const* state_images = NULL
+            ParamStateImages const* const state_images = NULL
         );
 
         DiscreteParamEditor(
@@ -604,7 +604,10 @@ class DiscreteParamEditor : public TransparentWidget
         static constexpr size_t TEXT_MAX_LENGTH = 24;
         static constexpr size_t TITLE_MAX_LENGTH = 64;
 
-        virtual void set_up(GUI::PlatformData platform_data, WidgetBase* parent) override;
+        virtual void set_up(
+            GUI::PlatformData platform_data,
+            WidgetBase* const parent
+        ) override;
 
         virtual bool paint() override;
         virtual bool mouse_up(int const x, int const y) override;

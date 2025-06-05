@@ -121,7 +121,7 @@ class GUI
         static double clamp_ratio(double const ratio);
 
         GUI(
-            char const* sdk_version,
+            char const* const sdk_version,
             PlatformData platform_data,
             PlatformWidget parent_window,
             Proxy& synth,
@@ -135,7 +135,7 @@ class GUI
 
         void update_active_voices_count();
 
-        void set_status_line(char const* text);
+        void set_status_line(char const* const text);
         void redraw_status_line();
 
         PlatformData get_platform_data() const;
@@ -174,7 +174,7 @@ class GUI
         void initialize();
         void destroy();
 
-        void build_about_body(char const* sdk_version);
+        void build_about_body(char const* const sdk_version);
 
         void build_zone_1_body(
             ParamStateImages const* const knob_states,
@@ -257,12 +257,12 @@ class WidgetBase
         virtual int get_height() const;
         virtual WidgetBase* get_parent() const;
 
-        virtual void set_text(char const* text);
+        virtual void set_text(char const* const text);
         virtual char const* get_text() const;
 
         virtual GUI::Image load_image(
             GUI::PlatformData platform_data,
-            char const* name
+            char const* const name
         );
 
         virtual GUI::Image copy_image_region(
@@ -280,7 +280,7 @@ class WidgetBase
         virtual void focus();
         virtual void bring_to_top();
         virtual void redraw();
-        virtual WidgetBase* own(WidgetBase* widget);
+        virtual WidgetBase* own(WidgetBase* const widget);
 
         virtual GUI::Image set_image(GUI::Image image);
         virtual GUI::Image get_image() const;
@@ -307,7 +307,10 @@ class WidgetBase
 
         virtual void destroy_children();
 
-        virtual void set_up(GUI::PlatformData platform_data, WidgetBase* parent);
+        virtual void set_up(
+            GUI::PlatformData platform_data,
+            WidgetBase* const parent
+        );
 
         virtual void set_gui(GUI& gui);
 

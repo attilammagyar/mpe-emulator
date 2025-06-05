@@ -60,7 +60,7 @@ using namespace Steinberg;
         if (message) {                                                          \
             message->setMessageID(msg_id);                                      \
                                                                                 \
-            Vst::IAttributeList* attributes = message->getAttributes();         \
+            Vst::IAttributeList* const attributes = message->getAttributes();   \
                                                                                 \
             if (attributes) {                                                   \
                 attributes->attr_setter((attr_name), (attr_value));             \
@@ -296,7 +296,7 @@ void Vst3Plugin::Processor::collect_param_change_events(
     int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
 
     for (int32 i = 0; i < numParamsChanged; i++) {
-        Vst::IParamValueQueue* param_queue = (
+        Vst::IParamValueQueue* const param_queue = (
             data.inputParameterChanges->getParameterData(i)
         );
 
@@ -403,7 +403,7 @@ void Vst3Plugin::Processor::collect_param_change_events_as_exported_param(
 
 void Vst3Plugin::Processor::collect_note_events(Vst::ProcessData& data) noexcept
 {
-    Vst::IEventList* input_events = data.inputEvents;
+    Vst::IEventList* const input_events = data.inputEvents;
 
     if (!input_events) {
         return;
@@ -754,14 +754,14 @@ tresult PLUGIN_API Vst3Plugin::Processor::setState(IBStream* state)
 }
 
 
-std::string Vst3Plugin::read_stream(IBStream* stream)
+std::string Vst3Plugin::read_stream(IBStream* const stream)
 {
     /*
     Not using FStreamer::readString8(), because we need the entire string here,
     and that method stops at line breaks.
     */
 
-    char* buffer = new char[Serializer::MAX_SIZE];
+    char* const buffer = new char[Serializer::MAX_SIZE];
     size_t i;
     int32 bytes_read;
     char8 c;
@@ -969,7 +969,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_midi_ctl_param(
         Vst::ParamID const param_tag,
         double const default_value
 ) const {
-    Vst::RangeParameter* param = new Vst::RangeParameter(
+    Vst::RangeParameter* const param = new Vst::RangeParameter(
         USTRING(Strings::CONTROLLERS_LONG[(size_t)controller_id]),
         param_tag,
         USTRING("%"),
@@ -995,7 +995,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
     char const* const* const options = Strings::get_options(param_id, number_of_options);
 
     if (options == NULL) {
-        Vst::RangeParameter* param = new Vst::RangeParameter(
+        Vst::RangeParameter* const param = new Vst::RangeParameter(
             USTRING(Strings::PARAMS[(size_t)param_id]),
             proxy_param_id_to_vst3_param_tag(param_id),
             USTRING("%"),
@@ -1011,7 +1011,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
 
         return param;
     } else {
-        Vst::StringListParameter* param = new Vst::StringListParameter(
+        Vst::StringListParameter* const param = new Vst::StringListParameter(
             USTRING(Strings::PARAMS[(size_t)param_id]),
             proxy_param_id_to_vst3_param_tag(param_id),
             NULL,
@@ -1031,7 +1031,7 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
 
 Vst::Parameter* Vst3Plugin::Controller::set_up_patch_changed_param() const
 {
-    Vst::RangeParameter* param = new Vst::RangeParameter(
+    Vst::RangeParameter* const param = new Vst::RangeParameter(
         USTRING("Patch Changed"),
         SETTINGS_CHANGED_PARAM_ID,
         USTRING("%"),
@@ -1139,9 +1139,7 @@ IPlugView* PLUGIN_API Vst3Plugin::Controller::createView(FIDString name)
             return NULL;
         }
 
-        GUI* gui = new GUI(*proxy);
-
-        return gui;
+        return new GUI(*proxy);
     }
 
     return NULL;

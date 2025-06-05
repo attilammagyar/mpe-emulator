@@ -80,7 +80,7 @@ ImportSettingsButton::ImportSettingsButton(
 }
 
 
-void ImportSettingsButton::import_settings(char const* buffer, int const size) const
+void ImportSettingsButton::import_settings(char const* const buffer, int const size) const
 {
     std::string const settings(
         buffer,
@@ -154,7 +154,7 @@ TabBody::TabBody(GUI& gui, char const* const text)
 }
 
 
-KnobParamEditor* TabBody::own(KnobParamEditor* knob_param_editor)
+KnobParamEditor* TabBody::own(KnobParamEditor* const knob_param_editor)
 {
     Widget::own(knob_param_editor);
 
@@ -164,7 +164,7 @@ KnobParamEditor* TabBody::own(KnobParamEditor* knob_param_editor)
 }
 
 
-ToggleSwitchParamEditor* TabBody::own(ToggleSwitchParamEditor* toggle_switch_param_editor)
+ToggleSwitchParamEditor* TabBody::own(ToggleSwitchParamEditor* const toggle_switch_param_editor)
 {
     Widget::own(toggle_switch_param_editor);
 
@@ -174,7 +174,7 @@ ToggleSwitchParamEditor* TabBody::own(ToggleSwitchParamEditor* toggle_switch_par
 }
 
 
-DiscreteParamEditor* TabBody::own(DiscreteParamEditor* discrete_param_editor)
+DiscreteParamEditor* TabBody::own(DiscreteParamEditor* const discrete_param_editor)
 {
     Widget::own(discrete_param_editor);
 
@@ -223,7 +223,7 @@ Background::~Background()
 }
 
 
-void Background::replace_body(TabBody* new_body)
+void Background::replace_body(TabBody* const new_body)
 {
     if (body != NULL) {
         body->hide();
@@ -266,9 +266,9 @@ void Background::refresh()
 
 
 TabSelector::TabSelector(
-        Background* background,
+        Background* const background,
         GUI::Image tab_image,
-        TabBody* tab_body,
+        TabBody* const tab_body,
         char const* const text,
         int const left
 ) : TransparentWidget(text, left, TOP, WIDTH, HEIGHT, Type::TAB_SELECTOR),
@@ -321,7 +321,7 @@ void OptionSelector::add_option(unsigned int value, char const* const name)
         return;
     }
 
-    Option* option = new Option(
+    Option* const option = new Option(
         *this, options_count, name, next_option_left, next_option_top, value
     );
 
@@ -343,7 +343,7 @@ void OptionSelector::add_option(unsigned int value, char const* const name)
 
 void OptionSelector::select_option(
         Proxy::ParamId const param_id,
-        DiscreteParamEditor* param_editor
+        DiscreteParamEditor* const param_editor
 ) {
     double const ratio = proxy.get_param_ratio_atomic(param_id);
     unsigned int value = proxy.param_ratio_to_value(param_id, ratio);
@@ -352,14 +352,14 @@ void OptionSelector::select_option(
         return;
     }
 
-    Option* selected_option = options_by_value[value];
+    Option* const selected_option = options_by_value[value];
 
     if (MPE_EMULATOR_UNLIKELY(selected_option == NULL)) {
         return;
     }
 
     if (selected_option_index < OPTIONS_SIZE) {
-        Option* previously_selected_option = options[selected_option_index];
+        Option* const previously_selected_option = options[selected_option_index];
 
         if (previously_selected_option != NULL) {
             previously_selected_option->unselect();
@@ -537,7 +537,7 @@ bool OptionSelector::Option::mouse_leave(int const x, int const y)
 
 
 ParamStateImages::ParamStateImages(
-        WidgetBase* widget,
+        WidgetBase* const widget,
         GUI::Image image,
         size_t const count,
         int const width,
@@ -560,7 +560,7 @@ GUI::Image* ParamStateImages::split_image(GUI::Image image) const
         return NULL;
     }
 
-    GUI::Image* images = new GUI::Image[count];
+    GUI::Image* const images = new GUI::Image[count];
 
     for (size_t i = 0; i != count; ++i) {
         int const top = (int)i * height;
@@ -583,7 +583,7 @@ ParamStateImages::~ParamStateImages()
 }
 
 
-GUI::Image* ParamStateImages::free_images(GUI::Image* images) const
+GUI::Image* ParamStateImages::free_images(GUI::Image* const images) const
 {
     if (images == NULL) {
         return NULL;
@@ -625,7 +625,7 @@ KnobParamEditor::KnobParamEditor(
         int const knob_top,
         Proxy& proxy,
         Proxy::ParamId const param_id,
-        ParamStateImages const* knob_states,
+        ParamStateImages const* const knob_states,
         KnobType const type
 ) : TransparentWidget(
         Strings::PARAMS[param_id],
@@ -652,7 +652,7 @@ KnobParamEditor::KnobParamEditor(
 }
 
 
-void KnobParamEditor::set_up(GUI::PlatformData platform_data, WidgetBase* parent)
+void KnobParamEditor::set_up(GUI::PlatformData platform_data, WidgetBase* const parent)
 {
     TransparentWidget::set_up(platform_data, parent);
 
@@ -805,7 +805,7 @@ KnobParamEditor::Knob::Knob(
         int const left,
         int const top,
         double const steps,
-        ParamStateImages const* knob_states
+        ParamStateImages const* const knob_states
 ) : Widget(text, left, top, knob_states->width, knob_states->height, Type::KNOB),
     steps(steps),
     knob_states(knob_states),
@@ -827,7 +827,7 @@ KnobParamEditor::Knob::~Knob()
 
 void KnobParamEditor::Knob::set_up(
         GUI::PlatformData platform_data,
-        WidgetBase* parent
+        WidgetBase* const parent
 ) {
     Widget::set_up(platform_data, parent);
 
@@ -981,7 +981,7 @@ bool KnobParamEditor::Knob::mouse_wheel(double const delta, bool const modifier)
 }
 
 
-AboutText::AboutText(char const* sdk_version, GUI::Image logo)
+AboutText::AboutText(char const* const sdk_version, GUI::Image logo)
     : Widget(TEXT, LEFT, TOP, WIDTH, HEIGHT, Type::ABOUT_TEXT),
     logo(logo)
 {
@@ -1056,7 +1056,7 @@ StatusLine::StatusLine()
 }
 
 
-void StatusLine::set_text(char const* text)
+void StatusLine::set_text(char const* const text)
 {
     TransparentWidget::set_text(text);
 
@@ -1123,8 +1123,10 @@ ToggleSwitchParamEditor::ToggleSwitchParamEditor(
 }
 
 
-void ToggleSwitchParamEditor::set_up(GUI::PlatformData platform_data, WidgetBase* parent)
-{
+void ToggleSwitchParamEditor::set_up(
+        GUI::PlatformData platform_data,
+        WidgetBase* const parent
+) {
     TransparentWidget::set_up(platform_data, parent);
 
     default_ratio = proxy.get_param_default_ratio(param_id);
@@ -1257,7 +1259,7 @@ DiscreteParamEditor::DiscreteParamEditor(
         int const value_width,
         Proxy& proxy,
         Proxy::ParamId const param_id,
-        ParamStateImages const* state_images
+        ParamStateImages const* const state_images
 ) : TransparentWidget(
         Strings::PARAMS[param_id],
         left,
@@ -1317,7 +1319,7 @@ DiscreteParamEditor::DiscreteParamEditor(
 
 void DiscreteParamEditor::set_up(
         GUI::PlatformData platform_data,
-        WidgetBase* parent
+        WidgetBase* const parent
 ) {
     Widget::set_up(platform_data, parent);
 

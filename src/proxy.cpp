@@ -1679,7 +1679,7 @@ Proxy::ParamIdHashTable::Entry::Entry() noexcept : next(NULL)
 
 
 Proxy::ParamIdHashTable::Entry::Entry(
-        const char* name,
+        const char* const name,
         ParamId const param_id
 ) noexcept
     : next(NULL)
@@ -1699,7 +1699,7 @@ Proxy::ParamIdHashTable::Entry::~Entry()
 
 
 void Proxy::ParamIdHashTable::Entry::set(
-        const char* name,
+        const char* const name,
         ParamId const param_id
 ) noexcept {
     std::fill_n(this->name, NAME_SIZE, '\x00');

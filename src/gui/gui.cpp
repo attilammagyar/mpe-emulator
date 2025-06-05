@@ -181,7 +181,7 @@ constexpr int pos_rel_offset_top = 0;
 
 
 GUI::GUI(
-        char const* sdk_version,
+        char const* const sdk_version,
         PlatformData platform_data,
         PlatformWidget parent_window,
         Proxy& proxy,
@@ -314,7 +314,7 @@ GUI::GUI(
 }
 
 
-void GUI::build_about_body(char const* sdk_version)
+void GUI::build_about_body(char const* const sdk_version)
 {
     about_body = new TabBody(*this, "About");
 
@@ -572,7 +572,7 @@ void GUI::update_active_voices_count()
 }
 
 
-void GUI::set_status_line(char const* text)
+void GUI::set_status_line(char const* const text)
 {
     if (text[0] == '\x00') {
         status_line->set_text(default_status_line);
@@ -691,7 +691,7 @@ int WidgetBase::get_height() const
 }
 
 
-void WidgetBase::set_text(char const* text)
+void WidgetBase::set_text(char const* const text)
 {
     this->text = text;
 }
@@ -711,7 +711,7 @@ WidgetBase* WidgetBase::get_parent() const
 
 GUI::Image WidgetBase::load_image(
     GUI::PlatformData platform_data,
-    char const* name
+    char const* const name
 ) {
     return NULL;
 }
@@ -748,7 +748,7 @@ void WidgetBase::redraw()
 }
 
 
-WidgetBase* WidgetBase::own(WidgetBase* widget)
+WidgetBase* WidgetBase::own(WidgetBase* const widget)
 {
     children.push_back(widget);
     widget->set_up(platform_data, (WidgetBase*)this);
@@ -784,8 +784,10 @@ void WidgetBase::click()
 }
 
 
-void WidgetBase::set_up(GUI::PlatformData platform_data, WidgetBase* parent)
-{
+void WidgetBase::set_up(
+        GUI::PlatformData platform_data,
+        WidgetBase* const parent
+) {
     this->platform_data = platform_data;
     this->parent = parent;
 }

@@ -306,7 +306,7 @@ xcb_visualtype_t* XcbPlatform::get_screen_root_visual() const
 
 
 cairo_font_face_t* XcbPlatform::get_font_face(
-        cairo_t* cairo,
+        cairo_t* const cairo,
         WidgetBase::FontWeight const font_weight
 ) {
     if (font_weight == WidgetBase::FontWeight::NORMAL) {
@@ -326,7 +326,7 @@ cairo_font_face_t* XcbPlatform::get_font_face(
 
 
 cairo_font_face_t* XcbPlatform::find_narrowest_font(
-        cairo_t* cairo,
+        cairo_t* const cairo,
         cairo_font_weight_t font_weight
 ) {
     cairo_font_face_t* narrowest_font_face = NULL;
@@ -374,7 +374,7 @@ cairo_font_face_t* XcbPlatform::find_narrowest_font(
 }
 
 
-void XcbPlatform::register_widget(xcb_window_t window_id, Widget* widget)
+void XcbPlatform::register_widget(xcb_window_t window_id, Widget* const widget)
 {
     widgets[window_id] = widget;
 }
@@ -433,7 +433,7 @@ void XcbPlatform::export_settings(std::string const& contents)
 }
 
 
-void XcbPlatform::import_settings(ImportSettingsButton* import_settings_button)
+void XcbPlatform::import_settings(ImportSettingsButton* const import_settings_button)
 {
     if (is_file_selector_dialog_open()) {
         return;
@@ -463,7 +463,7 @@ void XcbPlatform::import_settings(ImportSettingsButton* import_settings_button)
 }
 
 
-char const* XcbPlatform::find_executable(char const* const* alternatives) const
+char const* XcbPlatform::find_executable(char const* const* const alternatives) const
 {
     for (int i = 0; alternatives[i] != NULL; ++i) {
         if (access(alternatives[i], X_OK) != -1) {
@@ -476,8 +476,8 @@ char const* XcbPlatform::find_executable(char const* const* alternatives) const
 
 
 void XcbPlatform::start_file_selector_dialog(
-        char const* executable,
-        char const* const* arguments
+        char const* const executable,
+        char const* const* const arguments
 ) {
     std::vector<char*> argv;
     std::vector<char*> env;
@@ -545,8 +545,8 @@ void XcbPlatform::clear_active_file_selector_dialog_data()
 
 
 void XcbPlatform::build_file_selector_argv(
-        char const* executable,
-        char const* const* arguments,
+        char const* const executable,
+        char const* const* const arguments,
         std::vector<char*>& argv
 ) const {
     size_t length = strlen(executable) + 1;
@@ -577,7 +577,7 @@ void XcbPlatform::build_file_selector_env(std::vector<char*>& env) const
         /* Should we put our own window id into WINDOWID? */
 
         size_t const length = strlen(*it) + 1;
-        char* copy = new char[length];
+        char* const copy = new char[length];
         strncpy(copy, *it, length);
         env.push_back(copy);
     }
@@ -589,7 +589,7 @@ void XcbPlatform::build_file_selector_env(std::vector<char*>& env) const
 void XcbPlatform::run_file_selector_child_process(
         std::vector<char*> const& argv,
         std::vector<char*> const& env,
-        Pipe* pipe
+        Pipe* const pipe
 ) const {
     pipe->close_read_fd();
 
@@ -695,7 +695,7 @@ void XcbPlatform::read_file_selector_output()
 }
 
 
-bool XcbPlatform::has_file_selector_exited(int* exit_code) const
+bool XcbPlatform::has_file_selector_exited(int* const exit_code) const
 {
     int status = 0;
     pid_t result = waitpid(active_file_selector_dialog_pid, &status, WNOHANG);
@@ -735,7 +735,7 @@ void XcbPlatform::finish_importing_settings()
         return;
     }
 
-    char* buffer = new char[Serializer::MAX_SIZE];
+    char* const buffer = new char[Serializer::MAX_SIZE];
 
     std::fill_n(buffer, Serializer::MAX_SIZE, '\x00');
     settings_file.read(buffer, Serializer::MAX_SIZE);
@@ -811,9 +811,9 @@ void XcbPlatform::Pipe::close_write_fd()
 }
 
 
-void Widget::process_events(XcbPlatform* xcb)
+void Widget::process_events(XcbPlatform* const xcb)
 {
-    xcb_connection_t* xcb_connection = xcb->get_connection();
+    xcb_connection_t* const xcb_connection = xcb->get_connection();
 
     xcb->handle_file_selector_dialog();
 
@@ -826,8 +826,8 @@ void Widget::process_events(XcbPlatform* xcb)
 
 
 void Widget::process_all_events(
-        XcbPlatform* xcb,
-        xcb_connection_t* xcb_connection
+        XcbPlatform* const xcb,
+        xcb_connection_t* const xcb_connection
 ) {
     xcb_generic_event_t* event;
 
@@ -853,8 +853,8 @@ void Widget::process_all_events(
 
 
 void Widget::process_non_editing_events(
-        XcbPlatform* xcb,
-        xcb_connection_t* xcb_connection
+        XcbPlatform* const xcb,
+        xcb_connection_t* const xcb_connection
 ) {
     xcb_generic_event_t* event;
 
@@ -875,8 +875,8 @@ void Widget::process_non_editing_events(
 
 
 void Widget::handle_error_event(
-        XcbPlatform const* xcb,
-        xcb_generic_error_t const* error
+        XcbPlatform const* const xcb,
+        xcb_generic_error_t const* const error
 ) {
     // fprintf(
         // stderr,
@@ -891,10 +891,10 @@ void Widget::handle_error_event(
 
 
 void Widget::handle_expose_event(
-        XcbPlatform const* xcb,
-        xcb_expose_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_expose_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->window);
+    Widget* const widget = xcb->find_widget(event->window);
 
     if (widget == NULL) {
         return;
@@ -905,10 +905,10 @@ void Widget::handle_expose_event(
 
 
 void Widget::handle_button_press_event(
-        XcbPlatform const* xcb,
-        xcb_button_release_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_button_release_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->event);
+    Widget* const widget = xcb->find_widget(event->event);
 
     if (widget == NULL) {
         return;
@@ -950,7 +950,7 @@ void Widget::handle_button_press_event(
 
 
 bool Widget::is_double_click(
-    Widget const* widget,
+    Widget const* const widget,
     xcb_timestamp_t const time,
     int const x,
     int const y
@@ -964,10 +964,10 @@ bool Widget::is_double_click(
 
 
 void Widget::handle_button_release_event(
-        XcbPlatform const* xcb,
-        xcb_button_release_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_button_release_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->event);
+    Widget* const widget = xcb->find_widget(event->event);
 
     if (widget == NULL) {
         return;
@@ -991,10 +991,10 @@ void Widget::handle_button_release_event(
 
 
 void Widget::handle_enter_notify_event(
-        XcbPlatform const* xcb,
-        xcb_enter_notify_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_enter_notify_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->event);
+    Widget* const widget = xcb->find_widget(event->event);
 
     if (widget == NULL) {
         return;
@@ -1007,10 +1007,10 @@ void Widget::handle_enter_notify_event(
 
 
 void Widget::handle_motion_notify_event(
-        XcbPlatform const* xcb,
-        xcb_motion_notify_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_motion_notify_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->event);
+    Widget* const widget = xcb->find_widget(event->event);
 
     if (widget == NULL) {
         return;
@@ -1023,10 +1023,10 @@ void Widget::handle_motion_notify_event(
 
 
 void Widget::handle_leave_notify_event(
-        XcbPlatform const* xcb,
-        xcb_leave_notify_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_leave_notify_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->event);
+    Widget* const widget = xcb->find_widget(event->event);
 
     if (widget == NULL) {
         return;
@@ -1037,10 +1037,10 @@ void Widget::handle_leave_notify_event(
 
 
 void Widget::handle_client_message_event(
-        XcbPlatform const* xcb,
-        xcb_client_message_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_client_message_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->window);
+    Widget* const widget = xcb->find_widget(event->window);
 
     if (widget == NULL) {
         return;
@@ -1051,10 +1051,10 @@ void Widget::handle_client_message_event(
 
 
 void Widget::handle_destroy_notify_event(
-        XcbPlatform const* xcb,
-        xcb_destroy_notify_event_t const* event
+        XcbPlatform const* const xcb,
+        xcb_destroy_notify_event_t const* const event
 ) {
-    Widget* widget = xcb->find_widget(event->event);
+    Widget* const widget = xcb->find_widget(event->event);
 
     if (widget == NULL) {
         return;
@@ -1070,26 +1070,28 @@ bool Widget::is_modifier_active(uint16_t event_state)
 }
 
 
-Widget::Resource::Resource(unsigned char* start, unsigned char* end)
+Widget::Resource::Resource(unsigned char* const start, unsigned char* const end)
     : start(start),
     end(end)
 {
 }
 
 
-Widget::PNGStreamState::PNGStreamState(unsigned char* start, unsigned char* end)
-    : data(start),
-    end(end)
+Widget::PNGStreamState::PNGStreamState(
+        unsigned char* const start,
+        unsigned char* const end
+) : end(end),
+    data(start)
 {
 }
 
 
 cairo_status_t Widget::read_png_stream_from_array(
         void *closure,
-        unsigned char* data,
+        unsigned char* const data,
         unsigned int length
 ) {
-    PNGStreamState* state = (PNGStreamState*)closure;
+    PNGStreamState* const state = (PNGStreamState*)closure;
 
     if (state->data + length > state->end) {
         return CAIRO_STATUS_READ_ERROR;
@@ -1107,7 +1109,7 @@ void GUI::idle()
     Widget::process_events((XcbPlatform*)platform_data);
 
     if (background != NULL) {
-        XcbPlatform* xcb = (XcbPlatform*)platform_data;
+        XcbPlatform* const xcb = (XcbPlatform*)platform_data;
 
         background->refresh();
         xcb_flush(xcb->get_connection());
@@ -1118,7 +1120,7 @@ void GUI::idle()
 void GUI::initialize()
 {
     if (platform_data == NULL) {
-        XcbPlatform* xcb = new XcbPlatform();
+        XcbPlatform* const xcb = new XcbPlatform();
 
         platform_data = (PlatformData)xcb;
     }
@@ -1131,7 +1133,7 @@ void GUI::destroy()
     The owner of the XcbPlatform object is the GUI, even if the GUI was
     instantiated with an already created XcbPlatform object.
     */
-    XcbPlatform* xcb = (XcbPlatform*)platform_data;
+    XcbPlatform* const xcb = (XcbPlatform*)platform_data;
 
     platform_data = NULL;
 
@@ -1139,8 +1141,10 @@ void GUI::destroy()
 }
 
 
-GUI::Image Widget::load_image(GUI::PlatformData platform_data, char const* name)
-{
+GUI::Image Widget::load_image(
+        GUI::PlatformData platform_data,
+        char const* const name
+) {
     StringToImageMap::const_iterator it = IMAGES.find(name);
 
     if (it == IMAGES.end()) {
@@ -1250,7 +1254,7 @@ void Widget::destroy_fake_transparent_background()
 }
 
 
-void Widget::set_up(GUI::PlatformData platform_data, WidgetBase* parent)
+void Widget::set_up(GUI::PlatformData platform_data, WidgetBase* const parent)
 {
     WidgetBase::set_up(platform_data, parent);
 
@@ -1268,8 +1272,8 @@ void Widget::set_up(GUI::PlatformData platform_data, WidgetBase* parent)
         // | XCB_EVENT_MASK_VISIBILITY_CHANGE
     );
 
-    xcb_connection_t* xcb_connection = this->xcb_connection();
-    XcbPlatform* xcb = this->xcb();
+    xcb_connection_t* const xcb_connection = this->xcb_connection();
+    XcbPlatform* const xcb = this->xcb();
 
     xcb_window_t window_id = xcb_generate_id(xcb_connection);
     need_to_destroy_window = true;
@@ -1353,7 +1357,7 @@ void Widget::update_fake_transparency()
     3. A background image does not have transparent areas.
     */
 
-    cairo_surface_t* first_parent_image = find_first_parent_image();
+    cairo_surface_t* const first_parent_image = find_first_parent_image();
 
     if (first_parent_image == fake_transparent_background_source) {
         return;
@@ -1432,7 +1436,7 @@ void Widget::draw_text(
     double const green = COLOR_COMPONENT_SCALE * (double)GUI::green(color);
     double const blue = COLOR_COMPONENT_SCALE * (double)GUI::blue(color);
 
-    cairo_font_face_t* font_face = xcb()->get_font_face(cairo, font_weight);
+    cairo_font_face_t* const font_face = xcb()->get_font_face(cairo, font_weight);
     double text_left;
     double text_top;
     cairo_font_extents_t font_extents;
@@ -1500,10 +1504,10 @@ GUI::Image Widget::copy_image_region(
         int const width,
         int const height
 ) {
-    cairo_surface_t* dest_surface = cairo_image_surface_create(
+    cairo_surface_t* const dest_surface = cairo_image_surface_create(
         cairo_image_surface_get_format((cairo_surface_t*)source), width, height
     );
-    cairo_t* cairo = cairo_create(dest_surface);
+    cairo_t* const cairo = cairo_create(dest_surface);
     cairo_set_source_surface(
         cairo, (cairo_surface_t*)source, (double)-left, (double)-top
     );
@@ -1558,7 +1562,7 @@ GUI::Image Widget::set_image(GUI::Image image)
     GUI::Image old_image = WidgetBase::set_image(image);
 
     for (GUI::Widgets::iterator it = children.begin(); it != children.end(); ++it) {
-        Widget* child = (Widget*)*it;
+        Widget* const child = (Widget*)*it;
 
         if (child->is_transparent) {
             child->redraw();

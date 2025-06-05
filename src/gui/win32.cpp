@@ -161,14 +161,14 @@ COLORREF Widget::to_colorref(GUI::Color const color)
 }
 
 
-void Widget::set_text(char const* text)
+void Widget::set_text(char const* const text)
 {
     text_text.set(text);
     WidgetBase::set_text(text);
 }
 
 
-GUI::Image Widget::load_image(GUI::PlatformData platform_data, char const* name)
+GUI::Image Widget::load_image(GUI::PlatformData platform_data, char const* const name)
 {
     Text name_text(name);
 
@@ -200,7 +200,7 @@ LRESULT Widget::process_message(
         WPARAM wParam,
         LPARAM lParam
 ) {
-    Widget* widget = (
+    Widget* const widget = (
         (Widget*)GetWindowLongPtr(hwnd, GWLP_USERDATA)
     );
 
@@ -388,7 +388,7 @@ Widget::~Widget()
 }
 
 
-void Widget::set_up(GUI::PlatformData platform_data, WidgetBase* parent)
+void Widget::set_up(GUI::PlatformData platform_data, WidgetBase* const parent)
 {
     WidgetBase::set_up(platform_data, parent);
 
@@ -702,7 +702,7 @@ void ImportSettingsButton::click()
     }
 
     DWORD read;
-    char* buffer = new char[Serializer::MAX_SIZE];
+    char* const buffer = new char[Serializer::MAX_SIZE];
 
     std::fill_n(buffer, Serializer::MAX_SIZE, '\x00');
 

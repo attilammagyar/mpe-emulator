@@ -56,7 +56,7 @@ class Vst3Plugin
 
         static constexpr Vst::ParamID SETTINGS_CHANGED_PARAM_ID = 8192;
 
-        static std::string read_stream(IBStream* stream);
+        static std::string read_stream(IBStream* const stream);
 
         class Event
         {

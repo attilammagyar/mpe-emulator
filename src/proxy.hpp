@@ -608,10 +608,18 @@ class Proxy : public Midi::EventHandler
                         static constexpr size_t NAME_MAX_INDEX = NAME_SIZE - 1;
 
                         Entry() noexcept;
-                        Entry(const char* name, ParamId const param_id) noexcept;
+
+                        Entry(
+                            const char* const name,
+                            ParamId const param_id
+                        ) noexcept;
+
                         ~Entry();
 
-                        void set(const char* name, ParamId const param_id) noexcept;
+                        void set(
+                            const char* const name,
+                            ParamId const param_id
+                        ) noexcept;
 
                         Entry *next;
                         char name[NAME_SIZE];

@@ -61,7 +61,7 @@
             7                                                               \
         ) == 0                                                              \
     );                                                                      \
-    FILE* _mpe_f = (                                                        \
+    FILE* const _mpe_f = (                                                  \
         _mpe_use_stderr                                                     \
             ? stderr                                                        \
             : fopen(MPE_EMULATOR_TO_STRING(MPE_EMULATOR_DEBUG_LOG), "a+")   \
