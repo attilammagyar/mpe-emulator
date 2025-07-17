@@ -643,6 +643,14 @@ If you find bugs that are not mentioned in the
 "[Known Issues and Quirks](#bugs-known)" section, please report them at
 [https://github.com/attilammagyar/mpe-emulator/issues](https://github.com/attilammagyar/mpe-emulator/issues).
 
+When reporting an issue, please provide at least the following information:
+
+ * What MPE Emulator version are you using?
+ * What host application or DAW are you using?
+ * What operating system are you using?
+ * How is MPE Emulator set up?
+ * How can the bug be reproduced, what steps can trigger it?
+
 <a href="#toc">Table of Contents</a>
 
 <a id="bugs-known"></a>
