@@ -27,7 +27,7 @@ Before investing a significant amount of work into creating a pull request, it
 is recommended to open an issue at
 https://github.com/attilammagyar/mpe-emulator/issues to consult with the author
 whether it will be likely to be merged. Small, simple patches that e.g. fix
-compilation issues for various target platforms or add compatibility with
+compilation issues for various target platforms, add compatibility with
 currently unsupported ones, or fix bugs are appreciated and are likely to be
 added to the project, while large, complex patches that add new features, or
 otherwise demand a significantly increased maintenance effort are less likely
