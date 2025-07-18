@@ -161,7 +161,7 @@ int main(int const argc, char const* argv[])
     MpeEmulator::GUI* const gui = new MpeEmulator::GUI(
         NULL,
         (MpeEmulator::GUI::PlatformData)gui_xcb,
-        (MpeEmulator::GUI::PlatformWidget)window_id,
+        xcb->xcb_window_to_gui_platform_widget(window_id),
         proxy,
         true
     );
