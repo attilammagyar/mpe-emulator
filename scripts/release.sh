@@ -2,7 +2,7 @@
 
 ###############################################################################
 # This file is part of MPE Emulator.
-# Copyright (C) 2023, 2024  Attila M. Magyar
+# Copyright (C) 2023, 2024, 2025  Attila M. Magyar
 # Copyright (C) 2023  @aimixsaka (https://github.com/aimixsaka/)
 #
 # MPE Emulator is free software: you can redistribute it and/or modify
