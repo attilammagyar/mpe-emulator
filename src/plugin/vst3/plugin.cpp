@@ -565,8 +565,8 @@ void Vst3Plugin::Processor::generate_out_events(
 ) noexcept {
     Vst::Event vst_event;
 
-    for (Proxy::OutEvents::const_iterator i = proxy.out_events.begin(); i != proxy.out_events.end(); ++i) {
-        Midi::Event const& midi_event(*i);
+    for (Proxy::OutEvents::const_iterator it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
+        Midi::Event const& midi_event(*it);
         int32 const sample_offset = (
             midi_event.get_sample_offset<int32>(sample_rate, last_sample_offset)
         );

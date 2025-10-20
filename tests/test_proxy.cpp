@@ -43,8 +43,8 @@ std::string out_events_to_string(Proxy const& proxy)
 {
     std::string result("");
 
-    for (Proxy::OutEvents::const_iterator i = proxy.out_events.begin(); i != proxy.out_events.end(); ++i) {
-        result += i->to_string() + "\n";
+    for (Proxy::OutEvents::const_iterator it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
+        result += it->to_string() + "\n";
     }
 
     return result;

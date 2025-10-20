@@ -1004,8 +1004,8 @@ void FstPlugin::send_out_events(int const last_sample_offset) noexcept
 
     out_events.numEvents = 0;
 
-    for (Proxy::OutEvents::const_iterator i = proxy.out_events.begin(); i != proxy.out_events.end(); ++i) {
-        Midi::Event const& midi_event(*i);
+    for (Proxy::OutEvents::const_iterator it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
+        Midi::Event const& midi_event(*it);
         VstMidiEvent* const vst_midi_event = &out_event_buffer[next_vst_event_idx];
 
         memset(vst_midi_event, 0, sizeof(VstMidiEvent));
