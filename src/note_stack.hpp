@@ -34,11 +34,12 @@ namespace MpeEmulator
 {
 
 /**
- * \brief A stack (LIFO) for unique \c Midi::Channel and \c Midi::Note pairs
- *        where all operations cost O(1) most of the time, including removing an
- *        element by value from the middle.
+ * \brief A stack (LIFO) for unique \c Midi::Note numbers where all operations
+ *        cost O(1) most of the time, including removing an element by value
+ *        from the middle.
  */
-class NoteStack
+template<bool skip_updating_extremes>
+class NoteStackTpl
 {
     public:
         class ChannelStats
@@ -64,7 +65,7 @@ class NoteStack
         typedef Midi::Channel Channels[Midi::CHANNELS];
         typedef Midi::Channel ChannelsByNotes[Midi::NOTES];
 
-        NoteStack() noexcept;
+        NoteStackTpl() noexcept;
 
         void clear() noexcept;
         bool is_empty() const noexcept;
@@ -124,6 +125,10 @@ class NoteStack
         Midi::Note lowest_;
         Midi::Note highest_;
 };
+
+
+typedef NoteStackTpl<true> BasicNoteStack;
+typedef NoteStackTpl<false> NoteStack;
 
 }
 

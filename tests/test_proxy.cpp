@@ -1917,3 +1917,299 @@ TEST(changing_transposition_settings_triggers_reset, {
         proxy, proxy.transpose_above_anchor, 60
     );
 })
+
+
+TEST(when_sustain_pedal_is_ignored_then_events_for_sustained_notes_are_swallowed_after_note_off, {
+    Proxy proxy;
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::OFF);
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_HIGHEST);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_OLDEST);
+
+    proxy.rules[3].in_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST);
+
+    proxy.note_on(0.1, 0, 60, 127);     /* channel=1, oldest */
+    proxy.note_on(0.2, 0, 67, 127);     /* channel=2, highest */
+    proxy.note_on(0.3, 0, 48, 127);     /* channel=3, lowest */
+    proxy.note_on(0.4, 0, 64, 127);     /* channel=4, newest */
+
+    proxy.control_change(0.5, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+
+    proxy.note_off(0.6, 5, 60, 127);
+    proxy.note_off(0.7, 5, 67, 127);
+    proxy.note_off(0.8, 5, 48, 127);
+    proxy.note_off(0.9, 5, 64, 127);
+
+    proxy.begin_processing();
+
+    proxy.control_change(1.0, 5, Proxy::ControllerId::EXPRESSION_PEDAL, 123);
+    proxy.control_change(2.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
+    proxy.pitch_wheel_change(3.0, 6, 10000);
+    proxy.control_change(4.0, 8, Proxy::ControllerId::VOLUME, 96);
+    proxy.channel_pressure(5.0, 7, 30);
+
+    assert_out_events<1>(
+        {
+            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x0b d2=0x7b (v=0.969)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_sustain_pedal_is_handled_then_events_for_sustained_notes_are_kept_being_sent_after_note_off, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::ON);
+    proxy.transpose_below_anchor.set_value(32);
+    proxy.transpose_above_anchor.set_value(32);
+    proxy.begin_processing();
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_HIGHEST);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_OLDEST);
+
+    proxy.rules[3].in_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST);
+
+    proxy.note_on(0.1, 0, 60, 127);     /* channel=1, oldest */
+    proxy.note_on(0.2, 0, 67, 127);     /* channel=2, highest */
+    proxy.note_on(0.3, 0, 48, 127);     /* channel=3, lowest */
+    proxy.note_on(0.4, 0, 64, 127);     /* channel=4, newest */
+
+    proxy.begin_processing();
+
+    proxy.control_change(1.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+
+    proxy.note_off(2.0, 5, 60, 64);
+    proxy.note_off(3.0, 5, 67, 64);
+    proxy.note_off(4.0, 5, 48, 64);
+    proxy.note_off(5.0, 5, 64, 64);
+
+    proxy.control_change(6.0, 5, Proxy::ControllerId::EXPRESSION_PEDAL, 123);
+    proxy.control_change(7.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
+    proxy.pitch_wheel_change(8.0, 6, 10000);
+    proxy.control_change(9.0, 8, Proxy::ControllerId::VOLUME, 96);
+    proxy.channel_pressure(10.0, 7, 30);
+
+    proxy.control_change(11.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 0);
+
+    proxy.control_change(12.0, 5, Proxy::ControllerId::EXPRESSION_PEDAL, 0);
+    proxy.control_change(13.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 0);
+    proxy.pitch_wheel_change(14.0, 6, 0);
+    proxy.control_change(15.0, 8, Proxy::ControllerId::VOLUME, 0);
+    proxy.channel_pressure(16.0, 7, 0);
+
+    assert_out_events<12>(
+        {
+            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x7f (v=1.000)",
+            "t=6.000 cmd=CONTROL_CHANGE ch=0 d1=0x0b d2=0x7b (v=0.969)",
+            "t=7.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
+            "t=8.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
+            "t=9.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
+            "t=10.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
+            "t=11.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+            "t=11.000 cmd=NOTE_OFF ch=4 d1=0x30 d2=0x40 (v=0.504)",
+            "t=11.000 cmd=NOTE_OFF ch=3 d1=0x20 d2=0x40 (v=0.504)",
+            "t=11.000 cmd=NOTE_OFF ch=2 d1=0x33 d2=0x40 (v=0.504)",
+            "t=11.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x40 (v=0.504)",
+            "t=12.000 cmd=CONTROL_CHANGE ch=0 d1=0x0b d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(suspending_and_resuming_turns_off_the_sustain_pedal_and_clears_deferred_note_offs, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::ON);
+    proxy.transpose_below_anchor.set_value(32);
+    proxy.transpose_above_anchor.set_value(32);
+    proxy.begin_processing();
+
+    proxy.control_change(0.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+    proxy.note_on(0.1, 5, 64, 127);
+    proxy.note_off(0.2, 5, 64, 127);
+
+    proxy.suspend();
+    proxy.resume();
+    proxy.begin_processing();
+
+    proxy.begin_processing();
+
+    proxy.note_on(1.0, 5, 60, 96);
+    proxy.note_off(2.0, 5, 60, 60);
+    proxy.control_change(3.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 0);
+
+    assert_out_events<3>(
+        {
+            "t=1.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x60 (v=0.756)",
+            "t=2.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x3c (v=0.472)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(zone_config_change_turns_off_the_sustain_pedal_and_clears_deferred_note_offs, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::ON);
+    proxy.transpose_below_anchor.set_value(32);
+    proxy.transpose_above_anchor.set_value(32);
+    proxy.begin_processing();
+
+    proxy.control_change(0.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+    proxy.note_on(0.1, 5, 64, 127);
+    proxy.note_off(0.2, 5, 64, 127);
+
+    proxy.channels.set_value(14);
+    proxy.begin_processing();
+
+    proxy.begin_processing();
+
+    proxy.note_on(1.0, 5, 60, 96);
+    proxy.note_off(2.0, 5, 60, 60);
+    proxy.control_change(3.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 0);
+
+    assert_out_events<3>(
+        {
+            "t=1.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x60 (v=0.756)",
+            "t=2.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x3c (v=0.472)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(sustain_pedal_may_be_both_interpreted_and_transformed_at_the_same_time, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::ON);
+    proxy.transpose_below_anchor.set_value(32);
+    proxy.transpose_above_anchor.set_value(32);
+    proxy.begin_processing();
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::SUSTAIN_PEDAL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::SUSTAIN_PEDAL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_NEWEST);
+
+    proxy.note_on(0.1, 0, 60, 127);     /* channel=1, oldest */
+    proxy.note_on(0.2, 0, 64, 127);     /* channel=4, newest */
+
+    proxy.begin_processing();
+
+    proxy.control_change(1.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+
+    proxy.note_off(2.0, 5, 60, 64);
+    proxy.note_off(3.0, 5, 64, 64);
+
+    proxy.control_change(4.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 0);
+    proxy.control_change(5.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+
+    assert_out_events<4>(
+        {
+            "t=1.000 cmd=CONTROL_CHANGE ch=2 d1=0x40 d2=0x7f (v=1.000)",
+            "t=4.000 cmd=CONTROL_CHANGE ch=2 d1=0x40 d2=0x00 (v=0.000)",
+            "t=4.000 cmd=NOTE_OFF ch=2 d1=0x30 d2=0x40 (v=0.504)",
+            "t=4.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x40 (v=0.504)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_a_sustained_note_is_retriggered_then_its_note_off_is_no_longer_deferred, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::ON);
+    proxy.transpose_below_anchor.set_value(32);
+    proxy.transpose_above_anchor.set_value(32);
+    proxy.channels.set_value(1);
+    proxy.begin_processing();
+
+    proxy.note_on(0.1, 5, 60, 127);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_off(2.0, 5, 60, 123);
+    proxy.note_on(3.0, 5, 60, 127);
+
+    proxy.control_change(4.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 0);
+
+    assert_out_events<3>(
+        {
+            "t=3.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x40 (v=0.504)",
+            "t=3.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x7f (v=1.000)",
+            "t=4.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_a_sustained_note_is_stolen_then_its_note_off_is_no_longer_deferred, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.sustain_pedal_handling.set_value(Proxy::Toggle::ON);
+    proxy.transpose_below_anchor.set_value(32);
+    proxy.transpose_above_anchor.set_value(32);
+    proxy.channels.set_value(1);
+    proxy.begin_processing();
+
+    proxy.note_on(0.1, 5, 64, 127);
+    proxy.control_change(1.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 127);
+
+    proxy.begin_processing();
+
+    proxy.note_off(2.0, 5, 60, 123);
+    proxy.note_on(3.0, 5, 60, 127);
+
+    proxy.control_change(4.0, 5, Proxy::ControllerId::SUSTAIN_PEDAL, 0);
+
+    assert_out_events<3>(
+        {
+            "t=3.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
+            "t=3.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x7f (v=1.000)",
+            "t=4.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})

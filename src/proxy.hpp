@@ -159,7 +159,9 @@ class Proxy : public Midi::EventHandler
             Z1TRB   = 87,           ///< Zone 1 transpose below anchor
             Z1TRA   = 88,           ///< Zone 1 transpose above anchor
 
-            PARAM_ID_COUNT = 89,
+            Z1SUS   = 89,           ///< Zone 1 handle sustain pedal
+
+            PARAM_ID_COUNT = 90,
             INVALID_PARAM_ID = PARAM_ID_COUNT,
         };
 
@@ -577,6 +579,7 @@ class Proxy : public Midi::EventHandler
         Param override_release_velocity;
         Param transpose_below_anchor;
         Param transpose_above_anchor;
+        Param sustain_pedal_handling;
 
         Rule rules[RULES];
 
@@ -628,8 +631,8 @@ class Proxy : public Midi::EventHandler
 
                 static constexpr size_t ENTRIES = 0x80;
                 static constexpr size_t MASK = ENTRIES - 1;
-                static constexpr int MULTIPLIER = 111;
-                static constexpr int SHIFT = 5;
+                static constexpr int MULTIPLIER = 667;
+                static constexpr int SHIFT = 7;
 
                 static int hash(std::string const& name) noexcept;
 
@@ -764,6 +767,12 @@ class Proxy : public Midi::EventHandler
             ControllerId const out_cc
         ) noexcept;
 
+        void handle_note_off(
+            double const time_offset,
+            Midi::Note const note,
+            Midi::Byte const velocity
+        ) noexcept;
+
         void push_note_off(
             double const time_offset,
             Midi::Channel const channel,
@@ -777,6 +786,8 @@ class Proxy : public Midi::EventHandler
             ControllerId const controller_id,
             double const value
         ) noexcept;
+
+        void process_deferred_note_offs(double const time_offset) noexcept;
 
         template<Midi::Command midi_command>
         void push_controller_event(
@@ -799,6 +810,8 @@ class Proxy : public Midi::EventHandler
         Param* params[ParamId::PARAM_ID_COUNT];
         Queue<Midi::Channel, MPE_MEMBER_CHANNELS_MAX> available_channels;
         NoteStack::ChannelsByNotes channels_by_notes;
+        BasicNoteStack deferred_note_offs;
+        Midi::Byte deferred_note_off_velocities[Midi::NOTES];
         Midi::Byte velocities_by_notes[Midi::NOTES];
         std::atomic<double> param_ratios_atomic[ParamId::PARAM_ID_COUNT];
         SPSCQueue<Message> messages;
@@ -822,6 +835,7 @@ class Proxy : public Midi::EventHandler
         bool is_suspended;
         bool is_dirty_;
         bool had_reset;
+        bool is_sustain_pedal_on;
 };
 
 }

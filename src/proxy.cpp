@@ -230,6 +230,7 @@ Proxy::Proxy() noexcept
     override_release_velocity("Z1ORV", Toggle::OFF, Toggle::ON, Toggle::OFF),
     transpose_below_anchor("Z1TRB", 0, 96, 48),
     transpose_above_anchor("Z1TRA", 0, 96, 48),
+    sustain_pedal_handling("Z1SUS", Toggle::OFF, Toggle::ON, Toggle::OFF),
     rules{
         Rule("Z1R1", ControllerId::PITCH_WHEEL, ControllerId::PITCH_WHEEL, Target::TRG_NEWEST, 8192),
         Rule("Z1R2", ControllerId::CHANNEL_PRESSURE, ControllerId::CHANNEL_PRESSURE, Target::TRG_NEWEST, 0),
@@ -245,9 +246,11 @@ Proxy::Proxy() noexcept
     messages(MESSAGE_QUEUE_SIZE),
     is_suspended(false),
     is_dirty_(false),
-    had_reset(false)
+    had_reset(false),
+    is_sustain_pedal_on(false)
 {
     std::fill_n(channels_by_notes, Midi::NOTES, Midi::INVALID_CHANNEL);
+    std::fill_n(deferred_note_off_velocities, Midi::NOTES, 64);
     std::fill_n(velocities_by_notes, Midi::NOTES, 0);
 
     register_param(ParamId::MCM, send_mcm);
@@ -273,6 +276,7 @@ Proxy::Proxy() noexcept
 
     register_param(ParamId::Z1TRB, transpose_below_anchor);
     register_param(ParamId::Z1TRA, transpose_above_anchor);
+    register_param(ParamId::Z1SUS, sustain_pedal_handling);
 
     for (size_t i = 0; i != (size_t)ParamId::PARAM_ID_COUNT; ++i) {
         param_ratios_atomic[i].store(params[i]->get_ratio());
@@ -817,6 +821,8 @@ void Proxy::push_note_off(
         old_channel_stats_below,
         old_channel_stats_above
     );
+
+    deferred_note_offs.remove(note);
 }
 
 
@@ -1038,6 +1044,27 @@ void Proxy::process_controller_event(
             time_offset, manager_channel, controller_id, value
         );
     }
+
+    if (
+            (Toggle)sustain_pedal_handling.get_value() != Toggle::OFF
+            && controller_id == ControllerId::SUSTAIN_PEDAL
+    ) {
+        is_sustain_pedal_on = value >= 0.5;
+
+        if (!is_sustain_pedal_on) {
+            process_deferred_note_offs(time_offset);
+        }
+    }
+}
+
+
+void Proxy::process_deferred_note_offs(double const time_offset) noexcept
+{
+    while (!deferred_note_offs.is_empty()) {
+        Midi::Note const note = deferred_note_offs.pop();
+        Midi::Byte const velocity = deferred_note_off_velocities[note];
+        handle_note_off(time_offset, note, velocity);
+    }
 }
 
 
@@ -1078,6 +1105,23 @@ void Proxy::note_off(
         return;
     }
 
+    if (
+            (Toggle)sustain_pedal_handling.get_value() != Toggle::OFF
+            && is_sustain_pedal_on
+    ) {
+        deferred_note_offs.push(note);
+        deferred_note_off_velocities[note] = velocity;
+    } else {
+        handle_note_off(time_offset, note, velocity);
+    }
+}
+
+
+void Proxy::handle_note_off(
+        double const time_offset,
+        Midi::Note const note,
+        Midi::Byte const velocity
+) noexcept {
     Midi::Channel const assigned_channel = channels_by_notes[note];
 
     push_note_off(time_offset, assigned_channel, note, velocity);
@@ -1403,9 +1447,13 @@ void Proxy::stop_all_notes() noexcept
         }
     }
 
+    deferred_note_offs.clear();
+
     note_stack.clear();
     note_stack_below.clear();
     note_stack_above.clear();
+
+    is_sustain_pedal_on = false;
 }
 
 

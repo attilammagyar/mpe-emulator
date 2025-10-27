@@ -32,13 +32,15 @@
 namespace MpeEmulator
 {
 
-NoteStack::NoteStack() noexcept
+template<bool skip_updating_extremes>
+NoteStackTpl<skip_updating_extremes>::NoteStackTpl() noexcept
 {
     clear();
 }
 
 
-void NoteStack::clear() noexcept
+template<bool skip_updating_extremes>
+void NoteStackTpl<skip_updating_extremes>::clear() noexcept
 {
     std::fill_n(next, ITEMS, Midi::INVALID_NOTE);
     std::fill_n(previous, ITEMS, Midi::INVALID_NOTE);
@@ -50,19 +52,22 @@ void NoteStack::clear() noexcept
 }
 
 
-bool NoteStack::is_empty() const noexcept
+template<bool skip_updating_extremes>
+bool NoteStackTpl<skip_updating_extremes>::is_empty() const noexcept
 {
     return head == Midi::INVALID_NOTE;
 }
 
 
-bool NoteStack::is_top(Midi::Note const note) const noexcept
+template<bool skip_updating_extremes>
+bool NoteStackTpl<skip_updating_extremes>::is_top(Midi::Note const note) const noexcept
 {
     return head == note;
 }
 
 
-bool NoteStack::find(Midi::Note const note) const noexcept
+template<bool skip_updating_extremes>
+bool NoteStackTpl<skip_updating_extremes>::find(Midi::Note const note) const noexcept
 {
     if (MPE_EMULATOR_UNLIKELY(is_invalid(note))) {
         return false;
@@ -72,31 +77,36 @@ bool NoteStack::find(Midi::Note const note) const noexcept
 }
 
 
-Midi::Note NoteStack::top() const noexcept
+template<bool skip_updating_extremes>
+Midi::Note NoteStackTpl<skip_updating_extremes>::top() const noexcept
 {
     return head;
 }
 
 
-Midi::Note NoteStack::oldest() const noexcept
+template<bool skip_updating_extremes>
+Midi::Note NoteStackTpl<skip_updating_extremes>::oldest() const noexcept
 {
     return oldest_;
 }
 
 
-Midi::Note NoteStack::lowest() const noexcept
+template<bool skip_updating_extremes>
+Midi::Note NoteStackTpl<skip_updating_extremes>::lowest() const noexcept
 {
     return lowest_;
 }
 
 
-Midi::Note NoteStack::highest() const noexcept
+template<bool skip_updating_extremes>
+Midi::Note NoteStackTpl<skip_updating_extremes>::highest() const noexcept
 {
     return highest_;
 }
 
 
-void NoteStack::push(Midi::Note const note) noexcept
+template<bool skip_updating_extremes>
+void NoteStackTpl<skip_updating_extremes>::push(Midi::Note const note) noexcept
 {
     if (MPE_EMULATOR_UNLIKELY(is_invalid(note))) {
         return;
@@ -117,29 +127,34 @@ void NoteStack::push(Midi::Note const note) noexcept
     next[note] = head;
     head = note;
 
-    if (lowest_ == Midi::INVALID_NOTE || note < lowest_) {
-        lowest_ = note;
-    }
+    if constexpr (!skip_updating_extremes) {
+        if (lowest_ == Midi::INVALID_NOTE || note < lowest_) {
+            lowest_ = note;
+        }
 
-    if (highest_ == Midi::INVALID_NOTE || note > highest_) {
-        highest_ = note;
+        if (highest_ == Midi::INVALID_NOTE || note > highest_) {
+            highest_ = note;
+        }
     }
 }
 
 
-bool NoteStack::is_invalid(Midi::Note const note) const noexcept
+template<bool skip_updating_extremes>
+bool NoteStackTpl<skip_updating_extremes>::is_invalid(Midi::Note const note) const noexcept
 {
     return note > Midi::NOTE_MAX;
 }
 
 
-bool NoteStack::is_already_pushed(Midi::Note const note) const noexcept
+template<bool skip_updating_extremes>
+bool NoteStackTpl<skip_updating_extremes>::is_already_pushed(Midi::Note const note) const noexcept
 {
     return head == note || previous[note] != Midi::INVALID_NOTE;
 }
 
 
-Midi::Note NoteStack::pop() noexcept
+template<bool skip_updating_extremes>
+Midi::Note NoteStackTpl<skip_updating_extremes>::pop() noexcept
 {
     if (is_empty()) {
         return Midi::INVALID_NOTE;
@@ -160,8 +175,13 @@ Midi::Note NoteStack::pop() noexcept
 }
 
 
-void NoteStack::update_extremes_after_remove(Midi::Note const changed_note) noexcept
+template<bool skip_updating_extremes>
+void NoteStackTpl<skip_updating_extremes>::update_extremes_after_remove(Midi::Note const changed_note) noexcept
 {
+    if constexpr (skip_updating_extremes) {
+        return;
+    }
+
     if (is_empty()) {
         lowest_ = Midi::INVALID_NOTE;
         highest_ = Midi::INVALID_NOTE;
@@ -201,7 +221,8 @@ void NoteStack::update_extremes_after_remove(Midi::Note const changed_note) noex
 }
 
 
-void NoteStack::remove(Midi::Note const note) noexcept
+template<bool skip_updating_extremes>
+void NoteStackTpl<skip_updating_extremes>::remove(Midi::Note const note) noexcept
 {
     if (MPE_EMULATOR_UNLIKELY(is_invalid(note))) {
         return;
@@ -211,8 +232,9 @@ void NoteStack::remove(Midi::Note const note) noexcept
 }
 
 
+template<bool skip_updating_extremes>
 template<bool should_update_extremes>
-void NoteStack::remove(Midi::Note const note) noexcept
+void NoteStackTpl<skip_updating_extremes>::remove(Midi::Note const note) noexcept
 {
     Midi::Note const next_note = next[note];
     Midi::Note const previous_note = previous[note];
@@ -242,7 +264,8 @@ void NoteStack::remove(Midi::Note const note) noexcept
 }
 
 
-void NoteStack::collect_active_channels(
+template<bool skip_updating_extremes>
+void NoteStackTpl<skip_updating_extremes>::collect_active_channels(
         ChannelsByNotes const& channels_by_notes,
         Channels& channels,
         size_t& count
@@ -257,7 +280,8 @@ void NoteStack::collect_active_channels(
 }
 
 
-void NoteStack::make_stats(
+template<bool skip_updating_extremes>
+void NoteStackTpl<skip_updating_extremes>::make_stats(
         ChannelsByNotes const& channels_by_notes,
         ChannelStats& stats
 ) const noexcept {
@@ -267,15 +291,22 @@ void NoteStack::make_stats(
         stats.oldest = Midi::INVALID_CHANNEL;
         stats.newest = Midi::INVALID_CHANNEL;
     } else {
-        stats.lowest =  channels_by_notes[lowest_];
-        stats.highest = channels_by_notes[highest_];
+        if constexpr (skip_updating_extremes) {
+            stats.lowest = Midi::INVALID_CHANNEL;
+            stats.highest = Midi::INVALID_CHANNEL;
+        } else {
+            stats.lowest =  channels_by_notes[lowest_];
+            stats.highest = channels_by_notes[highest_];
+        }
+
         stats.oldest = channels_by_notes[oldest_];
         stats.newest = channels_by_notes[head];
     }
 }
 
 
-NoteStack::ChannelStats::ChannelStats() noexcept
+template<bool skip_updating_extremes>
+NoteStackTpl<skip_updating_extremes>::ChannelStats::ChannelStats() noexcept
     : lowest(Midi::INVALID_CHANNEL),
     highest(Midi::INVALID_CHANNEL),
     oldest(Midi::INVALID_CHANNEL),
@@ -285,7 +316,8 @@ NoteStack::ChannelStats::ChannelStats() noexcept
 
 
 #ifdef MPE_EMULATOR_ASSERTIONS
-std::string NoteStack::ChannelStats::to_string() const noexcept
+template<bool skip_updating_extremes>
+std::string NoteStackTpl<skip_updating_extremes>::ChannelStats::to_string() const noexcept
 {
     constexpr size_t buffer_size = 64;
     char buffer[buffer_size];
@@ -305,7 +337,8 @@ std::string NoteStack::ChannelStats::to_string() const noexcept
 #endif
 
 
-// void NoteStack::dump() const noexcept
+// template<bool skip_updating_extremes>
+// void NoteStackTpl<skip_updating_extremes>::dump() const noexcept
 // {
     // fprintf(stderr, "  top=\t%hhx\n", head);
     // fprintf(stderr, "  lowest=\t%hhx\n", lowest_);

@@ -115,6 +115,7 @@ params = [
     "Z1R9MP",
     "Z1R9RS",
     "Z1R9NV",
+    "Z1SUS",
 ]
 
 

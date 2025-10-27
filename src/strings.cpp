@@ -632,6 +632,7 @@ char const* const Strings::PARAMS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1R9NV] = "Rule 9 invert",
     [Proxy::ParamId::Z1TRB] = "Transpose below anchor",
     [Proxy::ParamId::Z1TRA] = "Transpose above anchor",
+    [Proxy::ParamId::Z1SUS] = "Sustain pedal handling",
 };
 
 
@@ -735,6 +736,8 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
 
     [Proxy::ParamId::Z1TRB] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
     [Proxy::ParamId::Z1TRA] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
+
+    [Proxy::ParamId::Z1SUS] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
 };
 
 
