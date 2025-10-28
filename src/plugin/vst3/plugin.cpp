@@ -929,20 +929,36 @@ tresult PLUGIN_API Vst3Plugin::Controller::initialize(FUnknown* context)
         )
     );
 
-    constexpr int param_begin = (int)Proxy::ParamId::MCM;
-    constexpr int param_end = (int)Proxy::ParamId::INVALID_PARAM_ID;
-
     Proxy const dummy_proxy;
 
-    for (int param_id = param_begin; param_id != param_end; ++param_id) {
-        parameters.addParameter(
-            create_exported_param(dummy_proxy, (Proxy::ParamId)param_id)
-        );
-    }
+    export_parameters(
+        dummy_proxy,
+        (int)Proxy::ParamId::MCM,
+        (int)Proxy::ParamId::Z1SUS
+    );
 
     parameters.addParameter(set_up_patch_changed_param());
 
+    export_parameters(
+        dummy_proxy,
+        (int)Proxy::ParamId::Z1SUS,
+        (int)Proxy::ParamId::INVALID_PARAM_ID
+    );
+
     return result;
+}
+
+
+void Vst3Plugin::Controller::export_parameters(
+        Proxy const& proxy,
+        int const param_id_begin,
+        int const param_id_end
+) {
+    for (int param_id = param_id_begin; param_id != param_id_end; ++param_id) {
+        parameters.addParameter(
+            create_exported_param(proxy, (Proxy::ParamId)param_id)
+        );
+    }
 }
 
 

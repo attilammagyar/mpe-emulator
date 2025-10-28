@@ -242,6 +242,12 @@ class Vst3Plugin
                 tresult PLUGIN_API setComponentState(IBStream* state) SMTG_OVERRIDE;
 
             private:
+                void export_parameters(
+                    Proxy const& proxy,
+                    int const param_id_begin,
+                    int const param_id_end
+                );
+
                 Vst::Parameter* create_midi_ctl_param(
                     Proxy::ControllerId const controller_id,
                     Vst::ParamID const param_id,
