@@ -633,6 +633,15 @@ char const* const Strings::PARAMS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1TRB] = "Transpose below anchor",
     [Proxy::ParamId::Z1TRA] = "Transpose above anchor",
     [Proxy::ParamId::Z1SUS] = "Sustain pedal handling",
+    [Proxy::ParamId::Z1R1FB] = "Rule 1 global fallback",
+    [Proxy::ParamId::Z1R2FB] = "Rule 2 global fallback",
+    [Proxy::ParamId::Z1R3FB] = "Rule 3 global fallback",
+    [Proxy::ParamId::Z1R4FB] = "Rule 4 global fallback",
+    [Proxy::ParamId::Z1R5FB] = "Rule 5 global fallback",
+    [Proxy::ParamId::Z1R6FB] = "Rule 6 global fallback",
+    [Proxy::ParamId::Z1R7FB] = "Rule 7 global fallback",
+    [Proxy::ParamId::Z1R8FB] = "Rule 8 global fallback",
+    [Proxy::ParamId::Z1R9FB] = "Rule 9 global fallback",
 };
 
 
@@ -738,6 +747,16 @@ Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1TRA] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
 
     [Proxy::ParamId::Z1SUS] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+
+    [Proxy::ParamId::Z1R1FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R2FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R3FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R4FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R5FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R6FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R7FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R8FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R9FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
 };
 
 

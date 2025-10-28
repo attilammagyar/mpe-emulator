@@ -161,6 +161,7 @@ Proxy::Rule::Rule(
     midpoint(name + "MP", 0, 20000, 10000),
     reset(name + "RS", Reset::RST_OFF, Reset::RST_INIT, reset),
     invert(name + "NV", Toggle::OFF, Toggle::ON, Toggle::OFF),
+    fallback(name + "FB", Toggle::OFF, Toggle::ON, Toggle::OFF),
     last_input_value(init_value.get_ratio())
 {
 }
@@ -274,9 +275,17 @@ Proxy::Proxy() noexcept
         register_param((ParamId)(param_id++), rules[i].invert);
     }
 
-    register_param(ParamId::Z1TRB, transpose_below_anchor);
-    register_param(ParamId::Z1TRA, transpose_above_anchor);
-    register_param(ParamId::Z1SUS, sustain_pedal_handling);
+    MPE_EMULATOR_ASSERT((ParamId)param_id == ParamId::Z1TRB);
+
+    register_param((ParamId)(param_id++), transpose_below_anchor);
+    register_param((ParamId)(param_id++), transpose_above_anchor);
+    register_param((ParamId)(param_id++), sustain_pedal_handling);
+
+    MPE_EMULATOR_ASSERT((ParamId)param_id == ParamId::Z1R1FB);
+
+    for (size_t i = 0; i != RULES; ++i) {
+        register_param((ParamId)(param_id++), rules[i].fallback);
+    }
 
     for (size_t i = 0; i != (size_t)ParamId::PARAM_ID_COUNT; ++i) {
         param_ratios_atomic[i].store(params[i]->get_ratio());
@@ -466,6 +475,8 @@ void Proxy::push_note_on(
     NoteStack::ChannelStats old_channel_stats_below(channel_stats_below);
     NoteStack::ChannelStats old_channel_stats_above(channel_stats_above);
 
+    bool const is_first_note = note_stack.is_empty();
+
     note_stack.push(note);
     channels_by_notes[note] = channel;
     velocities_by_notes[note] = velocity;
@@ -485,6 +496,7 @@ void Proxy::push_note_on(
     push_resets_for_new_note<true>(
         time_offset,
         channel,
+        is_first_note,
         is_above_anchor,
         old_channel_stats,
         old_channel_stats_below,
@@ -511,6 +523,7 @@ void Proxy::push_note_on(
     push_resets_for_new_note<false>(
         time_offset,
         channel,
+        is_first_note,
         is_above_anchor,
         old_channel_stats,
         old_channel_stats_below,
@@ -545,6 +558,7 @@ template<bool is_pre_note_on_setup>
 void Proxy::push_resets_for_new_note(
         double const time_offset,
         Midi::Channel const new_note_channel,
+        bool const is_first_note,
         bool const is_above_anchor,
         NoteStack::ChannelStats const& old_channel_stats,
         NoteStack::ChannelStats const& old_channel_stats_below,
@@ -573,6 +587,16 @@ void Proxy::push_resets_for_new_note(
                 channel_stats_above,
                 reset_value,
                 out_cc
+            );
+        }
+
+        if (is_first_note && (Toggle)rule.fallback.get_value() == Toggle::ON) {
+            push_controller_event(
+                time_offset,
+                manager_channel,
+                out_cc,
+                reset_value,
+                is_pre_note_on_setup
             );
         }
 
@@ -904,6 +928,8 @@ void Proxy::process_controller_event(
     size_t target_channels_count;
     bool matched = false;
 
+    bool const is_note_stack_empty = note_stack.is_empty();
+
     for (size_t i = 0; i != RULES; ++i) {
         Rule& rule = rules[i];
         ControllerId const rule_ctl_id = (ControllerId)rule.in_cc.get_value();
@@ -925,107 +951,111 @@ void Proxy::process_controller_event(
         );
         Midi::Note note;
 
-        switch ((Target)rule.target.get_value()) {
-            case Target::TRG_ALL_BELOW_ANCHOR:
-                note_stack_below.collect_active_channels(
-                    channels_by_notes, target_channels, target_channels_count
-                );
-                break;
+        if (is_note_stack_empty && (Toggle)rule.fallback.get_value() == Toggle::ON) {
+            target_channels[target_channels_count++] = manager_channel;
+        } else {
+            switch ((Target)rule.target.get_value()) {
+                case Target::TRG_ALL_BELOW_ANCHOR:
+                    note_stack_below.collect_active_channels(
+                        channels_by_notes, target_channels, target_channels_count
+                    );
+                    break;
 
-            case Target::TRG_ALL_ABOVE_ANCHOR:
-                note_stack_above.collect_active_channels(
-                    channels_by_notes, target_channels, target_channels_count
-                );
-                break;
+                case Target::TRG_ALL_ABOVE_ANCHOR:
+                    note_stack_above.collect_active_channels(
+                        channels_by_notes, target_channels, target_channels_count
+                    );
+                    break;
 
-            case Target::TRG_LOWEST:
-                if (!note_stack.is_empty()) {
-                    note = note_stack.lowest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_LOWEST:
+                    if (!note_stack.is_empty()) {
+                        note = note_stack.lowest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_HIGHEST:
-                if (!note_stack.is_empty()) {
-                    note = note_stack.highest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_HIGHEST:
+                    if (!note_stack.is_empty()) {
+                        note = note_stack.highest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_OLDEST:
-                if (!note_stack.is_empty()) {
-                    note = note_stack.oldest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_OLDEST:
+                    if (!note_stack.is_empty()) {
+                        note = note_stack.oldest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_NEWEST:
-                if (!note_stack.is_empty()) {
-                    note = note_stack.top();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_NEWEST:
+                    if (!note_stack.is_empty()) {
+                        note = note_stack.top();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_LOWEST_BELOW_ANCHOR:
-                if (!note_stack_below.is_empty()) {
-                    note = note_stack_below.lowest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_LOWEST_BELOW_ANCHOR:
+                    if (!note_stack_below.is_empty()) {
+                        note = note_stack_below.lowest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_HIGHEST_BELOW_ANCHOR:
-                if (!note_stack_below.is_empty()) {
-                    note = note_stack_below.highest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_HIGHEST_BELOW_ANCHOR:
+                    if (!note_stack_below.is_empty()) {
+                        note = note_stack_below.highest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_OLDEST_BELOW_ANCHOR:
-                if (!note_stack_below.is_empty()) {
-                    note = note_stack_below.oldest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_OLDEST_BELOW_ANCHOR:
+                    if (!note_stack_below.is_empty()) {
+                        note = note_stack_below.oldest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_NEWEST_BELOW_ANCHOR:
-                if (!note_stack_below.is_empty()) {
-                    note = note_stack_below.top();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_NEWEST_BELOW_ANCHOR:
+                    if (!note_stack_below.is_empty()) {
+                        note = note_stack_below.top();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_LOWEST_ABOVE_ANCHOR:
-                if (!note_stack_above.is_empty()) {
-                    note = note_stack_above.lowest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_LOWEST_ABOVE_ANCHOR:
+                    if (!note_stack_above.is_empty()) {
+                        note = note_stack_above.lowest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_HIGHEST_ABOVE_ANCHOR:
-                if (!note_stack_above.is_empty()) {
-                    note = note_stack_above.highest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_HIGHEST_ABOVE_ANCHOR:
+                    if (!note_stack_above.is_empty()) {
+                        note = note_stack_above.highest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_OLDEST_ABOVE_ANCHOR:
-                if (!note_stack_above.is_empty()) {
-                    note = note_stack_above.oldest();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_OLDEST_ABOVE_ANCHOR:
+                    if (!note_stack_above.is_empty()) {
+                        note = note_stack_above.oldest();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_NEWEST_ABOVE_ANCHOR:
-                if (!note_stack_above.is_empty()) {
-                    note = note_stack_above.top();
-                    target_channels[target_channels_count++] = channels_by_notes[note];
-                }
-                break;
+                case Target::TRG_NEWEST_ABOVE_ANCHOR:
+                    if (!note_stack_above.is_empty()) {
+                        note = note_stack_above.top();
+                        target_channels[target_channels_count++] = channels_by_notes[note];
+                    }
+                    break;
 
-            case Target::TRG_GLOBAL:
-            default:
-                target_channels[target_channels_count++] = manager_channel;
-                break;
+                case Target::TRG_GLOBAL:
+                default:
+                    target_channels[target_channels_count++] = manager_channel;
+                    break;
+            }
         }
 
         if (target_channels_count != 0) {

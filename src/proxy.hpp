@@ -161,7 +161,17 @@ class Proxy : public Midi::EventHandler
 
             Z1SUS   = 89,           ///< Zone 1 handle sustain pedal
 
-            PARAM_ID_COUNT = 90,
+            Z1R1FB  = 90,           ///< Zone 1 Rule 1 global fallback
+            Z1R2FB  = 91,           ///< Zone 1 Rule 2 global fallback
+            Z1R3FB  = 92,           ///< Zone 1 Rule 3 global fallback
+            Z1R4FB  = 93,           ///< Zone 1 Rule 4 global fallback
+            Z1R5FB  = 94,           ///< Zone 1 Rule 5 global fallback
+            Z1R6FB  = 95,           ///< Zone 1 Rule 6 global fallback
+            Z1R7FB  = 96,           ///< Zone 1 Rule 7 global fallback
+            Z1R8FB  = 97,           ///< Zone 1 Rule 8 global fallback
+            Z1R9FB  = 98,           ///< Zone 1 Rule 9 global fallback
+
+            PARAM_ID_COUNT = 99,
             INVALID_PARAM_ID = PARAM_ID_COUNT,
         };
 
@@ -412,6 +422,7 @@ class Proxy : public Midi::EventHandler
                 Param midpoint;
                 Param reset;
                 Param invert;
+                Param fallback;
 
                 double last_input_value;
         };
@@ -631,8 +642,8 @@ class Proxy : public Midi::EventHandler
 
                 static constexpr size_t ENTRIES = 0x80;
                 static constexpr size_t MASK = ENTRIES - 1;
-                static constexpr int MULTIPLIER = 667;
-                static constexpr int SHIFT = 7;
+                static constexpr int MULTIPLIER = 1679;
+                static constexpr int SHIFT = 5;
 
                 static int hash(std::string const& name) noexcept;
 
@@ -739,6 +750,7 @@ class Proxy : public Midi::EventHandler
         void push_resets_for_new_note(
                 double const time_offset,
                 Midi::Channel const new_note_channel,
+                bool const is_first_note,
                 bool const is_above_anchor,
                 NoteStack::ChannelStats const& old_channel_stats,
                 NoteStack::ChannelStats const& old_channel_stats_below,

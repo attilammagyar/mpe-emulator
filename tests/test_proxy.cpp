@@ -729,7 +729,7 @@ void test_global_cc_reset(Proxy::Reset const reset)
 }
 
 
-TEST(when_reset_is_on_for_a_global_cc_event_then_its_initial_value_is_sent_on_reset, {
+TEST(when_reset_is_on_for_a_global_cc_event_then_its_reset_value_is_sent_on_reset, {
     test_global_cc_reset(Proxy::Reset::RST_INIT);
     test_global_cc_reset(Proxy::Reset::RST_LAST);
 })
@@ -2209,6 +2209,154 @@ TEST(when_a_sustained_note_is_stolen_then_its_note_off_is_no_longer_deferred, {
             "t=3.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
             "t=3.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x7f (v=1.000)",
             "t=4.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_a_rule_has_fallback_to_global_and_no_notes_are_playing_then_its_cc_is_sent_on_the_manager_channel, {
+    Proxy proxy;
+
+    turn_off_reset_for_all_rules(proxy);
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_HIGHEST);
+    proxy.rules[0].fallback.set_value(Proxy::Toggle::ON);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+    proxy.rules[1].fallback.set_value(Proxy::Toggle::ON);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_OLDEST);
+    proxy.rules[2].fallback.set_value(Proxy::Toggle::ON);
+
+    proxy.rules[3].in_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST);
+    proxy.rules[3].fallback.set_value(Proxy::Toggle::ON);
+
+    proxy.note_on(0.1, 0, 60, 127);     /* channel=1, oldest */
+    proxy.note_on(0.2, 0, 67, 127);     /* channel=2, highest */
+    proxy.note_on(0.3, 0, 48, 127);     /* channel=3, lowest */
+    proxy.note_on(0.4, 0, 64, 127);     /* channel=4, newest */
+
+    proxy.begin_processing();
+
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
+    proxy.pitch_wheel_change(2.0, 6, 10000);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
+    proxy.channel_pressure(4.0, 7, 30);
+
+    proxy.note_off(5.0, 0, 60, 127);
+    proxy.note_off(6.0, 0, 67, 127);
+    proxy.note_off(7.0, 0, 48, 127);
+    proxy.note_off(8.0, 0, 64, 127);
+
+    proxy.control_change(9.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 48);
+    proxy.pitch_wheel_change(10.0, 6, 1000);
+    proxy.control_change(11.0, 8, Proxy::ControllerId::VOLUME, 32);
+    proxy.channel_pressure(12.0, 7, 0);
+
+    assert_out_events<12>(
+        {
+            "t=1.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
+            "t=4.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
+            "t=5.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x7f (v=1.000)",
+            "t=6.000 cmd=NOTE_OFF ch=2 d1=0x43 d2=0x7f (v=1.000)",
+            "t=7.000 cmd=NOTE_OFF ch=3 d1=0x30 d2=0x7f (v=1.000)",
+            "t=8.000 cmd=NOTE_OFF ch=4 d1=0x40 d2=0x7f (v=1.000)",
+            "t=9.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x30 (v=0.378)",
+            "t=10.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x68 d2=0x07 (v=0.061)",
+            "t=11.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x20 (v=0.252)",
+            "t=12.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x00 d2=0x00 (v=0.000)",
+        },
+        proxy
+    );
+})
+
+
+TEST(when_a_rule_has_fallback_to_global_and_no_notes_are_playing_then_its_cc_is_reset_on_the_manager_channel_as_well, {
+    Proxy proxy;
+
+    proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].out_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
+    proxy.rules[0].target.set_value(Proxy::Target::TRG_HIGHEST);
+    proxy.rules[0].fallback.set_value(Proxy::Toggle::ON);
+    proxy.rules[0].reset.set_value(Proxy::Reset::RST_INIT);
+    proxy.rules[0].init_value.set_value(8192);
+
+    proxy.rules[1].in_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].out_cc.set_value(Proxy::ControllerId::CHANNEL_PRESSURE);
+    proxy.rules[1].target.set_value(Proxy::Target::TRG_NEWEST);
+    proxy.rules[1].fallback.set_value(Proxy::Toggle::ON);
+    proxy.rules[1].reset.set_value(Proxy::Reset::RST_LAST);
+    proxy.rules[1].init_value.set_value(0);
+
+    proxy.rules[2].in_cc.set_value(Proxy::ControllerId::MODULATION_WHEEL);
+    proxy.rules[2].out_cc.set_value(Proxy::ControllerId::SOUND_5);
+    proxy.rules[2].target.set_value(Proxy::Target::TRG_OLDEST);
+    proxy.rules[2].fallback.set_value(Proxy::Toggle::ON);
+    proxy.rules[2].reset.set_value(Proxy::Reset::RST_INIT);
+    proxy.rules[2].init_value.set_value(0);
+
+    proxy.rules[3].in_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].out_cc.set_value(Proxy::ControllerId::VOLUME);
+    proxy.rules[3].target.set_value(Proxy::Target::TRG_LOWEST);
+    proxy.rules[3].fallback.set_value(Proxy::Toggle::ON);
+    proxy.rules[3].reset.set_value(Proxy::Reset::RST_LAST);
+    proxy.rules[3].init_value.set_value(0);
+
+    proxy.begin_processing();
+
+    proxy.control_change(1.0, 5, Proxy::ControllerId::MODULATION_WHEEL, 110);
+    proxy.pitch_wheel_change(2.0, 6, 10000);
+    proxy.control_change(3.0, 8, Proxy::ControllerId::VOLUME, 96);
+    proxy.channel_pressure(4.0, 7, 30);
+
+    proxy.note_on(5.0, 0, 60, 127);
+    proxy.note_on(6.0, 0, 67, 127);
+
+    assert_out_events<32>(
+        {
+            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x6e (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x10 d2=0x4e (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
+            "t=4.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236)",
+            "t=5.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
+            "t=5.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
+            "t=5.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236) pre-NOTE_ON setup",
+            "t=5.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x1e d2=0x00 (v=0.236) pre-NOTE_ON setup",
+            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x00 (v=0.000) pre-NOTE_ON setup",
+            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x00 (v=0.000) pre-NOTE_ON setup",
+            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756) pre-NOTE_ON setup",
+            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x07 d2=0x60 (v=0.756) pre-NOTE_ON setup",
+            "t=5.000 cmd=NOTE_ON ch=1 d1=0x3c d2=0x7f (v=1.000)",
+            "t=5.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x40 (v=0.500)",
+            "t=5.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x00 d2=0x40 (v=0.500)",
+            "t=5.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236)",
+            "t=5.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x1e d2=0x00 (v=0.236)",
+            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x00 (v=0.000)",
+            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x00 (v=0.000)",
+            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
+            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x07 d2=0x60 (v=0.756)",
+            "t=6.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x00 d2=0x40 (v=0.500)",
+            "t=6.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
+            "t=6.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x1e d2=0x00 (v=0.236)",
+            "t=6.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x1e d2=0x00 (v=0.236) pre-NOTE_ON setup",
+            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x00 (v=0.000) pre-NOTE_ON setup",
+            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x07 d2=0x60 (v=0.756) pre-NOTE_ON setup",
+            "t=6.000 cmd=NOTE_ON ch=2 d1=0x43 d2=0x7f (v=1.000)",
+            "t=6.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x00 d2=0x40 (v=0.500)",
+            "t=6.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x1e d2=0x00 (v=0.236)",
+            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x00 (v=0.000)",
+            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x07 d2=0x60 (v=0.756)",
         },
         proxy
     );
