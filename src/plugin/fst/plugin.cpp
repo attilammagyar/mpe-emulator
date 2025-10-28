@@ -434,17 +434,13 @@ void FstPlugin::populate_parameters(
         Proxy::ControllerId::CHANNEL_PRESSURE
     );
 
-    constexpr int param_begin = (int)Proxy::ParamId::MCM;
-    constexpr int param_end = (int)Proxy::ParamId::INVALID_PARAM_ID;
-
-    for (int param_id = param_begin; param_id != param_end; ++param_id) {
-        parameters[index++] = Parameter(
-            proxy.get_param_name((Proxy::ParamId)param_id).c_str(),
-            Strings::PARAMS[param_id],
-            (Proxy::ParamId)param_id,
-            Proxy::ControllerId::INVALID_CONTROLLER_ID
-        );
-    }
+    export_parameters(
+        proxy,
+        parameters,
+        (int)Proxy::ParamId::MCM,
+        (int)Proxy::ParamId::Z1SUS,
+        index
+    );
 
     MPE_EMULATOR_ASSERT(index == PATCH_CHANGED_PARAMETER_INDEX);
 
@@ -455,7 +451,33 @@ void FstPlugin::populate_parameters(
         Proxy::ControllerId::INVALID_CONTROLLER_ID
     );
 
-    parameters[PATCH_CHANGED_PARAMETER_INDEX] = patch_changed;
+    parameters[index++] = patch_changed;
+
+    export_parameters(
+        proxy,
+        parameters,
+        (int)Proxy::ParamId::Z1SUS,
+        (int)Proxy::ParamId::INVALID_PARAM_ID,
+        index
+    );
+}
+
+
+void FstPlugin::export_parameters(
+        Proxy& proxy,
+        Parameters& parameters,
+        int const param_id_begin,
+        int const param_id_end,
+        size_t& index
+) noexcept {
+    for (int param_id = param_id_begin; param_id != param_id_end; ++param_id) {
+        parameters[index++] = Parameter(
+            proxy.get_param_name((Proxy::ParamId)param_id).c_str(),
+            Strings::PARAMS[param_id],
+            (Proxy::ParamId)param_id,
+            Proxy::ControllerId::INVALID_CONTROLLER_ID
+        );
+    }
 }
 
 

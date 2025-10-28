@@ -88,7 +88,7 @@ class FstPlugin : public Midi::EventHandler
             + 1                                         /* Dummy Parameter */
         );
 
-        static constexpr size_t PATCH_CHANGED_PARAMETER_INDEX = NUMBER_OF_PARAMETERS - 1;
+        static constexpr size_t PATCH_CHANGED_PARAMETER_INDEX = (size_t)Proxy::ParamId::Z1SUS;
         static constexpr char const* PATCH_CHANGED_PARAMETER_SHORT_NAME = "Changed";
         static constexpr char const* PATCH_CHANGED_PARAMETER_LONG_NAME = "Settings Changed";
 
@@ -327,6 +327,14 @@ class FstPlugin : public Midi::EventHandler
             void* const pointer = NULL,
             float const fvalue = 0.0f
         ) const noexcept;
+
+        static void export_parameters(
+            Proxy& proxy,
+            Parameters& parameters,
+            int const param_id_begin,
+            int const param_id_end,
+            size_t& index
+        ) noexcept;
 
         void clear_received_midi_cc() noexcept;
 
