@@ -119,8 +119,12 @@ html, body {
 }
 
 .block h1 label.toggle {
-  margin-right: 3px;
+  margin-right: 1px;
   float: right;
+}
+
+.block h1 label.toggle.rule span {
+  padding-right: 2px;
 }
 
 .block h1 label.toggle input {
@@ -154,8 +158,13 @@ html, body {
 }
 
 .block h1 label.reset {
-  margin-right: 3px;
+  margin-right: 1px;
   float: right;
+}
+
+.block h1 label.reset span,
+.block h1 label.dist span {
+  padding-right: 2px;
 }
 
 .block h1 label.reset input {
@@ -312,8 +321,9 @@ svg.icon {
   filter: drop-shadow(2px 2px 1px #030408);
 }
 
+#relvel,
 #mcm {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 
 h1 span {
@@ -356,8 +366,11 @@ function make_tabs(active)
           <label id="mcm" class="toggle">
             <span>MCM </span><input type="text" />
           </label>
-          <label class="toggle">
+          <label id="relvel" class="toggle">
             <span>RelVel=TrigVel </span><input type="text" />
+          </label>
+          <label class="toggle">
+            <span>Sustain Pedal </span><input type="text" />
           </label>
         </h1>
         <div id="main-body" class="block">
@@ -475,13 +488,16 @@ window.onload = function ()
         h.innerHTML = [
           '<span>Rule ' + String(i) + '</span>',
           '<label class="dist rule">',
-            '<span>Dist </span><input type="text" />',
+            '<span>Dist</span><input type="text" />',
           '</label>',
           '<label class="reset rule">',
-            '<span>Reset </span><input type="text" />',
+            '<span>Res</span><input type="text" />',
           '</label>',
           '<label class="toggle rule">',
-            '<span>Invert </span><input type="text" />',
+            '<span>Inv</span><input type="text" />',
+          '</label>',
+          '<label class="toggle rule">',
+            '<span>FB</span><input type="text" />',
           '</label>',
         ].join("");
 

@@ -359,13 +359,14 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 38 + KNOB_W * 4, 30, Proxy::ParamId::Z1TRB, knob_states);
     KNOBD(zone_1_body, 38 + KNOB_W * 5, 30, Proxy::ParamId::Z1TRA, knob_states);
 
-    TOGG(zone_1_body, 195, 4, 110, 24, 89, Proxy::ParamId::Z1ORV);
-    TOGG(zone_1_body, 329, 4, 53, 24, 32, Proxy::ParamId::MCM);
+    TOGG(zone_1_body, 91, 4, 106, 24, 85, Proxy::ParamId::Z1SUS);
+    TOGG(zone_1_body, 209, 4, 110, 24, 89, Proxy::ParamId::Z1ORV);
+    TOGG(zone_1_body, 331, 4, 53, 24, 32, Proxy::ParamId::MCM);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(19, 149);
+    POSITION_RELATIVE_BEGIN(18, 149);
 
     DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R1IN, controller_selector);
     DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R1OU, controller_selector);
@@ -373,10 +374,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R1TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R1DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R1NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R1RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R1MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R1DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R1FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R1NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R1RS);
+    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R1MP, midpoint_states);
+    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R1DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -389,10 +391,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R2TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R2DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R2NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R2RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R2MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R2DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R2FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 20, Proxy::ParamId::Z1R2NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R2RS);
+    MIDP(zone_1_body, 252, 5, Proxy::ParamId::Z1R2MP, midpoint_states);
+    DPEI(zone_1_body, 273, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R2DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -405,15 +408,16 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R3TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R3DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R3NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R3RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R3MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R3DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R3FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R3NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R3RS);
+    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R3MP, midpoint_states);
+    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R3DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(19, 287);
+    POSITION_RELATIVE_BEGIN(18, 287);
 
     DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R4IN, controller_selector);
     DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R4OU, controller_selector);
@@ -421,10 +425,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R4TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R4DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R4NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R4RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R4MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R4DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R4FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R4NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R4RS);
+    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R4MP, midpoint_states);
+    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R4DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -437,10 +442,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R5TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R5DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R5NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R5RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R5MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R5DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R5FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 20, Proxy::ParamId::Z1R5NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R5RS);
+    MIDP(zone_1_body, 252, 5, Proxy::ParamId::Z1R5MP, midpoint_states);
+    DPEI(zone_1_body, 273, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R5DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -453,15 +459,16 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R6TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R6DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R6NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R6RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R6MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R6DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R6FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R6NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R6RS);
+    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R6MP, midpoint_states);
+    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R6DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(19, 425);
+    POSITION_RELATIVE_BEGIN(18, 425);
 
     DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R7IN, controller_selector);
     DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R7OU, controller_selector);
@@ -469,10 +476,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R7TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R7DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R7NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R7RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R7MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R7DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R7FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R7NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R7RS);
+    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R7MP, midpoint_states);
+    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R7DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -485,10 +493,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R8TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R8DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R8NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R8RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R8MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R8DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R8FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 20, Proxy::ParamId::Z1R8NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R8RS);
+    MIDP(zone_1_body, 252, 5, Proxy::ParamId::Z1R8MP, midpoint_states);
+    DPEI(zone_1_body, 273, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R8DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -501,10 +510,11 @@ void GUI::build_zone_1_body(
     KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R9TR, knob_states);
     KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R9DL, knob_states);
 
-    TOGG(zone_1_body,  66, 4, 62, 24, 41, Proxy::ParamId::Z1R9NV);
-    DPET(zone_1_body, 138, 5, 73, 21, 38, 34, Proxy::ParamId::Z1R9RS);
-    MIDP(zone_1_body, 251, 5, Proxy::ParamId::Z1R9MP, midpoint_states);
-    DPEI(zone_1_body, 272, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R9DT, distortions);
+    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R9FB);
+    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R9NV);
+    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R9RS);
+    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R9MP, midpoint_states);
+    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R9DT, distortions);
 
     POSITION_RELATIVE_END();
 
