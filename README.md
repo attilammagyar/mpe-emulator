@@ -748,6 +748,25 @@ track. If you see something there that is clearly wrong on MPE Emulator's side,
 and it's not a [known quirk with a particular host and plugin type combination](#bugs-known)
 then please [report it as a bug](https://github.com/attilammagyar/mpe-emulator/issues).
 
+Issues with polyphonic expression can also be the result of the DAW
+application merging the raw MIDI data together with MPE Emulator's output. In
+some cases, this is a bug in the DAW application
+(e.g. [REAPER 7.18 and below](#bugs-known-reaper-7-18)), in other cases, the
+DAW application should have an option somewhere to turn this off.
+
+If all else fails, a workaround might be to sacrifice a channel in order to
+separate the MPE stream from the raw MIDI stream:
+
+ * Set both your synthesizer and MPE Emulator to use the
+   [lower zone with 14 channels](#usage-zone).
+
+ * Set your MIDI keyboard to use channel 16.
+
+Alternatively, you can use channel 1 on your keyboard, and configure the upper
+zone with 14 channels in your synthesizer and in MPE Emulator. What's important
+is to have the keyboard use a MIDI channel which is outside the MPE zone that
+is used by the synthesizer and MPE Emulator.
+
 <a href="#toc">Table of Contents</a>
 
 <a id="faq"></a>
