@@ -1,7 +1,7 @@
 MPE Emulator
 ============
 
-A VST plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic
+A VST® plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic
 Expression) capabilities based on user-defined mappings and rules, for Linux
 and Windows.
 
@@ -20,8 +20,7 @@ https://github.com/attilammagyar/mpe-emulator .
 (The source code is also available on GitHub under the terms of the GNU General
 Public License Version 3.)
 
-VST® is a trademark of Steinberg Media Technologies GmbH, registered in
-Europe and other countries.
+VST is a registered trademark of Steinberg Media Technologies GmbH.
 
 MPE Emulator Lite
 -----------------

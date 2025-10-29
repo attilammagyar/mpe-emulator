@@ -1,7 +1,7 @@
 MPE Emulator
 ============
 
-A [VST plugin](https://en.wikipedia.org/wiki/Virtual_Studio_Technology) for
+A [VST® plugin](https://en.wikipedia.org/wiki/Virtual_Studio_Technology) for
 enhancing non-MPE MIDI streams with MPE
 ([MIDI Polyphonic Expression](https://en.wikipedia.org/wiki/MIDI#MIDI_Polyphonic_Expression))
 capabilities based on user-defined mappings and rules, for Linux and Windows.
@@ -28,8 +28,7 @@ Public License Version 3.)
 See the "[Before Installing: Choosing a Distribution](#install-dist)" section
 below to find out which package you need.
 
-> VST® is a trademark of Steinberg Media Technologies GmbH, registered in
-> Europe and other countries.
+> VST is a registered trademark of Steinberg Media Technologies GmbH.
 
 <a id="toc"></a>
 
