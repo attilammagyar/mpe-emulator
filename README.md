@@ -733,39 +733,47 @@ support for MIDI and its extensions like MPE.
 
 #### The mod wheel or a CC event is not handled with polyphony despite matching one of the rules
 
-Though the MPE specification allows basically any controller event to be sent
-on the polyphonic channels (member channels) and to be handled individually for
-each note, many commercial synthesizers use only the pitch wheel, the channel
-pressure, and CC 74 (a.k.a. Brightness, Timbre, Sound 5, etc.) with polyphony,
-because these are the ones that are mandated by the standard. If you set up a
-rule in MPE Emulator to make e.g. the mod wheel polyphonic and the synthesizer
-ignores it or still applies it globally, then MPE Emulator has no influence on
-it, and the synthesizer is doing nothing wrong with respect to the standard.
+This can occur in the scenarios explained below. Most DAW applications have a
+plugin or a special MIDI inspection tool which lets you peek into the log of
+raw MIDI messages that are sent and received by each plugin, bus, and MIDI
+track. You can use that tool to confirm what is going on in your specific case.
+If you see something there that is clearly wrong on MPE Emulator's side, and
+it's not a
+[known quirk with a particular host and plugin type combination](#bugs-known)
+then please
+[report it as a bug](https://github.com/attilammagyar/mpe-emulator/issues).
 
-Most DAW applications have a plugin or a special tool which lets you peek into
-the raw MIDI messages that are sent and received by each plugin, bus, and MIDI
-track. If you see something there that is clearly wrong on MPE Emulator's side, 
-and it's not a [known quirk with a particular host and plugin type combination](#bugs-known)
-then please [report it as a bug](https://github.com/attilammagyar/mpe-emulator/issues).
+ * **The synth supports MPE only for pitch bend, channel pressure, and CC 74
+   (a.k.a. Brightness, Timbre, Sound 5, etc.).**
 
-Issues with polyphonic expression can also be the result of the DAW
-application merging the raw MIDI data together with MPE Emulator's output. In
-some cases, this is a bug in the DAW application
-(e.g. [REAPER 7.18 and below](#bugs-known-reaper-7-18)), in other cases, the
-DAW application should have an option somewhere to turn this off.
+   Though the MPE specification allows basically any controller event to be
+   sent on the polyphonic channels (member channels) and to be handled
+   individually for each note, many commercial synthesizers use only the pitch
+   wheel, the channel pressure, and CC 74 with polyphony, because these are the
+   ones that are mandated by the standard. If you set up a rule in MPE Emulator
+   to make e.g. the mod wheel polyphonic and the synthesizer ignores it or
+   still applies it globally, then MPE Emulator has no influence on it, and the
+   synthesizer is doing nothing wrong with respect to the standard either.
 
-If all else fails, a workaround might be to sacrifice a channel in order to
-separate the MPE stream from the raw MIDI stream:
+ * **The DAW merges the raw single channel MIDI messages with MPE Emulator's
+   output.**
 
- * Set both your synthesizer and MPE Emulator to use the
-   [lower zone with 14 channels](#usage-zone).
+   In some cases, this is a bug in the DAW application (e.g.
+   [REAPER 7.18 and below](#bugs-known-reaper-7-18)), in other cases, the DAW
+   application should have an option somewhere to turn this off.
 
- * Set your MIDI keyboard to use channel 16.
+   If all else fails, a **workaround** might be to sacrifice a channel in order
+   to separate the MPE stream from the raw single channel MIDI stream:
 
-Alternatively, you can use channel 1 on your keyboard, and configure the upper
-zone with 14 channels in your synthesizer and in MPE Emulator. What's important
-is to have the keyboard use a MIDI channel which is outside the MPE zone that
-is used by the synthesizer and MPE Emulator.
+    * Set both your synthesizer and MPE Emulator to use the
+      [lower zone with 14 channels](#usage-zone).
+
+    * Set your MIDI keyboard to use channel 16.
+
+   Alternatively, you can use channel 1 on your keyboard, and configure the
+   upper zone with 14 channels in your synthesizer and in MPE Emulator. What's
+   important is to have the keyboard use a MIDI channel which is outside the
+   MPE zone that is used by the synthesizer and MPE Emulator.
 
 <a href="#toc">Table of Contents</a>
 
