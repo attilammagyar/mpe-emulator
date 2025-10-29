@@ -1120,6 +1120,16 @@ non-linearity curve that the rule will use when its
 "<a href="#bugs-known">Known Issues and Quirks</a>" section, please report them at
 <a href="https://github.com/attilammagyar/mpe-emulator/issues">https://github.com/attilammagyar/mpe-emulator/issues</a>.</p>
 
+<p>When reporting an issue, please provide at least the following information:</p>
+
+<ul>
+<li>What MPE Emulator version are you using?</li>
+<li>What host application or DAW are you using?</li>
+<li>What operating system are you using?</li>
+<li>How is MPE Emulator set up?</li>
+<li>How can the bug be reproduced, what steps can trigger it?</li>
+</ul>
+
 <p><a href="#toc">Table of Contents</a></p>
 
 <p><a id="bugs-known"></a></p>
@@ -1217,6 +1227,26 @@ the raw MIDI messages that are sent and received by each plugin, bus, and MIDI
 track. If you see something there that is clearly wrong on MPE Emulator's side, 
 and it's not a <a href="#bugs-known">known quirk with a particular host and plugin type combination</a>
 then please <a href="https://github.com/attilammagyar/mpe-emulator/issues">report it as a bug</a>.</p>
+
+<p>Issues with polyphonic expression can also be the result of the DAW
+application merging the raw MIDI data together with MPE Emulator's output. In
+some cases, this is a bug in the DAW application
+(e.g. <a href="#bugs-known-reaper-7-18">REAPER 7.18 and below</a>), in other cases, the
+DAW application should have an option somewhere to turn this off.</p>
+
+<p>If all else fails, a workaround might be to sacrifice a channel in order to
+separate the MPE stream from the raw MIDI stream:</p>
+
+<ul>
+<li><p>Set both your synthesizer and MPE Emulator to use the
+<a href="#usage-zone">lower zone with 14 channels</a>.</p></li>
+<li><p>Set your MIDI keyboard to use channel 16.</p></li>
+</ul>
+
+<p>Alternatively, you can use channel 1 on your keyboard, and configure the upper
+zone with 14 channels in your synthesizer and in MPE Emulator. What's important
+is to have the keyboard use a MIDI channel which is outside the MPE zone that
+is used by the synthesizer and MPE Emulator.</p>
 
 <p><a href="#toc">Table of Contents</a></p>
 
@@ -1369,7 +1399,7 @@ MPE Emulator and want to compile it themselves.</p>
 </ul>
 
 <p><strong>Note</strong>: the <code>lib/</code> directory does not include the whole SDK packages, it only
-contains what's required for compiling MPE Emulator.</p>
+contains what is required for compiling MPE Emulator.</p>
 
 <h4>Linux</h4>
 
@@ -1379,6 +1409,7 @@ the following packages need to be installed:</p>
 <pre><code>apt-get install \
     binutils \
     build-essential \
+    cppcheck \
     g++ \
     gcc-multilib \
     g++-multilib \
@@ -1397,6 +1428,10 @@ the following packages need to be installed:</p>
 
 <h3>Compiling</h3>
 
+<p>Successfully compiled plugin files are placed in the platform-specific
+subdirectories inside the <code>dist</code> directory; copy them to the appropriate plugin
+directories, as described in the <a href="#install">Installation</a> section.</p>
+
 <h4>Windows</h4>
 
 <p>Assuming that you have installed MinGW-w64 to <code>C:\mingw64</code>, you can use the
@@ -1412,8 +1447,6 @@ mingw32-make.exe all
 
 <h4>Linux</h4>
 
-<p>Run <code>make check</code> for running tests.</p>
-
 <p>The following commands (on a 64 bit Linux environment) will compile MPE
 Emulator for 64 bit Windows, 32 bit Windows, <code>x86_64</code> Linux, <code>x86</code> Linux, and
 <code>RISC-V 64</code> Linux respectively:</p>
@@ -1424,6 +1457,8 @@ TARGET_PLATFORM=x86_64-gpp make all
 TARGET_PLATFORM=i686-gpp make all
 TARGET_PLATFORM=riscv64-gpp make all
 </code></pre>
+
+<p>Run <code>make check</code> in a similar fashion to run unit tests.</p>
 
 <p><a href="#toc">Table of Contents</a></p>
 
