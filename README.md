@@ -848,8 +848,7 @@ the pitch bend range as well.
 
 ### Why do you say FST instead of VST 2?
 
-> VST® is a trademark of Steinberg Media Technologies GmbH, registered in
-> Europe and other countries.
+> VST is a registered trademark of Steinberg Media Technologies GmbH.
 
 I'm not a lawyer, so I have no idea if it would be trademark infringement for
 me to claim VST 2.4 compatibility for MPE Emulator without obtaining a license
