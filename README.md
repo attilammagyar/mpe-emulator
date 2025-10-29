@@ -64,6 +64,7 @@ Table of Contents
  * [Frequently Asked Questions](#faq)
     * [Mac version?](#faq-mac)
     * [FL Studio: How to set up MPE Emulator?](#faq-flstudio)
+    * [FL Studio: How to set up the Sustain Pedal?](#faq-flstudio-sustain)
     * [Why do you say FST instead of VST 2?](#faq-fst)
  * [Development](#dev)
     * [Tools](#dev-tools)
@@ -370,6 +371,18 @@ The two icons at the top left corner of the "Main" configuration section allow
 saving and loading settings as ordinary files, e.g. for transferring them
 across projects, different host applications, computers, etc.
 
+#### Handle Sustain Pedal (Sustain Pedal, Z1SUS)
+
+The default behaviour of MPE Emulator is to output Note Off events immediately
+when they are received and stop sending any polyphonic expression messages that
+lost their targets with the stopped note, regardless of whether the sustain
+pedal is held. When this option is turned on, then MPE Emulator keeps track of
+the pedal's state, and when it is pressed, then sending Note Off events is
+deferred until the pedal is released again, or
+[voice stealing](#usage-zone-excess) occurs. Other than that, CC 64 (which is
+associated with the sustain pedal) events are handled according to the
+configured [rules](#usage-rule).
+
 #### Override Release Velocity With Triggered Velocity (RelVel=TrigVel, Z1ORV)
 
 Most MIDI keyboards emit Note Off events with note velocity set to either 0%,
@@ -400,6 +413,8 @@ Click on the switch to change the channel layout used by MPE Emulator:
 
 The number of channels to use as member channels. This determines the number of
 available polyphonic voices to use (within the limits of the synthesizer).
+
+<a id="usage-zone-excess"></a>
 
 #### Excess Note Handling (STEAL, Z1ENH)
 
@@ -565,16 +580,23 @@ Which polyphonic note (channel) to send the output of the rule:
 How much to distort the flat, linear curve of the controller with the selected
 [distortion function](#usage-rule-dist-type).
 
+<a id="usage-rule-fallback"></a>
+
+#### Global Fallback (FB, Z1RxFB)
+
+When no notes are playing, then send the expression events globally on the
+manager channel.
+
 <a id="usage-rule-invert"></a>
 
-#### Invert (Z1RxNV)
+#### Invert (Inv, Z1RxNV)
 
 Flip the controller: when 0% is received on the input, send 100%, and when the
 input is at 100%, then send 0%.
 
 <a id="usage-rule-reset"></a>
 
-#### Reset (Z1RxRS)
+#### Reset (Res, Z1RxRS)
 
 Select note initialization and reset behaviour. A reset can occur in one of two
 ways:
@@ -624,7 +646,7 @@ into different controllers, and to misuse it in various creative ways.
 
 <a id="usage-rule-dist-type"></a>
 
-#### Distortion Type (Z1RxDT)
+#### Distortion Type (Dist, Z1RxDT)
 
 Click on the second function graph icon at the top right corner of a rule, or
 use the mouse wheel while holding the mouse cursor over it to select the
@@ -849,13 +871,13 @@ the pitch bend range as well.
    MPE Emulator, and select the "_Browse parameters_" menu item.
 
 2. Find the CC parameter in the browser that you want to assign to one of the
-   knobs, faders, or other gadgets of your MIDI input device. Click on it with
-   the right mouse button.
+   knobs, faders, or other gadgets of your MIDI input device or your pedal.
+   Click on it with the right mouse button.
 
 3. Select the "_Link to controller..._" menu item.
 
-4. Turn the knob or move the fader on your MIDI input device until FL Studio
-   recognizes it.
+4. Turn the knob or move the fader on your MIDI input device, or press the
+   pedal until FL Studio recognizes it.
 
 **Note**:
 
@@ -868,6 +890,13 @@ the pitch bend range as well.
    [FL Studio seems to have some quirks](#bugs-known-fl-studio) when it comes
    to MIDI plugins (e.g. Pitch Bend messages emitted by the VST 3 version of
    MPE Emulator get messed up by FL Studio).
+
+ * Use CC 64 for setting up the sustain pedal, and the "_Channel Pressure
+   (Aftertouch)_" (VST 3) or "_Ch AT_" (FST, VST 2.4) parameter for setting up
+   channel pressure with the above method. To trigger a channel pressure event,
+   hold down a key on the MIDI keyboard before clicking on the "_Link to
+   controller..._" menu item, then click on the menu item, and then increase
+   the pressure on the key until FL Studio recognizes it.
 
 <a href="#toc">Table of Contents</a>
 
