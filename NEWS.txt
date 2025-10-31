@@ -1,3 +1,11 @@
+v1.1.0 (2025-11-??)
+ * Added ability to handle the sustain pedal, making it possible to send
+   expression events to sustained notes as well.
+ * Added ability for expression rules to fallback to the global channel
+   (manager channel) when all notes have received a Note Off event, allowing
+   expressions to optionally affect long note release tails as well.
+ * Documentation additions and improvements.
+
 v1.0.3 (2025-01-25)
  * Bugfix: the VST 3 plugin used to ignore certain requests by the host to
    clear its state (https://github.com/attilammagyar/mpe-emulator/issues/2).
