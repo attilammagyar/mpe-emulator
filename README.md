@@ -512,7 +512,9 @@ known to have some
 [bugs and quirks in some plugin type and host combinations](#bugs-known).)
 
 The available options are the same as for the [input](#usage-rule-in), but the
-**MIDI Learn** option is ignored for this parameter.
+**MIDI Learn** option is ignored for this parameter, and the **none** option
+means to swallow the corresponding MIDI messages, preventing subsequent plugins
+from receiving them.
 
 **Note**: if you accidentally open the controller selector, just click on the
 already selected item to close it.
