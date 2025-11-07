@@ -376,12 +376,14 @@ across projects, different host applications, computers, etc.
 The default behaviour of MPE Emulator is to output Note Off events immediately
 when they are received and stop sending any polyphonic expression messages that
 lost their targets with the stopped note, regardless of whether the sustain
-pedal is held. When this option is turned on, then MPE Emulator keeps track of
-the pedal's state, and when it is pressed, then sending Note Off events is
-deferred until the pedal is released again, or
-[voice stealing](#usage-zone-excess) occurs. Other than that, CC 64 (which is
-associated with the sustain pedal) events are handled according to the
-configured [rules](#usage-rule).
+pedal is held. Turning on this option makes MPE Emulator keep track of the
+pedal's state: when it is pressed, sending Note Off events is deferred until
+the pedal is released again, or [voice stealing](#usage-zone-excess) occurs.
+Other than that, CC 64 events (which are associated with the sustain pedal) are
+handled according to the configured [rules](#usage-rule), which means that if
+you don't want subsequent plugins to receive CC 64, then you have to set up a
+rule which takes it as its [input](#usage-rule-in), and its
+[output](#usage-rule-out) is set to **none**.
 
 #### Override Release Velocity With Triggered Velocity (RelVel=TrigVel, Z1ORV)
 
