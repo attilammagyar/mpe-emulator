@@ -2,13 +2,13 @@ MPE Emulator
 ============
 
 A [VST® plugin](https://en.wikipedia.org/wiki/Virtual_Studio_Technology) for
-enhancing non-MPE MIDI streams with MPE
+enhancing ordinary MIDI controllers with MPE
 ([MIDI Polyphonic Expression](https://en.wikipedia.org/wiki/MIDI#MIDI_Polyphonic_Expression))
-capabilities based on user-defined mappings and rules, for Linux and Windows.
+capabilities based on configurable mappings and rules, for Linux and Windows.
 
 MPE Emulator is a MIDI proxy: an intermediary plugin which turns
 non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or
-any MIDI Control Change (CC) message into polyphonic by applying them
+any MIDI control change (CC) message into polyphonic by applying them
 selectively to the lowest, highest, oldest, or newest note, either across the
 whole keyboard or restricted to a range of keys based on a configurable
 keyboard split point. It can also remap and reshape controller data, and do
@@ -77,13 +77,13 @@ Features
 --------
 
  * Retroactively add MPE functionality to non-MPE-capable MIDI input devices.
- * Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and
+ * Remap controllers, e.g. turn modulation wheel data into MPE aftertouch or
    vice-versa.
  * Invert MIDI expression and controller data, and apply various other
-   distortions.
- * Use the trigger velocity of notes as release velocity for synths that
+   transformations.
+ * Use the trigger velocity of notes as release velocity for synths that can
    utilize it.
- * Split the keyboard and route polyphonic expressions to the two halves with
+ * Split the keyboard and route polyphonic expressions to the two sections with
    different rules.
  * Transpose the two sides of the split point independently from each other.
    (E.g. extend the range of small keyboards, or play the same note with

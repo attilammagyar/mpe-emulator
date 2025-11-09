@@ -1,13 +1,13 @@
 MPE Emulator
 ============
 
-A VST® plugin for enhancing non-MPE MIDI streams with MPE (MIDI Polyphonic
-Expression) capabilities based on user-defined mappings and rules, for Linux
+A VST® plugin for enhancing ordinary MIDI controllers with MPE (MIDI Polyphonic
+Expression) capabilities based on configurable mappings and rules, for Linux
 and Windows.
 
 MPE Emulator is a MIDI proxy: an intermediary plugin which turns
 non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or
-any MIDI Control Change (CC) message into polyphonic by applying them
+any MIDI control change (CC) message into polyphonic by applying them
 selectively to the lowest, highest, oldest, or newest note, either across the
 whole keyboard or restricted to a range of keys based on a configurable
 keyboard split point. It can also remap and reshape controller data, and do
@@ -27,7 +27,7 @@ MPE Emulator Lite
 
 MPE Emulator Lite is a platform-independent JS plugin for REAPER
 (see https://http://reaper.fm/) v6.74 and above which provides the most
-fundamental of MPE Emulator.
+fundamental features of MPE Emulator.
 
 System Requirements
 -------------------
