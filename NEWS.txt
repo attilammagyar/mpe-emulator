@@ -1,9 +1,9 @@
-v1.1.0 (2025-11-??)
+v1.1.0 (2025-11-09)
  * Added ability to handle the sustain pedal, making it possible to send
    expression events to sustained notes as well.
  * Added ability for expression rules to fallback to the global channel
-   (manager channel) when all notes have received a Note Off event, allowing
-   expressions to optionally affect long note release tails as well.
+   (manager channel) when all notes have been released, allowing
+   expressions to affect e.g. long note release tails as well.
  * Documentation additions and improvements.
 
 v1.0.3 (2025-01-25)
