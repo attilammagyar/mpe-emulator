@@ -279,6 +279,15 @@ small {
     <div id="home" class="main-section">
       <h1 class="center">MPE Emulator</h1>
       <div class="center" id="tagline">
+        A <a href="https://en.wikipedia.org/wiki/Virtual_Studio_Technology">VST® plugin</a>
+        for enhancing ordinary MIDI controllers with MPE
+        (<a href="https://en.wikipedia.org/wiki/MIDI#MIDI_Polyphonic_Expression">MIDI Polyphonic Expression</a>)
+        capabilities based on configurable mappings and rules, for Linux and
+        Windows.
+      </div>
+
+
+      <div class="center" id="tagline">
         A <a href="https://en.wikipedia.org/wiki/Virtual_Studio_Technology">VST&reg; plugin</a>
         for enhancing non-MPE MIDI streams with MPE
         (<a href="https://en.wikipedia.org/wiki/MIDI#MIDI_Polyphonic_Expression">MIDI Polyphonic Expression</a>)
@@ -292,9 +301,9 @@ small {
       <div class="center">
         MPE Emulator is a MIDI proxy: an intermediary plugin which turns
         non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or
-        any MIDI Control Change (CC) message into polyphonic by applying them
-        selectively to the lowest, highest, oldest, or newest note, either across
-        the whole keyboard or restricted to a range of keys based on a configurable
+        any MIDI control change (CC) message into polyphonic by applying them
+        selectively to the lowest, highest, oldest, or newest note, either across the
+        whole keyboard or restricted to a range of keys based on a configurable
         keyboard split point. It can also remap and reshape controller data, and do
         various other tricks to increase the expressiveness of a musical performance.
       </div>
@@ -315,7 +324,7 @@ small {
     </div>
 
     <div id="download">
-      <h2 class="center">Download (v1.0.3)</h2>
+      <h2 class="center">Download (v1.1.0)</h2>
       <div class="section">
         <p class="center">
           <a href="#install-dist">Which distribution should I download?</a>
@@ -327,39 +336,39 @@ small {
               <h4>Windows and Linux, 64 bit and 32 bit</h4>
               <ul>
                 <li>
-                  VST 3 Bundle: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-sse2-vst3_bundle.zip">Download (4.6M)</a>
+                  VST 3 Bundle: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-sse2-vst3_bundle.zip">Download (4.8M)</a>
                 </li>
               </ul>
 
               <h4>Windows</h4>
               <ul>
                 <li>
-                  64-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-windows-x86_64-sse2-vst3_single_file.zip">Download (1.3M)</a>
+                  64-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-windows-x86_64-sse2-vst3_single_file.zip">Download (1.3M)</a>
                 </li>
                 <li>
-                  64-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-windows-x86_64-sse2-fst.zip">Download (1.1M)</a>
+                  64-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-windows-x86_64-sse2-fst.zip">Download (1.1M)</a>
                 </li>
                 <li>
-                  32-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-windows-x86-sse2-vst3_single_file.zip">Download (1.4M)</a>
+                  32-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-windows-x86-sse2-vst3_single_file.zip">Download (1.4M)</a>
                 </li>
                 <li>
-                  32-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-windows-x86-sse2-fst.zip">Download (1.1M)</a>
+                  32-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-windows-x86-sse2-fst.zip">Download (1.1M)</a>
                 </li>
               </ul>
 
               <h4>Linux</h4>
               <ul>
                 <li>
-                  64-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-linux-x86_64-sse2-vst3_single_file.zip">Download (664K)</a>
+                  64-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-linux-x86_64-sse2-vst3_single_file.zip">Download (692K)</a>
                 </li>
                 <li>
-                  64-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-linux-x86_64-sse2-fst.zip">Download (492K)</a>
+                  64-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-linux-x86_64-sse2-fst.zip">Download (520K)</a>
                 </li>
                 <li>
-                  32-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-linux-x86-sse2-vst3_single_file.zip">Download (688K)</a>
+                  32-bit, VST 3 Single File: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-linux-x86-sse2-vst3_single_file.zip">Download (712K)</a>
                 </li>
                 <li>
-                  32-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-linux-x86-sse2-fst.zip">Download (500K)</a>
+                  32-bit, FST (VST 2.4): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-linux-x86-sse2-fst.zip">Download (528K)</a>
                 </li>
               </ul>
             </div>
@@ -369,19 +378,29 @@ small {
         <h3>MPE Emulator Lite</h3>
         <ul>
           <li>
-            MPE Emulator Lite for REAPER (JS): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/MPE_Emulator_Lite-v1_0_1.jsfx">Download (68K)</a>
+            MPE Emulator Lite for REAPER (JS): <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/MPE_Emulator_Lite-v1_0_1.jsfx">Download (68K)</a>
           </li>
         </ul>
 
         <h3>Source Code</h3>
         <ul>
           <li>
-            Source: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.0.3/mpe-emulator-1_0_3-src.zip">Download (3.2M)</a>
+            Source: <a href="https://github.com/attilammagyar/mpe-emulator/releases/download/v1.1.0/mpe-emulator-1_1_0-src.zip">Download (3.0M)</a>
           </li>
         </ul>
       </div>
 
       <div class="section">
+        <h3>What's New in v1.1.0</h3>
+        <ul>
+          <li><p>Added ability to handle the sustain pedal, making it possible to send
+          expression events to sustained notes as well.</p></li>
+          <li><p>Added ability for expression rules to fallback to the global channel
+          (manager channel) when all notes have been released, allowing
+          expressions to affect e.g. long note release tails as well.</p></li>
+          <li><p>Documentation additions and improvements.</p></li>
+        </ul>
+
         <h3>What's New in v1.0.3</h3>
         <ul>
           <li><p><strong>Bugfix</strong>: the VST 3 plugin used to ignore certain requests by the host to
@@ -465,20 +484,21 @@ small {
 
       <div class="section center">
         <video controls>
-          <source src="demo/mpe-emulator-v001-demo.mp4" type="video/mp4">
-          <source src="demo/mpe-emulator-v001-demo.webm" type="video/webm">
+          <source src="demo/mpe-emulator-v110-demo.mp4" type="video/mp4">
+          <source src="demo/mpe-emulator-v110-demo.webm" type="video/webm">
             Download demo video:
-            <a href="demo/mpe-emulator-v001-demo.mp4">MP4</a>
-            <a href="demo/mpe-emulator-v001-demo.webm">WEBM</a>
+            <a href="demo/mpe-emulator-v110-demo.mp4">MP4</a>
+            <a href="demo/mpe-emulator-v110-demo.webm">WEBM</a>
         </video>
         <br/>
-        Demo: MPE Emulator v0.0.1 in <a href="https://www.reaper.fm/">REAPER</a>
-        7.17, with an
+        Demo: MPE Emulator v1.1.0 in <a href="https://www.reaper.fm/">REAPER</a>
+        6.79, with an
         <a href="https://www.arturia.com/products/hybrid-synths/keystep-37/overview">Arturia KeyStep 37</a> keyboard and the
-        <a href="https://www.arturia.com/products/software-instruments/cs-80v/overview">Arturia CS-80 V</a> synthesizer.
+        <a href="https://attilammagyar.github.io/js80p/">JS80P</a> synthesizer.
         <br/>
-        <a href="demo/mpe-emulator-v001-demo.mid">Raw MIDI</a> |
-        <a href="demo/mpe-emulator-v001-demo.mpe">MPE Emulator settings</a>
+        <a href="demo/mpe-emulator-v110-demo.mid">Raw MIDI</a> |
+        <a href="demo/mpe-emulator-v110-demo.mpe">MPE Emulator settings</a> |
+        <a href="demo/mpe-emulator-v110-demo.js80p">JS80P patch</a>
       </div>
     </div>
 
@@ -529,6 +549,7 @@ small {
 <ul>
 <li><a href="#faq-mac">Mac version?</a></li>
 <li><a href="#faq-flstudio">FL Studio: How to set up MPE Emulator?</a></li>
+<li><a href="#faq-flstudio-sustain">FL Studio: How to set up the Sustain Pedal?</a></li>
 <li><a href="#faq-fst">Why do you say FST instead of VST 2?</a></li>
 </ul></li>
 <li><a href="#dev">Development</a>
@@ -545,13 +566,13 @@ small {
 
 <ul>
 <li>Retroactively add MPE functionality to non-MPE-capable MIDI input devices.</li>
-<li>Remap controllers, e.g. turn modulation wheel data into MPE aftertouch and
+<li>Remap controllers, e.g. turn modulation wheel data into MPE aftertouch or
 vice-versa.</li>
 <li>Invert MIDI expression and controller data, and apply various other
-distortions.</li>
-<li>Use the trigger velocity of notes as release velocity for synths that
+transformations.</li>
+<li>Use the trigger velocity of notes as release velocity for synths that can
 utilize it.</li>
-<li>Split the keyboard and route polyphonic expressions to the two halves with
+<li>Split the keyboard and route polyphonic expressions to the two sections with
 different rules.</li>
 <li>Transpose the two sides of the split point independently from each other.
 (E.g. extend the range of small keyboards, or play the same note with
@@ -863,6 +884,20 @@ synthesizer match up.)</p>
 saving and loading settings as ordinary files, e.g. for transferring them
 across projects, different host applications, computers, etc.</p>
 
+<h4>Handle Sustain Pedal (Sustain Pedal, Z1SUS)</h4>
+
+<p>The default behaviour of MPE Emulator is to output Note Off events immediately
+when they are received and stop sending any polyphonic expression messages that
+lost their targets with the stopped note, regardless of whether the sustain
+pedal is held. Turning on this option makes MPE Emulator keep track of the
+pedal's state: when it is pressed, sending Note Off events is deferred until
+the pedal is released again, or <a href="#usage-zone-excess">voice stealing</a> occurs.
+Other than that, CC 64 events (which are associated with the sustain pedal) are
+handled according to the configured <a href="#usage-rule">rules</a>, which means that if
+you don't want subsequent plugins to receive CC 64, then you have to set up a
+rule which takes it as its <a href="#usage-rule-in">input</a>, and its
+<a href="#usage-rule-out">output</a> is set to <strong>none</strong>.</p>
+
 <h4>Override Release Velocity With Triggered Velocity (RelVel=TrigVel, Z1ORV)</h4>
 
 <p>Most MIDI keyboards emit Note Off events with note velocity set to either 0%,
@@ -894,6 +929,8 @@ member channels.</p></li>
 
 <p>The number of channels to use as member channels. This determines the number of
 available polyphonic voices to use (within the limits of the synthesizer).</p>
+
+<p><a id="usage-zone-excess"></a></p>
 
 <h4>Excess Note Handling (STEAL, Z1ENH)</h4>
 
@@ -985,7 +1022,9 @@ known to have some
 <a href="#bugs-known">bugs and quirks in some plugin type and host combinations</a>.)</p>
 
 <p>The available options are the same as for the <a href="#usage-rule-in">input</a>, but the
-<strong>MIDI Learn</strong> option is ignored for this parameter.</p>
+<strong>MIDI Learn</strong> option is ignored for this parameter, and the <strong>none</strong> option
+means to swallow the corresponding MIDI messages, preventing subsequent plugins
+from receiving them.</p>
 
 <p><strong>Note</strong>: if you accidentally open the controller selector, just click on the
 already selected item to close it.</p>
@@ -1043,16 +1082,23 @@ pressed for the shortest time above the <a href="#usage-zone-anchor">anchor</a>.
 <p>How much to distort the flat, linear curve of the controller with the selected
 <a href="#usage-rule-dist-type">distortion function</a>.</p>
 
+<p><a id="usage-rule-fallback"></a></p>
+
+<h4>Global Fallback (FB, Z1RxFB)</h4>
+
+<p>When no notes are playing, then send the expression events globally on the
+manager channel.</p>
+
 <p><a id="usage-rule-invert"></a></p>
 
-<h4>Invert (Z1RxNV)</h4>
+<h4>Invert (Inv, Z1RxNV)</h4>
 
 <p>Flip the controller: when 0% is received on the input, send 100%, and when the
 input is at 100%, then send 0%.</p>
 
 <p><a id="usage-rule-reset"></a></p>
 
-<h4>Reset (Z1RxRS)</h4>
+<h4>Reset (Res, Z1RxRS)</h4>
 
 <p>Select note initialization and reset behaviour. A reset can occur in one of two
 ways:</p>
@@ -1103,7 +1149,7 @@ into different controllers, and to misuse it in various creative ways.</p>
 
 <p><a id="usage-rule-dist-type"></a></p>
 
-<h4>Distortion Type (Z1RxDT)</h4>
+<h4>Distortion Type (Dist, Z1RxDT)</h4>
 
 <p>Click on the second function graph icon at the top right corner of a rule, or
 use the mouse wheel while holding the mouse cursor over it to select the
@@ -1325,11 +1371,11 @@ titled "<em>Pitch knob range (semitones)</em>". Its default value is 2.</p></li>
 <li><p>Click on the small triangle in the top left corner of the plugin window of
 MPE Emulator, and select the "<em>Browse parameters</em>" menu item.</p></li>
 <li><p>Find the CC parameter in the browser that you want to assign to one of the
-knobs, faders, or other gadgets of your MIDI input device. Click on it with
-the right mouse button.</p></li>
+knobs, faders, or other gadgets of your MIDI input device or your pedal.
+Click on it with the right mouse button.</p></li>
 <li><p>Select the "<em>Link to controller...</em>" menu item.</p></li>
-<li><p>Turn the knob or move the fader on your MIDI input device until FL Studio
-recognizes it.</p></li>
+<li><p>Turn the knob or move the fader on your MIDI input device, or press the
+pedal until FL Studio recognizes it.</p></li>
 </ol>
 
 <p><strong>Note</strong>:</p>
@@ -1343,6 +1389,12 @@ Emulator getting a chance to enhance it.</p></li>
 <a href="#bugs-known-fl-studio">FL Studio seems to have some quirks</a> when it comes
 to MIDI plugins (e.g. Pitch Bend messages emitted by the VST 3 version of
 MPE Emulator get messed up by FL Studio).</p></li>
+<li><p>Use CC 64 for setting up the sustain pedal, and the "<em>Channel Pressure
+(Aftertouch)</em>" (VST 3) or "<em>Ch AT</em>" (FST, VST 2.4) parameter for setting up
+channel pressure with the above method. To trigger a channel pressure event,
+hold down a key on the MIDI keyboard before clicking on the "<em>Link to
+controller...</em>" menu item, then click on the menu item, and then increase
+the pressure on the key until FL Studio recognizes it.</p></li>
 </ul>
 
 <p><a href="#toc">Table of Contents</a></p>
