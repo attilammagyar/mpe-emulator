@@ -294,6 +294,7 @@ VST3_CXXFLAGS = \
 	-DMPE_EMULATOR_VST3_GUI_PLATFORM=$(VST3_GUI_PLATFORM) \
 	$(MPE_EMULATOR_CXXFLAGS) \
 	-Wno-class-memaccess \
+	-Wno-error=deprecated-declarations \
 	-Wno-format \
 	-Wno-multichar \
 	-Wno-parentheses \
