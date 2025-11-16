@@ -1550,11 +1550,6 @@ void Widget::hide()
 }
 
 
-void Widget::focus()
-{
-}
-
-
 void Widget::bring_to_top()
 {
     uint32_t value = XCB_STACK_MODE_ABOVE;
