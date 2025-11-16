@@ -393,7 +393,7 @@ void VSTCALLBACK FstPlugin::set_parameter(
 
 
 void FstPlugin::populate_parameters(
-        Proxy& proxy,
+        Proxy const& proxy,
         Parameters& parameters
 ) noexcept {
     size_t index = 0;
@@ -464,7 +464,7 @@ void FstPlugin::populate_parameters(
 
 
 void FstPlugin::export_parameters(
-        Proxy& proxy,
+        Proxy const& proxy,
         Parameters& parameters,
         int const param_id_begin,
         int const param_id_end,
@@ -614,7 +614,7 @@ void FstPlugin::handle_change_param(
         return;
     }
 
-    Parameter& param = parameters[index];
+    Parameter const& param = parameters[index];
 
     if (param.is_exported_param()) {
         proxy.process_message(

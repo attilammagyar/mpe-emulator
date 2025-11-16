@@ -159,7 +159,7 @@ class FstPlugin : public Midi::EventHandler
         );
 
         static void populate_parameters(
-            Proxy& proxy,
+            Proxy const& proxy,
             Parameters& parameters
         ) noexcept;
 
@@ -329,7 +329,7 @@ class FstPlugin : public Midi::EventHandler
         ) const noexcept;
 
         static void export_parameters(
-            Proxy& proxy,
+            Proxy const& proxy,
             Parameters& parameters,
             int const param_id_begin,
             int const param_id_end,
