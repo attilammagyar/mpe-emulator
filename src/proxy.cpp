@@ -949,7 +949,6 @@ void Proxy::process_controller_event(
         ControllerId const out_controller_id = (
             (ControllerId)rule.out_cc.get_value()
         );
-        Midi::Note note;
 
         if (is_note_stack_empty && (Toggle)rule.fallback.get_value() == Toggle::ON) {
             target_channels[target_channels_count++] = manager_channel;
@@ -969,84 +968,84 @@ void Proxy::process_controller_event(
 
                 case Target::TRG_LOWEST:
                     if (!note_stack.is_empty()) {
-                        note = note_stack.lowest();
+                        Midi::Note note = note_stack.lowest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_HIGHEST:
                     if (!note_stack.is_empty()) {
-                        note = note_stack.highest();
+                        Midi::Note note = note_stack.highest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_OLDEST:
                     if (!note_stack.is_empty()) {
-                        note = note_stack.oldest();
+                        Midi::Note note = note_stack.oldest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_NEWEST:
                     if (!note_stack.is_empty()) {
-                        note = note_stack.top();
+                        Midi::Note note = note_stack.top();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_LOWEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
-                        note = note_stack_below.lowest();
+                        Midi::Note note = note_stack_below.lowest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_HIGHEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
-                        note = note_stack_below.highest();
+                        Midi::Note note = note_stack_below.highest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_OLDEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
-                        note = note_stack_below.oldest();
+                        Midi::Note note = note_stack_below.oldest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_NEWEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
-                        note = note_stack_below.top();
+                        Midi::Note note = note_stack_below.top();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_LOWEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
-                        note = note_stack_above.lowest();
+                        Midi::Note note = note_stack_above.lowest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_HIGHEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
-                        note = note_stack_above.highest();
+                        Midi::Note note = note_stack_above.highest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_OLDEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
-                        note = note_stack_above.oldest();
+                        Midi::Note note = note_stack_above.oldest();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
 
                 case Target::TRG_NEWEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
-                        note = note_stack_above.top();
+                        Midi::Note note = note_stack_above.top();
                         target_channels[target_channels_count++] = channels_by_notes[note];
                     }
                     break;
