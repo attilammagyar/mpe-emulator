@@ -739,6 +739,8 @@ void ImportSettingsButton::click()
         // TODO: GetLastError
         CloseHandle(file);
 
+        delete[] buffer;
+
         return;
     }
 
