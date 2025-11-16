@@ -727,26 +727,19 @@ void ImportSettingsButton::click()
 
     std::fill_n(buffer, Serializer::MAX_SIZE, '\x00');
 
-    if (
-        !ReadFile(
-            file,
-            (LPVOID)buffer,
-            std::min(size, (DWORD)Serializer::MAX_SIZE),
-            &read,
-            NULL
-        )
-    ) {
-        // TODO: GetLastError
-        CloseHandle(file);
-
-        delete[] buffer;
-
-        return;
-    }
+    bool const success = (bool)ReadFile(
+        file,
+        (LPVOID)buffer,
+        std::min(size, (DWORD)Serializer::MAX_SIZE),
+        &read,
+        NULL
+    );
 
     CloseHandle(file);
 
-    import_settings(buffer, (int)read);
+    if (success) {
+        import_settings(buffer, (int)read);
+    } // TODO: GetLastError
 
     delete[] buffer;
 }
