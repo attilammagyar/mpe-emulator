@@ -46,6 +46,12 @@
 #endif
 
 
+/*
+Mark compile-time polymorphism. (E.g. Midi::EventHandler.)
+*/
+#define MPE_EMULATOR_OVERRIDE
+
+
 namespace MpeEmulator
 {
 

@@ -38,7 +38,7 @@ class MidiEventLogger : public Midi::EventHandler
                 Midi::Channel const channel,
                 Midi::Note const note,
                 Midi::Byte const velocity
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("NOTE_OFF", time_offset, channel, note, velocity);
         }
 
@@ -47,7 +47,7 @@ class MidiEventLogger : public Midi::EventHandler
                 Midi::Channel const channel,
                 Midi::Note const note,
                 Midi::Byte const velocity
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("NOTE_ON", time_offset, channel, note, velocity);
         }
 
@@ -56,7 +56,7 @@ class MidiEventLogger : public Midi::EventHandler
                 Midi::Channel const channel,
                 Midi::Note const note,
                 Midi::Byte const pressure
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("AFTERTOUCH", time_offset, channel, note, pressure);
         }
 
@@ -65,7 +65,7 @@ class MidiEventLogger : public Midi::EventHandler
                 Midi::Channel const channel,
                 Midi::Controller const controller,
                 Midi::Byte const new_value
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("CONTROL_CHANGE", time_offset, channel, controller, new_value);
         }
 
@@ -73,7 +73,7 @@ class MidiEventLogger : public Midi::EventHandler
                 double const time_offset,
                 Midi::Channel const channel,
                 Midi::Byte const new_program
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("PROGRAM_CHANGE", time_offset, channel, new_program);
         }
 
@@ -81,7 +81,7 @@ class MidiEventLogger : public Midi::EventHandler
                 double const time_offset,
                 Midi::Channel const channel,
                 Midi::Byte const pressure
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("CHANNEL_PRESSURE", time_offset, channel, pressure);
         }
 
@@ -89,7 +89,7 @@ class MidiEventLogger : public Midi::EventHandler
                 double const time_offset,
                 Midi::Channel const channel,
                 Midi::Word const new_value
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("PITCH_WHEEL", time_offset, channel, new_value);
         }
 
@@ -98,7 +98,7 @@ class MidiEventLogger : public Midi::EventHandler
                 Midi::Channel const channel,
                 Midi::Byte const message,
                 Midi::Byte const data
-        ) noexcept {
+        ) noexcept MPE_EMULATOR_OVERRIDE {
             log_event("CHANNEL_MODE", time_offset, channel, message, data);
         }
 

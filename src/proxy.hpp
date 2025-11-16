@@ -539,47 +539,47 @@ class Proxy : public Midi::EventHandler
             Midi::Channel const channel,
             Midi::Note const note,
             Midi::Byte const velocity
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         void note_on(
             double const time_offset,
             Midi::Channel const channel,
             Midi::Note const note,
             Midi::Byte const velocity
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         void aftertouch(
             double const time_offset,
             Midi::Channel const channel,
             Midi::Note const note,
             Midi::Byte const pressure
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         void control_change(
             double const time_offset,
             Midi::Channel const channel,
             Midi::Controller const controller,
             Midi::Byte const new_value
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         void channel_pressure(
             double const time_offset,
             Midi::Channel const channel,
             Midi::Byte const pressure
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         void pitch_wheel_change(
             double const time_offset,
             Midi::Channel const channel,
             Midi::Word const new_value
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         void channel_mode(
             double const time_offset,
             Midi::Channel const channel,
             Midi::Byte const message,
             Midi::Byte const data
-        ) noexcept;
+        ) noexcept MPE_EMULATOR_OVERRIDE;
 
         Param send_mcm;
 

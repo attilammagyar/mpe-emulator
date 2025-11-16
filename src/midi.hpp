@@ -77,6 +77,10 @@ inline FloatType word_to_float(Word const value) noexcept
 }
 
 
+/**
+ * \note Use the \c MPE_EMULATOR_OVERRIDE macro to mark compile-time
+ *       polymorphism.
+ */
 class EventHandler
 {
     public:
