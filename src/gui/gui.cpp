@@ -320,7 +320,7 @@ void GUI::build_about_body(char const* const sdk_version)
 
     background->own(about_body);
 
-    ((Widget*)about_body)->own(
+    about_body->own(
         new AboutText(sdk_version, show_vst_logo ? vst_logo_image : NULL)
     );
 
@@ -341,12 +341,12 @@ void GUI::build_zone_1_body(
 
     POSITION_RELATIVE_BEGIN(295, 11);
 
-    ((Widget*)zone_1_body)->own(
+    zone_1_body->own(
         new ImportSettingsButton(
             *this, pos_rel_offset_left + 4, pos_rel_offset_top + 30, 30, 30, proxy, zone_1_body
         )
     );
-    ((Widget*)zone_1_body)->own(
+    zone_1_body->own(
         new ExportSettingsButton(
             *this, pos_rel_offset_left + 4, pos_rel_offset_top + 60, 30, 30, proxy
         )
