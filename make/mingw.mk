@@ -40,13 +40,13 @@ GUI_TARGET_PLATFORM_HEADERS = src/gui/win32.hpp
 GUI_TARGET_PLATFORM_SOURCES = src/gui/win32.cpp
 
 GUI_IMAGES = \
-	gui/img/about.bmp \
-	gui/img/distortions.bmp \
-	gui/img/midpoint_states.bmp \
-	gui/img/knob_states.bmp \
-	gui/img/rocker_switch.bmp \
-	gui/img/vst_logo.bmp \
-	gui/img/zone1.bmp
+	gui/img/about.png \
+	gui/img/distortions.png \
+	gui/img/midpoint_states.png \
+	gui/img/knob_states.png \
+	gui/img/rocker_switch.png \
+	gui/img/vst_logo.png \
+	gui/img/zone1.png
 
 OBJ_TARGET_GUI_EXTRA = $(BUILD_DIR)/gui-$(SUFFIX).res
 
@@ -61,7 +61,8 @@ TARGET_PLATFORM_LFLAGS = \
 	-lkernel32 \
 	-municode \
 	-lcomdlg32 \
-	-lole32
+	-lole32 \
+	-lwindowscodecs
 
 LINK_DLL = $(CPP_TARGET_PLATFORM) -Wall -shared -static
 LINK_TARGET_EXE = $(CPP_TARGET_PLATFORM) -Wall -static
