@@ -22,11 +22,12 @@ or look for the "[Releases](https://github.com/attilammagyar/mpe-emulator/releas
 section at its GitHub page at
 [https://github.com/attilammagyar/mpe-emulator](https://github.com/attilammagyar/mpe-emulator).
 
+See the "[Before Installing: Choosing a Distribution](#install-dist)" section
+below to find out which package you need. TL;DR: it's most probably the
+`x86_64` FST edition if your host application supports VST 2 plugins.
+
 (The source code is also available on GitHub under the terms of the GNU General
 Public License Version 3.)
-
-See the "[Before Installing: Choosing a Distribution](#install-dist)" section
-below to find out which package you need.
 
 > VST is a registered trademark of Steinberg Media Technologies GmbH.
 
@@ -832,6 +833,10 @@ configurations.
 
 ### FL Studio: How to set up MPE Emulator?
 
+Due to the broken MIDI support in the VST 3 protocol itself and the
+[bugs in some versions of FL Studio](#bugs-known-fl-studio), it is recommended
+for FL Studio users to use the FST edition of MPE Emulator.
+
 Create an instance of MPE Emulator and create an instance of the synthesizer
 that you want to use with MPE. Then you will have to connect these two, and you
 will also have to set up the CC inputs of MPE Emulator. You may need to adjust
@@ -895,8 +900,8 @@ the pitch bend range as well.
    to MIDI plugins (e.g. Pitch Bend messages emitted by the VST 3 version of
    MPE Emulator get messed up by FL Studio).
 
- * Use CC 64 for setting up the sustain pedal, and the "_Channel Pressure
-   (Aftertouch)_" (VST 3) or "_Ch AT_" (FST, VST 2.4) parameter for setting up
+ * Use CC 64 for setting up the sustain pedal, and the "_Ch AT_" (FST, VST 2.4)
+   or "_Channel Pressure (Aftertouch)_" (VST 3) parameter for setting up
    channel pressure with the above method. To trigger a channel pressure event,
    hold down a key on the MIDI keyboard before clicking on the "_Link to
    controller..._" menu item, then click on the menu item, and then increase

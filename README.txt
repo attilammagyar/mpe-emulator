@@ -17,6 +17,10 @@ To download MPE Emulator, visit https://attilammagyar.github.io/mpe-emulator ,
 or look for the "Releases" section at its GitHub page at
 https://github.com/attilammagyar/mpe-emulator .
 
+See the "Before Installing: Choosing a Distribution" section
+below to find out which package you need. TL;DR: it's most probably the
+x86_64 FST edition if your host application supports VST 2 plugins.
+
 (The source code is also available on GitHub under the terms of the GNU General
 Public License Version 3.)
 
