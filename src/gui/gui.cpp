@@ -725,6 +725,7 @@ WidgetBase::WidgetBase(char const* const text)
     parent(NULL),
     text(text),
     scale(1.0),
+    image_id(0),
     left(0),
     top(0),
     width(0),
@@ -751,6 +752,7 @@ WidgetBase::WidgetBase(
     parent(NULL),
     text(text),
     scale(1.0),
+    image_id(0),
     left(left),
     top(top),
     width(width),
@@ -774,6 +776,7 @@ WidgetBase::WidgetBase(
     parent(NULL),
     text(""),
     scale(1.0),
+    image_id(0),
     left(0),
     top(0),
     width(0),
@@ -938,19 +941,26 @@ WidgetBase* WidgetBase::own(WidgetBase* const widget)
 }
 
 
-GUI::Image WidgetBase::set_image(GUI::Image image)
+GUI::Image WidgetBase::set_image(GUI::Image new_image)
 {
-    GUI::Image old = this->image;
-    this->image = image;
+    GUI::Image old_image = image;
+    image = new_image;
+    image_id = (image_id + 1) & 0x7fffffff;
     redraw();
 
-    return old;
+    return old_image;
 }
 
 
 GUI::Image WidgetBase::get_image() const
 {
     return image;
+}
+
+
+int WidgetBase::get_image_id() const
+{
+    return image_id;
 }
 
 
