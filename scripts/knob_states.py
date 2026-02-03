@@ -45,7 +45,7 @@ def main(argv):
         glow_color_3=(80, 170, 255),
         ticks_color=knob_ticks_color,
         line_color=knob_line_color,
-        out_file=os.path.join(os.path.dirname(argv[0]), "../gui/img/knob_states-free.png")
+        out_file_prefix=os.path.join(os.path.dirname(argv[0]), "../gui/img/knob_states")
     )
 
 
@@ -56,7 +56,7 @@ def generate_knob_states(
         glow_color_3,
         ticks_color,
         line_color,
-        out_file,
+        out_file_prefix,
         stages=128
 ):
 
@@ -144,9 +144,9 @@ def generate_knob_states(
         knob_states.paste(knob.copy(), (0, height * i, width, height * (i + 1)))
 
     knob_states = knob_states.resize(
-        (int(width / 5), int(height / 5) * stages), Image.BICUBIC
+        (96, 96 * stages), Image.BICUBIC
     )
-    knob_states.save(out_file)
+    knob_states.save(out_file_prefix + ".png")
 
     return 0
 

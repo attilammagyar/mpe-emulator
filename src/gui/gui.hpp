@@ -1,6 +1,6 @@
 /*
  * This file is part of MPE Emulator.
- * Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+ * Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
  *
  * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
 #ifndef MPE_EMULATOR__GUI__GUI_HPP
 #define MPE_EMULATOR__GUI__GUI_HPP
 
+#include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 #include "common.hpp"
@@ -41,7 +43,7 @@ class TabSelector;
 class OptionSelector;
 class DiscreteParamEditor;
 class ToggleSwitchParamEditor;
-class TuningSelector;
+class ResizerHandle;
 class Widget;
 class WidgetBase;
 
@@ -49,6 +51,18 @@ class WidgetBase;
 class GUI
 {
     public:
+        class EventHandler
+        {
+            public:
+                /**
+                 * \brief Called when the GUI needs to be resized with external help.
+                 */
+                virtual void handle_resize_request(
+                    int const new_width,
+                    int const new_height
+                );
+        };
+
         typedef void* PlatformWidget; ///< \brief GUI platform dependent widget type.
         typedef void* PlatformData; ///< \brief GUI platform dependent data (e.g. HINSTANCE on Windows).
         typedef void* Image; ///< \brief GUI platform dependent image handle.
@@ -62,8 +76,26 @@ class GUI
         typedef unsigned int Color;
         typedef unsigned char ColorComponent;
 
-        static constexpr long int WIDTH = 980;
-        static constexpr long int HEIGHT = 600;
+        static constexpr double INIT_SCALE = 0.5;
+
+        static constexpr int WIDTH = 1960;
+        static constexpr int HEIGHT = 1200;
+
+        static constexpr double WIDTH_FLOAT = (double)WIDTH;
+        static constexpr double HEIGHT_FLOAT = (double)HEIGHT;
+
+        static constexpr int INIT_WIDTH = (
+            (int)std::round(INIT_SCALE * WIDTH_FLOAT)
+        );
+
+        static constexpr int INIT_HEIGHT = (
+            (int)std::round(INIT_SCALE * HEIGHT_FLOAT)
+        );
+
+        static constexpr int MIN_WIDTH = WIDTH / 4;
+        static constexpr int MIN_HEIGHT = HEIGHT / 4;
+        static constexpr int MAX_WIDTH = WIDTH;
+        static constexpr int MAX_HEIGHT = HEIGHT;
 
         static constexpr double REFRESH_RATE = 18.0;
         static constexpr double REFRESH_RATE_SECONDS = 1.0 / REFRESH_RATE;
@@ -107,7 +139,7 @@ class GUI
         static Color const TOGGLE_ON_COLOR;
 
         static void param_ratio_to_str(
-            Proxy const& synth,
+            Proxy const& proxy,
             Proxy::ParamId const param_id,
             double const ratio,
             double const scale,
@@ -124,8 +156,9 @@ class GUI
             char const* const sdk_version,
             PlatformData platform_data,
             PlatformWidget parent_window,
-            Proxy& synth,
-            bool const show_vst_logo
+            Proxy& proxy,
+            bool const show_vst_logo,
+            EventHandler* const event_handler = NULL
         );
 
         GUI(GUI const& gui) = delete;
@@ -136,6 +169,14 @@ class GUI
         void show();
         void idle();
 
+        void resize(int const new_width, int const new_height);
+
+        void apply_size_constraints(int& new_width, int& new_height, double& new_scale) const;
+
+        void ignore_resizing();
+        int get_width() const;
+        int get_height() const;
+
         void update_active_voices_count();
 
         void set_status_line(char const* const text);
@@ -144,10 +185,28 @@ class GUI
         PlatformData get_platform_data() const;
 
     private:
+        class DefaultEventHandler : public EventHandler
+        {
+            public:
+                explicit DefaultEventHandler(GUI& gui);
+
+                virtual void handle_resize_request(
+                    int const new_width,
+                    int const new_height
+                ) override;
+
+            private:
+                GUI& gui;
+        };
+
+        static constexpr double ASPECT_RATIO = WIDTH_FLOAT / HEIGHT_FLOAT;
+
         static constexpr size_t DEFAULT_STATUS_LINE_MAX_LENGTH = 32;
 
+        static constexpr int clamp(int const number, int const min, int const max);
+
         static void param_ratio_to_str_float(
-            Proxy const& synth,
+            Proxy const& proxy,
             Proxy::ParamId const param_id,
             double const ratio,
             double const scale,
@@ -157,7 +216,7 @@ class GUI
         );
 
         static void param_ratio_to_str_options(
-            Proxy const& synth,
+            Proxy const& proxy,
             Proxy::ParamId const param_id,
             double const ratio,
             char const* const* const options,
@@ -167,7 +226,7 @@ class GUI
         );
 
         static void param_ratio_to_str_int(
-            Proxy const& synth,
+            Proxy const& proxy,
             Proxy::ParamId const param_id,
             double const ratio,
             char* const buffer,
@@ -191,22 +250,26 @@ class GUI
 
         char default_status_line[DEFAULT_STATUS_LINE_MAX_LENGTH];
 
+        DefaultEventHandler default_event_handler;
+        EventHandler* event_handler;
+
         Widget* dummy_widget;
 
         Image about_image;
         Image zone_1_image;
         Image vst_logo_image;
 
-        ParamStateImages const* knob_states;
-        ParamStateImages const* rocker_switch;
-        ParamStateImages const* distortions;
-        ParamStateImages const* midpoint_states;
+        ParamStateImages* knob_states;
+        ParamStateImages* rocker_switch;
+        ParamStateImages* distortions;
+        ParamStateImages* midpoint_states;
         Background* background;
         OptionSelector* controller_selector;
         OptionSelector* target_selector;
         TabBody* about_body;
         TabBody* zone_1_body;
         StatusLine* status_line;
+        double scale;
 
         Proxy& proxy;
         MpeEmulator::GUI::PlatformData platform_data;
@@ -214,6 +277,11 @@ class GUI
 
         unsigned int active_voices_count;
         unsigned int polyphony;
+
+        int width;
+        int height;
+
+        bool resizing_allowed;
 };
 
 
@@ -238,6 +306,7 @@ class WidgetBase
             DISCRETE_PARAM_EDITOR = 1 << 11,
             OPTION_SELECTOR = 1 << 12,
             OPTION = 1 << 13,
+            RESIZER_HANDLE = 1 << 14,
         };
 
         enum TextAlignment {
@@ -263,6 +332,9 @@ class WidgetBase
         virtual void set_text(char const* const text);
         virtual char const* get_text() const;
 
+        virtual void set_scale(double const new_scale);
+        virtual int scale_value(int const value) const;
+
         virtual GUI::Image load_image(
             GUI::PlatformData platform_data,
             char const* const name
@@ -276,8 +348,17 @@ class WidgetBase
             int const height
         );
 
+        virtual GUI::Image downscale_image(
+            GUI::Image source,
+            int const old_width,
+            int const old_height,
+            int const new_width,
+            int const new_height
+        );
+
         virtual void delete_image(GUI::Image image);
 
+        virtual bool is_on_screen() const;
         virtual void show();
         virtual void hide();
         virtual void focus();
@@ -416,6 +497,8 @@ class WidgetBase
          */
         virtual bool mouse_wheel(double const delta, bool const modifier);
 
+        virtual uint64_t monotonic_clock_ms();
+
         virtual void fill_rectangle(
             int const left,
             int const top,
@@ -446,6 +529,8 @@ class WidgetBase
             int const height
         );
 
+        virtual void update_children_scale_if_changed();
+
         Type const type;
 
         GUI::Widgets children;
@@ -456,12 +541,16 @@ class WidgetBase
         WidgetBase* parent;
         char const* text;
 
+        double scale;
+
         int left;
         int top;
         int width;
         int height;
 
+        bool is_visible;
         bool is_clicking;
+        bool scale_changed;
 };
 
 }

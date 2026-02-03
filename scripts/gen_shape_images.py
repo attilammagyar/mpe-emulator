@@ -1,6 +1,6 @@
 ###############################################################################
 # This file is part of MPE Emulator.
-# Copyright (C) 2024  Attila M. Magyar
+# Copyright (C) 2024, 2026  Attila M. Magyar
 #
 # MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,10 +43,10 @@ RED_2 = (230, 140, 140)
 
 SUBPIXELS = 5
 
-WIDTH = 21
-HEIGHT = 21
-SEGMENTS = 20
-STROKE_WIDTH = int(SUBPIXELS * 3.5 + 0.5)
+WIDTH = 42
+HEIGHT = 42
+SEGMENTS = 50
+STROKE_WIDTH = int(7.0 * SUBPIXELS + 0.5)
 
 
 DISTORTIONS = (
@@ -60,10 +60,10 @@ DISTORTIONS = (
 def main(argv):
     out_dir = os.path.join(os.path.dirname(argv[0]), "../gui/img/")
     generate_image(
-        os.path.join(out_dir, "distortions.png"), 0.0, 1.0, DISTORTIONS
+        os.path.join(out_dir, "distortions"), 0.0, 1.0, DISTORTIONS
     )
     generate_image(
-        os.path.join(out_dir, "midpoint_states.png"),
+        os.path.join(out_dir, "midpoint_states"),
         0.0,
         1.0,
         tuple(
@@ -73,14 +73,14 @@ def main(argv):
     )
 
 
-def generate_image(out_file, start, end, funcs):
+def generate_image(out_file_prefix, start, end, funcs):
     image = Image.new("RGB", (WIDTH, HEIGHT * len(funcs)), (0, 0, 0))
 
     for i, (color, f) in enumerate(funcs):
         plot = draw_plot(f, start, end, color)
         image.paste(plot, (0, HEIGHT * i, WIDTH, HEIGHT * (i + 1)))
 
-    image.save(out_file)
+    image.save(out_file_prefix + ".png")
 
 
 def draw_plot(f, start, end, color):

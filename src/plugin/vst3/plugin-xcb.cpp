@@ -108,7 +108,8 @@ void Vst3Plugin::GUI::initialize()
         (MpeEmulator::GUI::PlatformData)xcb,
         (MpeEmulator::GUI::PlatformWidget)systemWindow,
         proxy,
-        true
+        true,
+        this
     );
 
     event_handler->gui = gui;
@@ -119,6 +120,8 @@ void Vst3Plugin::GUI::initialize()
 
     this->event_handler = (void*)event_handler;
     this->timer_handler = (void*)timer_handler;
+
+    this->plugFrame->resizeView(this, &gui_size);
 }
 
 

@@ -187,26 +187,32 @@ class Vst3Plugin
 
         class Controller;
 
-        class GUI : public CPluginView
+        class GUI : public CPluginView, MpeEmulator::GUI::EventHandler
         {
             public:
-                explicit GUI(Proxy& proxy);
+                explicit GUI(Proxy& proxy, ViewRect& gui_size);
 
                 virtual ~GUI();
 
                 tresult PLUGIN_API isPlatformTypeSupported(FIDString type) SMTG_OVERRIDE;
                 tresult PLUGIN_API canResize() SMTG_OVERRIDE;
+                tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) SMTG_OVERRIDE;
+                tresult PLUGIN_API onSize(ViewRect* newSize) SMTG_OVERRIDE;
 
                 virtual void attachedToParent() override;
                 virtual void removedFromParent() override;
 
-            private:
-                static ViewRect const rect;
+                virtual void handle_resize_request(
+                    int const new_width,
+                    int const new_height
+                ) override;
 
+            private:
                 void initialize();
                 void show_if_needed();
 
                 Proxy& proxy;
+                ViewRect& gui_size;
                 MpeEmulator::GUI* gui;
 
                 void* run_loop;
@@ -264,6 +270,7 @@ class Vst3Plugin
                 void update_params();
 
                 Proxy* proxy;
+                ViewRect gui_size;
 
             public:
                 OBJ_METHODS(Controller, Vst::EditControllerEx1)

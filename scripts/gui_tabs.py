@@ -1,6 +1,6 @@
 ###############################################################################
 # This file is part of MPE Emulator.
-# Copyright (C) 2024, 2025  Attila M. Magyar
+# Copyright (C) 2024, 2025, 2026  Attila M. Magyar
 #
 # MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ except ImportError as error:
     sys.exit(1)
 
 
-WIDTH = 980
-HEIGHT = 600
-LEFT = 11
+WIDTH = 1960
+HEIGHT = 1200
+LEFT = 22
 
 
 def save_tab_bg(file_name, mockup, top):
@@ -53,11 +53,11 @@ def main(argv):
     mockup = Image.open(os.path.join(argv[1]))
 
     tabs = (
-        ("zone1", 11),
-        ("about", 623),
+        (20 + 2 + (1200 + 20 + 2 + 2) * 0, "zone1"),
+        (20 + 2 + (1200 + 20 + 2 + 2) * 1, "about"),
     )
 
-    for file_name, top in tabs:
+    for top, file_name in tabs:
         save_tab_bg(os.path.join(dir_name, file_name), mockup, top)
 
 

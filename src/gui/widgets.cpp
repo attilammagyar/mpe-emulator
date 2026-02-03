@@ -1,6 +1,6 @@
 /*
  * This file is part of MPE Emulator.
- * Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+ * Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
  *
  * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,6 +234,12 @@ void Background::replace_body(TabBody* const new_body)
 }
 
 
+TabBody* Background::get_body() const
+{
+    return body;
+}
+
+
 void Background::hide_body()
 {
     if (body != NULL) {
@@ -274,8 +280,33 @@ TabSelector::TabSelector(
 ) : TransparentWidget(text, left, TOP, WIDTH, HEIGHT, Type::TAB_SELECTOR),
     background(background),
     tab_body(tab_body),
-    tab_image(tab_image)
+    tab_image_full_size(tab_image),
+    tab_image_scaled(NULL),
+    needs_rescale(true)
 {
+}
+
+
+TabSelector::~TabSelector()
+{
+    if (tab_image_scaled != NULL) {
+        this->delete_image(tab_image_scaled);
+
+        tab_image_scaled = NULL;
+    }
+}
+
+
+void TabSelector::set_scale(double const new_scale)
+{
+    TransparentWidget::set_scale(new_scale);
+
+    needs_rescale = true;
+
+    if (background->get_body() == tab_body) {
+        rescale_tab_image_if_needed();
+        background->set_image(tab_image_scaled);
+    }
 }
 
 
@@ -283,8 +314,36 @@ void TabSelector::click()
 {
     TransparentWidget::click();
 
-    background->set_image(tab_image);
+    rescale_tab_image_if_needed();
+
+    background->set_image(tab_image_scaled);
     background->replace_body(tab_body);
+}
+
+
+void TabSelector::rescale_tab_image_if_needed()
+{
+    if (!needs_rescale) {
+        return;
+    }
+
+    needs_rescale = false;
+    GUI::Image old_tab_image_scaled = tab_image_scaled;
+
+    int const width = background->get_width();
+    int const height = background->get_height();
+
+    tab_image_scaled = downscale_image(
+        tab_image_full_size,
+        width,
+        height,
+        this->scale_value(width),
+        this->scale_value(height)
+    );
+
+    if (old_tab_image_scaled != NULL) {
+        delete_image(old_tab_image_scaled);
+    }
 }
 
 
@@ -298,7 +357,7 @@ OptionSelector::OptionSelector(
     param_editor(NULL),
     options_count(0),
     selected_option_index(OPTIONS_SIZE),
-    next_option_left(5),
+    next_option_left(10),
     next_option_top(TITLE_HEIGHT),
     param_id(Proxy::ParamId::INVALID_PARAM_ID)
 {
@@ -411,18 +470,24 @@ bool OptionSelector::paint()
 {
     Widget::paint();
 
-    fill_rectangle(0, 0, width, height, GUI::TEXT_BACKGROUND);
+    fill_rectangle(
+        0,
+        0,
+        this->scale_value(width),
+        this->scale_value(height),
+        GUI::TEXT_BACKGROUND
+    );
     draw_text(
         title,
-        12,
+        this->scale_value(FONT_SIZE),
         0,
         0,
-        WIDTH,
-        TITLE_HEIGHT,
+        this->scale_value(WIDTH),
+        this->scale_value(TITLE_HEIGHT),
         GUI::TEXT_COLOR,
         GUI::TEXT_BACKGROUND,
         FontWeight::BOLD,
-        10,
+        this->scale_value(PADDING),
         TextAlignment::LEFT
     );
 
@@ -481,15 +546,15 @@ bool OptionSelector::Option::paint()
 
     draw_text(
         text,
-        12,
+        this->scale_value(FONT_SIZE),
         0,
         0,
-        width,
-        height,
+        this->scale_value(width),
+        this->scale_value(height),
         color,
         background,
         FontWeight::BOLD,
-        3,
+        this->scale_value(PADDING),
         TextAlignment::LEFT
     );
 
@@ -546,39 +611,76 @@ ParamStateImages::ParamStateImages(
     width(width),
     height(height),
     widget(widget),
-    image(image),
+    image_full(image),
+    images(NULL),
     last_index(count - 1),
     last_index_float((double)last_index)
 {
-    images = split_image(image);
+    images = new GUI::Image[count];
+
+    for (size_t i = 0; i != count; ++i) {
+        images[i] = NULL;
+    }
+
+    set_scale(1.0);
 }
 
 
-GUI::Image* ParamStateImages::split_image(GUI::Image image) const
+void ParamStateImages::set_scale(double const new_scale)
 {
+    int const scaled_width = widget->scale_value(width);
+    int const scaled_height = widget->scale_value(height);
+
+    split_image(image_full, scaled_width, scaled_height, images);
+}
+
+
+void ParamStateImages::split_image(
+    GUI::Image image,
+    int const scaled_width,
+    int const scaled_height,
+    GUI::Image* images
+) const {
     if (image == NULL) {
-        return NULL;
+        return;
     }
 
-    GUI::Image* const images = new GUI::Image[count];
+    GUI::Image scaled_image = widget->downscale_image(
+        image,
+        width,
+        height * count,
+        scaled_width,
+        scaled_height * count
+    );
 
     for (size_t i = 0; i != count; ++i) {
-        int const top = (int)i * height;
+        GUI::Image old_segment = images[i];
+        int const top = (int)i * scaled_height;
 
-        images[i] = widget->copy_image_region(image, 0, top, width, height);
+        images[i] = widget->copy_image_region(
+            scaled_image,
+            0,
+            top,
+            scaled_width,
+            scaled_height
+        );
+
+        if (MPE_EMULATOR_LIKELY(old_segment != NULL)) {
+            widget->delete_image(old_segment);
+        }
     }
 
-    return images;
+    widget->delete_image(scaled_image);
 }
 
 
 ParamStateImages::~ParamStateImages()
 {
-    if (image != NULL) {
+    if (image_full != NULL) {
         images = free_images(images);
 
-        widget->delete_image(image);
-        image = NULL;
+        widget->delete_image(image_full);
+        image_full = NULL;
     }
 }
 
@@ -641,7 +743,7 @@ KnobParamEditor::KnobParamEditor(
         is_continuous ? 0.0 : 1.001 / (double)proxy.get_param_max_value(param_id)
     ),
     knob_states(knob_states),
-    value_font_size(is_continuous ? 11 : 10),
+    value_font_size(is_continuous ? 22 : 20),
     knob_top(knob_top),
     has_room_for_text(height >= knob_top + knob_states->height + VALUE_TEXT_HEIGHT),
     proxy(proxy),
@@ -766,11 +868,11 @@ bool KnobParamEditor::paint()
     if (has_room_for_text) {
         draw_text(
             value_str,
-            value_font_size,
-            1,
-            height - VALUE_TEXT_HEIGHT,
-            width - 2,
-            VALUE_TEXT_HEIGHT,
+            this->scale_value(value_font_size),
+            this->scale_value(1),
+            this->scale_value(height - VALUE_TEXT_HEIGHT),
+            this->scale_value(width - 2),
+            this->scale_value(VALUE_TEXT_HEIGHT),
             GUI::TEXT_COLOR,
             GUI::TEXT_BACKGROUND
         );
@@ -832,6 +934,13 @@ void KnobParamEditor::Knob::set_up(
     Widget::set_up(platform_data, parent);
 
     update(0.0);
+}
+
+
+void KnobParamEditor::Knob::set_scale(double const new_scale)
+{
+    Widget::set_scale(new_scale);
+    update();
 }
 
 
@@ -931,7 +1040,7 @@ bool KnobParamEditor::Knob::mouse_move(
         double const dx = float_x - prev_x;
         double const dy = float_y - prev_y;
         double const delta = (
-            scale * ((std::fabs(dx) > std::fabs(dy)) ? dx : -dy)
+            scale * ((std::fabs(dx) > std::fabs(dy)) ? dx : -dy) / this->scale
         );
 
         prev_x = float_x;
@@ -983,7 +1092,9 @@ bool KnobParamEditor::Knob::mouse_wheel(double const delta, bool const modifier)
 
 AboutText::AboutText(char const* const sdk_version, GUI::Image logo)
     : Widget(TEXT, LEFT, TOP, WIDTH, HEIGHT, Type::ABOUT_TEXT),
-    logo(logo)
+    logo(logo),
+    logo_scaled(NULL),
+    needs_logo_rescale(logo != NULL)
 {
     std::string line("(Version: ");
 
@@ -1014,36 +1125,87 @@ AboutText::AboutText(char const* const sdk_version, GUI::Image logo)
 }
 
 
+AboutText::~AboutText()
+{
+    if (logo_scaled != NULL) {
+        this->delete_image(logo_scaled);
+        logo_scaled = NULL;
+    }
+}
+
+
+void AboutText::set_scale(double const new_scale)
+{
+    Widget::set_scale(new_scale);
+
+    if (logo == NULL) {
+        return;
+    }
+
+    needs_logo_rescale = true;
+}
+
+
 bool AboutText::paint()
 {
     Widget::paint();
 
-    fill_rectangle(0, 0, width, height, GUI::TEXT_BACKGROUND);
+    fill_rectangle(
+        0,
+        0,
+        this->scale_value(width),
+        this->scale_value(height),
+        GUI::TEXT_BACKGROUND
+    );
 
-    int const left = logo != NULL ? LOGO_WIDTH + 10 : 0;
+    int const left = logo != NULL ? LOGO_WIDTH + 20 : 0;
     int const text_width = width - left;
     int top = TEXT_TOP;
 
     for (std::vector<std::string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
         draw_text(
             it->c_str(),
-            FONT_SIZE,
-            left,
-            top,
-            text_width,
-            LINE_HEIGHT,
+            this->scale_value(FONT_SIZE),
+            this->scale_value(left),
+            this->scale_value(top),
+            this->scale_value(text_width),
+            this->scale_value(LINE_HEIGHT),
             GUI::TEXT_COLOR,
             GUI::TEXT_BACKGROUND,
             FontWeight::NORMAL,
-            PADDING,
+            this->scale_value(PADDING),
             TextAlignment::CENTER
         );
 
         top += it->length() == 0 ? EMPTY_LINE_HEIGHT : LINE_HEIGHT;
     }
 
-    if (logo != NULL) {
-        draw_image(logo, 5, (HEIGHT - LOGO_HEIGHT) / 2, LOGO_WIDTH, LOGO_HEIGHT);
+    if (needs_logo_rescale) {
+        needs_logo_rescale = false;
+
+        GUI::Image old_logo_scaled = logo_scaled;
+
+        logo_scaled = downscale_image(
+            logo,
+            LOGO_WIDTH,
+            LOGO_HEIGHT,
+            this->scale_value(LOGO_WIDTH),
+            this->scale_value(LOGO_HEIGHT)
+        );
+
+        if (old_logo_scaled != NULL) {
+            this->delete_image(old_logo_scaled);
+        }
+    }
+
+    if (logo_scaled != NULL) {
+        draw_image(
+            logo_scaled,
+            this->scale_value(10),
+            this->scale_value((HEIGHT - LOGO_HEIGHT) / 2),
+            this->scale_value(LOGO_WIDTH),
+            this->scale_value(LOGO_HEIGHT)
+        );
     }
 
     return true;
@@ -1077,18 +1239,24 @@ bool StatusLine::paint()
     TransparentWidget::paint();
 
     if (text[0] != '\x00') {
-        fill_rectangle(0, 0, WIDTH, HEIGHT, GUI::STATUS_LINE_BACKGROUND);
+        fill_rectangle(
+            0,
+            0,
+            this->scale_value(WIDTH),
+            this->scale_value(HEIGHT),
+            GUI::STATUS_LINE_BACKGROUND
+        );
         draw_text(
             text,
-            9,
-            0,
-            3,
-            WIDTH,
-            20,
+            this->scale_value(18),
+            this->scale_value(0),
+            this->scale_value(6),
+            this->scale_value(WIDTH),
+            this->scale_value(40),
             GUI::TEXT_COLOR,
             GUI::STATUS_LINE_BACKGROUND,
             FontWeight::NORMAL,
-            5,
+            this->scale_value(10),
             TextAlignment::RIGHT
         );
     }
@@ -1165,7 +1333,13 @@ bool ToggleSwitchParamEditor::paint()
         toggle == Proxy::Toggle::ON ? GUI::TOGGLE_ON_COLOR : GUI::TOGGLE_OFF_COLOR
     );
 
-    fill_rectangle(box_left + 5, 8, 11, 8, color);
+    fill_rectangle(
+        this->scale_value(box_left + 10),
+        this->scale_value(16),
+        this->scale_value(22),
+        this->scale_value(16),
+        color
+    );
 
     return true;
 }
@@ -1316,6 +1490,12 @@ DiscreteParamEditor::DiscreteParamEditor(
 }
 
 
+void DiscreteParamEditor::set_scale(double const new_scale)
+{
+    TransparentWidget::set_scale(new_scale);
+    update();
+}
+
 
 void DiscreteParamEditor::set_up(
         GUI::PlatformData platform_data,
@@ -1407,7 +1587,14 @@ bool DiscreteParamEditor::paint()
 
     if (state_images == NULL) {
         draw_text(
-            value_str, 10, value_left, 0, value_width, height, GUI::TEXT_COLOR, GUI::TEXT_BACKGROUND
+            value_str,
+            this->scale_value(20),
+            this->scale_value(value_left),
+            this->scale_value(0),
+            this->scale_value(value_width),
+            this->scale_value(height),
+            GUI::TEXT_COLOR,
+            GUI::TEXT_BACKGROUND
         );
     }
 
@@ -1494,6 +1681,73 @@ bool DiscreteParamEditor::mouse_wheel(double const delta, bool const modifier)
     }
 
     return false;
+}
+
+
+ResizerHandle::ResizerHandle(GUI& gui, GUI::EventHandler& event_handler)
+    : TransparentWidget("Resize", LEFT, TOP, WIDTH, HEIGHT, Type::RESIZER_HANDLE),
+    event_handler(event_handler),
+    prev_resize_time_ms(0),
+    click_x(0),
+    click_y(0)
+{
+    set_gui(gui);
+}
+
+
+bool ResizerHandle::mouse_down(int const x, int const y)
+{
+    TransparentWidget::mouse_down(x, y);
+    init_movement(x, y);
+
+    return true;
+}
+
+
+void ResizerHandle::init_movement(int const x, int const y)
+{
+    prev_resize_time_ms = monotonic_clock_ms();
+    click_x = x;
+    click_y = y;
+}
+
+
+bool ResizerHandle::mouse_up(int const x, int const y)
+{
+    TransparentWidget::mouse_up(x, y);
+    init_movement(x, y);
+
+    return true;
+}
+
+
+bool ResizerHandle::mouse_move(int const x, int const y, bool const modifier)
+{
+    TransparentWidget::mouse_move(x, y, modifier);
+
+    if (is_clicking && gui != NULL) {
+        uint64_t const now = monotonic_clock_ms();
+
+        if ((now - prev_resize_time_ms) > RESIZE_MOVE_INTERVAL_MS) {
+            double scale;
+            int const current_width = gui->get_width();
+            int const current_height = gui->get_height();
+            int const dx = x - click_x;
+            int const dy = y - click_y;
+
+            int new_width = current_width + dx;
+            int new_height = current_height + dy;
+
+            gui->apply_size_constraints(new_width, new_height, scale);
+
+            if (new_width != current_width || new_height != current_height) {
+                prev_resize_time_ms = now;
+                event_handler.handle_resize_request(new_width, new_height);
+            }
+        }
+    }
+
+    return is_clicking;
 }
 
 }

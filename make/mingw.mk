@@ -1,6 +1,6 @@
 ###############################################################################
 # This file is part of MPE Emulator.
-# Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+# Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
 #
 # MPE Emulator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ OBJ_TARGET_GUI_EXTRA = $(BUILD_DIR)/gui-$(SUFFIX).res
 $(OBJ_TARGET_GUI_EXTRA): src/gui/gui.rc $(GUI_IMAGES) | $(BUILD_DIR)
 	$(WINDRES) -i $< --input-format=rc -o $@ -O coff
 
-MINGW_CXXFLAGS = -D OEMRESOURCE
+MINGW_CXXFLAGS = -D OEMRESOURCE -D WINVER=0x0601 -D _WIN32_WINNT=0x0601
 
 TARGET_PLATFORM_LFLAGS = \
 	-lgdi32 \

@@ -89,9 +89,6 @@ FUID const Vst3Plugin::Processor::ID(0x56535441, 0x4d50456d, 0x7065656d, 0x756c6
 FUID const Vst3Plugin::Controller::ID(0x56534541, 0x4d50456d, 0x7065656d, 0x756c6174);
 
 
-ViewRect const Vst3Plugin::GUI::rect(0, 0, MpeEmulator::GUI::WIDTH, MpeEmulator::GUI::HEIGHT);
-
-
 Vst3Plugin::Event::Event()
     : time_offset(0.0),
     velocity_or_value(0.0),
@@ -810,9 +807,10 @@ tresult PLUGIN_API Vst3Plugin::Processor::getState(IBStream* state)
 }
 
 
-Vst3Plugin::GUI::GUI(Proxy& proxy)
-    : CPluginView(&rect),
+Vst3Plugin::GUI::GUI(Proxy& proxy, ViewRect& gui_size)
+    : CPluginView(&gui_size),
     proxy(proxy),
+    gui_size(gui_size),
     gui(NULL),
     run_loop(NULL),
     event_handler(NULL),
@@ -843,13 +841,76 @@ tresult PLUGIN_API Vst3Plugin::GUI::isPlatformTypeSupported(FIDString type)
 
 tresult PLUGIN_API Vst3Plugin::GUI::canResize()
 {
-    return kResultFalse;
+    return kResultTrue;
 }
+
+
+tresult PLUGIN_API Vst3Plugin::GUI::checkSizeConstraint(ViewRect* rect)
+{
+    if (gui == NULL) {
+        return kResultTrue;
+    }
+
+    double new_scale;
+    int new_width = (int)rect->getWidth();
+    int new_height = (int)rect->getHeight();
+
+    gui->apply_size_constraints(new_width, new_height, new_scale);
+
+    rect->right = rect->left + (int32)new_width;
+    rect->bottom = rect->top + (int32)new_height;
+
+    return kResultTrue;
+}
+
+
+tresult PLUGIN_API Vst3Plugin::GUI::onSize(ViewRect* newSize)
+{
+    tresult result = CPluginView::onSize(newSize);
+
+    if (gui == NULL || result != kResultTrue) {
+        return result;
+    }
+
+    gui_size = *newSize;
+    gui->resize((int)newSize->getWidth(), (int)newSize->getHeight());
+
+    return result;
+ }
 
 
 void Vst3Plugin::GUI::attachedToParent()
 {
     show_if_needed();
+}
+
+
+void Vst3Plugin::GUI::handle_resize_request(
+        int const new_width,
+        int const new_height
+) {
+    if (gui == NULL) {
+        return;
+    }
+
+    double scale;
+    int width = new_width;
+    int height = new_height;
+
+    gui->apply_size_constraints(width, height, scale);
+
+    if (width == gui->get_width() && height != gui->get_height()) {
+        return;
+    }
+
+    ViewRect current_rect;
+
+    getSize(&current_rect);
+
+    current_rect.right = current_rect.left + (int32)width;
+    current_rect.bottom = current_rect.top + (int32)height;
+
+    this->plugFrame->resizeView(this, &current_rect);
 }
 
 
@@ -869,7 +930,9 @@ FUnknown* Vst3Plugin::Controller::createInstance(void* unused)
 }
 
 
-Vst3Plugin::Controller::Controller() : proxy(NULL)
+Vst3Plugin::Controller::Controller()
+    : proxy(NULL),
+    gui_size(0, 0, MpeEmulator::GUI::INIT_WIDTH, MpeEmulator::GUI::INIT_HEIGHT)
 {
 }
 
@@ -1155,7 +1218,7 @@ IPlugView* PLUGIN_API Vst3Plugin::Controller::createView(FIDString name)
             return NULL;
         }
 
-        return new GUI(*proxy);
+        return new GUI(*proxy, gui_size);
     }
 
     return NULL;

@@ -1,6 +1,6 @@
 /*
  * This file is part of MPE Emulator.
- * Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+ * Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
  *
  * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,13 @@
 
 namespace MpeEmulator
 {
+
+void GUI::EventHandler::handle_resize_request(
+        int const new_width,
+        int const new_height
+) {
+}
+
 
 constexpr GUI::Color GUI::rgb(
         ColorComponent const red,
@@ -75,9 +82,9 @@ double GUI::clamp_ratio(double const ratio)
 }
 
 
-#define KNOB_W 58
-#define KNOB_H 85
-#define KNOB_TOP 16
+#define KNOB_W 116
+#define KNOB_H 170
+#define KNOB_TOP 32
 
 
 constexpr int pos_rel_offset_left = 0;
@@ -169,8 +176,8 @@ constexpr int pos_rel_offset_top = 0;
             *this,                                                  \
             pos_rel_offset_left + left,                             \
             pos_rel_offset_top + top,                               \
-            21,                                                     \
-            21,                                                     \
+            42,                                                     \
+            42,                                                     \
             0,                                                      \
             proxy,                                                  \
             param_id,                                               \
@@ -185,18 +192,26 @@ GUI::GUI(
         PlatformData platform_data,
         PlatformWidget parent_window,
         Proxy& proxy,
-        bool const show_vst_logo
+        bool const show_vst_logo,
+        EventHandler* const event_handler
 )
     : show_vst_logo(show_vst_logo),
+    default_event_handler(*this),
+    event_handler(event_handler == NULL ? &default_event_handler : event_handler),
     dummy_widget(NULL),
     background(NULL),
     about_body(NULL),
     zone_1_body(NULL),
     status_line(NULL),
+    scale(1.0),
     proxy(proxy),
     platform_data(platform_data),
     active_voices_count(0),
-    polyphony(0)
+    polyphony(0),
+    width(WIDTH),
+    height(HEIGHT),
+    resizing_allowed(true)
+
 {
     default_status_line[0] = '\x00';
     update_active_voices_count();
@@ -209,32 +224,32 @@ GUI::GUI(
         dummy_widget,
         dummy_widget->load_image(this->platform_data, "KNOBSTATES"),
         128,
-        48,
-        48
+        96,
+        96
     );
 
     rocker_switch = new ParamStateImages(
         dummy_widget,
         dummy_widget->load_image(this->platform_data, "ROCKERSWITCH"),
         2,
-        48,
-        48
+        96,
+        96
     );
 
     distortions = new ParamStateImages(
         dummy_widget,
         dummy_widget->load_image(this->platform_data, "DISTORTIONS"),
         4,
-        21,
-        21
+        42,
+        42
     );
 
     midpoint_states = new ParamStateImages(
         dummy_widget,
         dummy_widget->load_image(this->platform_data, "MIDPOINT"),
         128,
-        21,
-        21
+        42,
+        42
     );
 
     about_image = dummy_widget->load_image(this->platform_data, "ABOUT");
@@ -311,6 +326,8 @@ GUI::GUI(
             (unsigned int)i, Strings::CONTROLLERS_LONG[i]
         );
     }
+
+    resize(INIT_WIDTH, INIT_HEIGHT);
 }
 
 
@@ -320,9 +337,8 @@ void GUI::build_about_body(char const* const sdk_version)
 
     background->own(about_body);
 
-    about_body->own(
-        new AboutText(sdk_version, show_vst_logo ? vst_logo_image : NULL)
-    );
+    about_body->own(new ResizerHandle(*this, *event_handler));
+    about_body->own(new AboutText(sdk_version, show_vst_logo ? vst_logo_image : NULL));
 
     about_body->hide();
 }
@@ -339,182 +355,184 @@ void GUI::build_zone_1_body(
 
     background->own(zone_1_body);
 
-    POSITION_RELATIVE_BEGIN(295, 11);
+    zone_1_body->own(new ResizerHandle(*this, *event_handler));
+
+    POSITION_RELATIVE_BEGIN(592, 19);
 
     zone_1_body->own(
         new ImportSettingsButton(
-            *this, pos_rel_offset_left + 4, pos_rel_offset_top + 30, 30, 30, proxy, zone_1_body
+            *this, pos_rel_offset_left + 6, pos_rel_offset_top + 63, 60, 60, proxy, zone_1_body
         )
     );
     zone_1_body->own(
         new ExportSettingsButton(
-            *this, pos_rel_offset_left + 4, pos_rel_offset_top + 60, 30, 30, proxy
+            *this, pos_rel_offset_left + 6, pos_rel_offset_top + 123, 60, 60, proxy
         )
     );
 
-    KNOBD(zone_1_body, 38 + KNOB_W * 0, 30, Proxy::ParamId::Z1TYP, rocker_switch);
-    KNOBD(zone_1_body, 38 + KNOB_W * 1, 30, Proxy::ParamId::Z1CHN, knob_states);
-    KNOBD(zone_1_body, 38 + KNOB_W * 2, 30, Proxy::ParamId::Z1ENH, knob_states);
-    KNOBD(zone_1_body, 38 + KNOB_W * 3, 30, Proxy::ParamId::Z1ANC, knob_states);
-    KNOBD(zone_1_body, 38 + KNOB_W * 4, 30, Proxy::ParamId::Z1TRB, knob_states);
-    KNOBD(zone_1_body, 38 + KNOB_W * 5, 30, Proxy::ParamId::Z1TRA, knob_states);
+    KNOBD(zone_1_body, 66 + KNOB_W * 0, 65, Proxy::ParamId::Z1TYP, rocker_switch);
+    KNOBD(zone_1_body, 66 + KNOB_W * 1, 65, Proxy::ParamId::Z1CHN, knob_states);
+    KNOBD(zone_1_body, 66 + KNOB_W * 2, 65, Proxy::ParamId::Z1ENH, knob_states);
+    KNOBD(zone_1_body, 66 + KNOB_W * 3, 65, Proxy::ParamId::Z1ANC, knob_states);
+    KNOBD(zone_1_body, 66 + KNOB_W * 4, 65, Proxy::ParamId::Z1TRB, knob_states);
+    KNOBD(zone_1_body, 66 + KNOB_W * 5, 65, Proxy::ParamId::Z1TRA, knob_states);
 
-    TOGG(zone_1_body, 91, 4, 106, 24, 85, Proxy::ParamId::Z1SUS);
-    TOGG(zone_1_body, 209, 4, 110, 24, 89, Proxy::ParamId::Z1ORV);
-    TOGG(zone_1_body, 331, 4, 53, 24, 32, Proxy::ParamId::MCM);
-
-    POSITION_RELATIVE_END();
-
-
-    POSITION_RELATIVE_BEGIN(18, 149);
-
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R1IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R1OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R1IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R1TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R1DL, knob_states);
-
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R1FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R1NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R1RS);
-    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R1MP, midpoint_states);
-    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R1DT, distortions);
+    TOGG(zone_1_body, 177, 7, 212, 48, 170, Proxy::ParamId::Z1SUS);
+    TOGG(zone_1_body, 413, 7, 221, 48, 179, Proxy::ParamId::Z1ORV);
+    TOGG(zone_1_body, 658, 7, 106, 48, 64, Proxy::ParamId::MCM);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(339, 149);
+    POSITION_RELATIVE_BEGIN(37, 294);
 
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R2IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R2OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R2IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R2TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R2DL, knob_states);
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R1IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R1OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R1IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R1TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R1DL, knob_states);
 
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R2FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 20, Proxy::ParamId::Z1R2NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R2RS);
-    MIDP(zone_1_body, 252, 5, Proxy::ParamId::Z1R2MP, midpoint_states);
-    DPEI(zone_1_body, 273, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R2DT, distortions);
-
-    POSITION_RELATIVE_END();
-
-
-    POSITION_RELATIVE_BEGIN(659, 149);
-
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R3IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R3OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R3IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R3TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R3DL, knob_states);
-
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R3FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R3NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R3RS);
-    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R3MP, midpoint_states);
-    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R3DT, distortions);
+    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R1FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R1NV);
+    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R1RS);
+    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R1MP, midpoint_states);
+    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R1DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(18, 287);
+    POSITION_RELATIVE_BEGIN(678, 294);
 
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R4IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R4OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R4IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R4TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R4DL, knob_states);
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R2IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R2OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R2IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R2TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R2DL, knob_states);
 
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R4FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R4NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R4RS);
-    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R4MP, midpoint_states);
-    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R4DT, distortions);
-
-    POSITION_RELATIVE_END();
-
-
-    POSITION_RELATIVE_BEGIN(339, 287);
-
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R5IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R5OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R5IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R5TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R5DL, knob_states);
-
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R5FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 20, Proxy::ParamId::Z1R5NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R5RS);
-    MIDP(zone_1_body, 252, 5, Proxy::ParamId::Z1R5MP, midpoint_states);
-    DPEI(zone_1_body, 273, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R5DT, distortions);
+    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R2FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R2NV);
+    DPET(zone_1_body, 311, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R2RS);
+    MIDP(zone_1_body, 504, 13, Proxy::ParamId::Z1R2MP, midpoint_states);
+    DPEI(zone_1_body, 546, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R2DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(659, 287);
+    POSITION_RELATIVE_BEGIN(1318, 294);
 
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R6IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R6OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R6IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R6TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R6DL, knob_states);
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R3IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R3OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R3IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R3TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R3DL, knob_states);
 
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R6FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R6NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R6RS);
-    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R6MP, midpoint_states);
-    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R6DT, distortions);
-
-    POSITION_RELATIVE_END();
-
-
-    POSITION_RELATIVE_BEGIN(18, 425);
-
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R7IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R7OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R7IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R7TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R7DL, knob_states);
-
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R7FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R7NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R7RS);
-    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R7MP, midpoint_states);
-    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R7DT, distortions);
+    TOGG(zone_1_body, 124, 7, 74, 48, 32, Proxy::ParamId::Z1R3FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R3NV);
+    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R3RS);
+    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R3MP, midpoint_states);
+    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R3DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(339, 425);
+    POSITION_RELATIVE_BEGIN(37, 569);
 
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R8IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R8OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R8IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R8TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R8DL, knob_states);
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R4IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R4OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R4IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R4TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R4DL, knob_states);
 
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R8FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 20, Proxy::ParamId::Z1R8NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R8RS);
-    MIDP(zone_1_body, 252, 5, Proxy::ParamId::Z1R8MP, midpoint_states);
-    DPEI(zone_1_body, 273, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R8DT, distortions);
+    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R4FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R4NV);
+    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R4RS);
+    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R4MP, midpoint_states);
+    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R4DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
-    POSITION_RELATIVE_BEGIN(659, 425);
+    POSITION_RELATIVE_BEGIN(678, 569);
 
-    DPETO(zone_1_body, 42, 44, 70, 23, 0, 70, Proxy::ParamId::Z1R9IN, controller_selector);
-    DPETO(zone_1_body, 42, 79, 70, 23, 0, 70, Proxy::ParamId::Z1R9OU, controller_selector);
-    KNOBC(zone_1_body, 6 + KNOB_W * 2, 30, Proxy::ParamId::Z1R9IV, knob_states);
-    KNOBD(zone_1_body, 6 + KNOB_W * 3, 30, Proxy::ParamId::Z1R9TR, knob_states);
-    KNOBC(zone_1_body, 6 + KNOB_W * 4, 30, Proxy::ParamId::Z1R9DL, knob_states);
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R5IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R5OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R5IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R5TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R5DL, knob_states);
 
-    TOGG(zone_1_body,  62, 4, 38, 24, 16, Proxy::ParamId::Z1R9FB);
-    TOGG(zone_1_body, 107, 4, 42, 24, 21, Proxy::ParamId::Z1R9NV);
-    DPET(zone_1_body, 157, 5, 60, 21, 24, 34, Proxy::ParamId::Z1R9RS);
-    MIDP(zone_1_body, 253, 5, Proxy::ParamId::Z1R9MP, midpoint_states);
-    DPEI(zone_1_body, 274, 5, 21, 21, 0, 21, Proxy::ParamId::Z1R9DT, distortions);
+    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R5FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R5NV);
+    DPET(zone_1_body, 311, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R5RS);
+    MIDP(zone_1_body, 504, 13, Proxy::ParamId::Z1R5MP, midpoint_states);
+    DPEI(zone_1_body, 546, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R5DT, distortions);
+
+    POSITION_RELATIVE_END();
+
+
+    POSITION_RELATIVE_BEGIN(1318, 569);
+
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R6IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R6OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R6IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R6TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R6DL, knob_states);
+
+    TOGG(zone_1_body, 124, 7, 74, 48, 32, Proxy::ParamId::Z1R6FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R6NV);
+    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R6RS);
+    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R6MP, midpoint_states);
+    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R6DT, distortions);
+
+    POSITION_RELATIVE_END();
+
+
+    POSITION_RELATIVE_BEGIN(37, 844);
+
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R7IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R7OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R7IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R7TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R7DL, knob_states);
+
+    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R7FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R7NV);
+    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R7RS);
+    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R7MP, midpoint_states);
+    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R7DT, distortions);
+
+    POSITION_RELATIVE_END();
+
+
+    POSITION_RELATIVE_BEGIN(678, 844);
+
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R8IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R8OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R8IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R8TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R8DL, knob_states);
+
+    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R8FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R8NV);
+    DPET(zone_1_body, 311, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R8RS);
+    MIDP(zone_1_body, 504, 13, Proxy::ParamId::Z1R8MP, midpoint_states);
+    DPEI(zone_1_body, 546, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R8DT, distortions);
+
+    POSITION_RELATIVE_END();
+
+
+    POSITION_RELATIVE_BEGIN(1318, 844);
+
+    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R9IN, controller_selector);
+    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R9OU, controller_selector);
+    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R9IV, knob_states);
+    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R9TR, knob_states);
+    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R9DL, knob_states);
+
+    TOGG(zone_1_body, 124, 7, 74, 48, 32, Proxy::ParamId::Z1R9FB);
+    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R9NV);
+    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R9RS);
+    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R9MP, midpoint_states);
+    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R9DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -547,6 +565,87 @@ GUI::~GUI()
 void GUI::show()
 {
     background->show();
+}
+
+
+void GUI::resize(int const new_width, int const new_height)
+{
+    double new_scale;
+    int constrained_new_width = new_width;
+    int constrained_new_height = new_height;
+
+    apply_size_constraints(constrained_new_width, constrained_new_height, new_scale);
+
+    if (constrained_new_width == width && constrained_new_height == height) {
+        return;
+    }
+
+    scale = new_scale;
+    width = constrained_new_width;
+    height = constrained_new_height;
+
+    dummy_widget->set_scale(scale);
+
+    knob_states->set_scale(scale);
+    rocker_switch->set_scale(scale);
+    distortions->set_scale(scale);
+    midpoint_states->set_scale(scale);
+
+    background->set_scale(scale);
+    background->redraw();
+}
+
+
+void GUI::apply_size_constraints(
+        int& new_width,
+        int& new_height,
+        double& new_scale
+) const {
+    if (!resizing_allowed) {
+        new_scale = scale;
+        new_width = width;
+        new_height = height;
+
+        return;
+    }
+
+    new_width = clamp(new_width, MIN_WIDTH, MAX_WIDTH);
+    new_height = clamp(new_height, MIN_HEIGHT, MAX_HEIGHT);
+
+    double const width_scale = (double)new_width / WIDTH_FLOAT;
+    double const height_scale = (double)new_height / HEIGHT_FLOAT;
+
+    if (width_scale <= height_scale) {
+        new_scale = width_scale;
+        new_height = (int)std::round(HEIGHT_FLOAT * new_scale);
+    } else {
+        new_scale = height_scale;
+        new_width = (int)std::round(WIDTH_FLOAT * new_scale);
+    }
+}
+
+
+constexpr int GUI::clamp(int const number, int const min, int const max)
+{
+    return std::min(max, std::max(min, number));
+}
+
+
+void GUI::ignore_resizing()
+{
+    resizing_allowed = false;
+}
+
+
+int GUI::get_width() const
+{
+    return width;
+}
+
+
+int GUI::get_height() const
+{
+    return height;
 }
 
 
@@ -604,6 +703,19 @@ GUI::PlatformData GUI::get_platform_data() const
 }
 
 
+GUI::DefaultEventHandler::DefaultEventHandler(GUI& gui) : gui(gui)
+{
+}
+
+
+void GUI::DefaultEventHandler::handle_resize_request(
+        int const new_width,
+        int const new_height
+) {
+    gui.resize(new_width, new_height);
+}
+
+
 WidgetBase::WidgetBase(char const* const text)
     : type(Type::BACKGROUND),
     platform_widget(NULL),
@@ -612,11 +724,14 @@ WidgetBase::WidgetBase(char const* const text)
     gui(NULL),
     parent(NULL),
     text(text),
+    scale(1.0),
     left(0),
     top(0),
     width(0),
     height(0),
-    is_clicking(false)
+    is_visible(true),
+    is_clicking(false),
+    scale_changed(true)
 {
 }
 
@@ -635,11 +750,14 @@ WidgetBase::WidgetBase(
     gui(NULL),
     parent(NULL),
     text(text),
+    scale(1.0),
     left(left),
     top(top),
     width(width),
     height(height),
-    is_clicking(false)
+    is_visible(true),
+    is_clicking(false),
+    scale_changed(true)
 {
 }
 
@@ -655,11 +773,14 @@ WidgetBase::WidgetBase(
     gui(NULL),
     parent(NULL),
     text(""),
+    scale(1.0),
     left(0),
     top(0),
     width(0),
     height(0),
-    is_clicking(false)
+    is_visible(true),
+    is_clicking(false),
+    scale_changed(true)
 {
 }
 
@@ -719,6 +840,37 @@ WidgetBase* WidgetBase::get_parent() const
 }
 
 
+void WidgetBase::set_scale(double const new_scale)
+{
+    scale = new_scale;
+    scale_changed = true;
+
+    if (is_visible) {
+        update_children_scale_if_changed();
+    }
+}
+
+
+void WidgetBase::update_children_scale_if_changed()
+{
+    if (!scale_changed) {
+        return;
+    }
+
+    scale_changed = false;
+
+    for (GUI::Widgets::iterator it = children.begin(); it != children.end(); ++it) {
+        (*it)->set_scale(scale);
+    }
+}
+
+
+int WidgetBase::scale_value(int const value) const
+{
+    return (int)std::round(scale * (double)value);
+}
+
+
 GUI::Image WidgetBase::load_image(
         GUI::PlatformData platform_data,
         char const* const name
@@ -732,13 +884,32 @@ void WidgetBase::delete_image(GUI::Image image)
 }
 
 
+bool WidgetBase::is_on_screen() const
+{
+    WidgetBase const* widget = this;
+
+    while (widget != NULL) {
+        if (!widget->is_visible) {
+            return false;
+        }
+
+        widget = widget->parent;
+    }
+
+    return true;
+}
+
+
 void WidgetBase::show()
 {
+    is_visible = true;
+    update_children_scale_if_changed();
 }
 
 
 void WidgetBase::hide()
 {
+    is_visible = false;
 }
 
 
@@ -811,11 +982,11 @@ void WidgetBase::set_gui(GUI& gui)
 
 bool WidgetBase::paint()
 {
-    if (image == NULL) {
+    if (image == NULL || !is_on_screen()) {
         return false;
     }
 
-    draw_image(image, 0, 0, width, height);
+    draw_image(image, 0, 0, this->scale_value(width), this->scale_value(height));
 
     return true;
 }
@@ -854,6 +1025,12 @@ bool WidgetBase::mouse_leave(int const x, int const y)
 bool WidgetBase::mouse_wheel(double const delta, bool const modifier)
 {
     return false;
+}
+
+
+uint64_t WidgetBase::monotonic_clock_ms()
+{
+    return 0;
 }
 
 
@@ -900,6 +1077,19 @@ GUI::Image WidgetBase::copy_image_region(
         int const width,
         int const height
 ) {
+    return NULL;
+}
+
+
+GUI::Image WidgetBase::downscale_image(
+        GUI::Image source,
+        int const old_width,
+        int const old_height,
+        int const new_width,
+        int const new_height
+) {
+    MPE_EMULATOR_ASSERT(new_width <= old_width && new_height <= old_height);
+
     return NULL;
 }
 
