@@ -255,8 +255,6 @@ class GUI
 
         Widget* dummy_widget;
 
-        Image about_image;
-        Image zone_1_image;
         Image vst_logo_image;
 
         ParamStateImages* knob_states;

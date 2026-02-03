@@ -252,16 +252,12 @@ GUI::GUI(
         42
     );
 
-    about_image = dummy_widget->load_image(this->platform_data, "ABOUT");
-    zone_1_image = dummy_widget->load_image(this->platform_data, "ZONE1");
     vst_logo_image = dummy_widget->load_image(this->platform_data, "VSTLOGO");
 
     background = new Background();
 
     this->parent_window = new ExternallyCreatedWindow(this->platform_data, parent_window);
     this->parent_window->own(background);
-
-    background->set_image(zone_1_image);
 
     status_line = new StatusLine();
     status_line->set_text("");
@@ -280,7 +276,7 @@ GUI::GUI(
     background->own(
         new TabSelector(
             background,
-            zone_1_image,
+            "ZONE1",
             zone_1_body,
             "Settings",
             TabSelector::LEFT + TabSelector::WIDTH * 0
@@ -289,7 +285,7 @@ GUI::GUI(
     background->own(
         new TabSelector(
             background,
-            about_image,
+            "ABOUT",
             about_body,
             "About",
             TabSelector::LEFT + TabSelector::WIDTH * 1
@@ -550,8 +546,6 @@ GUI::~GUI()
     delete distortions;
     delete midpoint_states;
 
-    dummy_widget->delete_image(about_image);
-    dummy_widget->delete_image(zone_1_image);
     dummy_widget->delete_image(vst_logo_image);
 
     delete dummy_widget;
