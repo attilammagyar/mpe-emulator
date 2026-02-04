@@ -678,7 +678,7 @@ void Vst3Plugin::Processor::initialize_cc_event(
     The MPE specs recommend sending Note On setup control events before the
     Note On event itself, but since it's not mandatory, we should be fine with
     sending them with the same sample offset, and let the VST 3 implementation
-    and the synth pick and order.
+    and the synth pick an order.
 
     Unfortunately, some commercial synths seem to ignore parameter automation
     events (and therefore the control events that are sent via parameters as a
