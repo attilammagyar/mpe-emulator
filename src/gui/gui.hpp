@@ -171,6 +171,9 @@ class GUI
 
         void resize(int const new_width, int const new_height);
 
+        void start_resizing();
+        void stop_resizing();
+
         void apply_size_constraints(int& new_width, int& new_height, double& new_scale) const;
 
         void ignore_resizing();
