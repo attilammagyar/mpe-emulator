@@ -509,7 +509,7 @@ class AboutText : public Widget
             "MIDI Polyphonic Expression (MPE)\n"
             "for non-MPE-capable keyboards.\n"
             "\n"
-            "Copyright (C) 2025 Attila M. Magyar and contributors\n"
+            "Copyright (C) 2026 Attila M. Magyar and contributors\n"
             "https://attilammagyar.github.io/mpe-emulator\n"
             "\n"
             "License: GNU General Public License Version 3\n"
