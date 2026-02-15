@@ -30,11 +30,6 @@
 
 namespace MpeEmulator {
 
-void GUI::idle()
-{
-}
-
-
 void GUI::initialize()
 {
 }
@@ -147,6 +142,16 @@ void ImportSettingsButton::click()
 
 void ExportSettingsButton::click()
 {
+}
+
+
+void GUI::idle()
+{
+    handle_scheduled_resize();
+
+    if (background != NULL) {
+        background->refresh();
+    }
 }
 
 }

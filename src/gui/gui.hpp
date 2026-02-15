@@ -170,6 +170,7 @@ class GUI
         void idle();
 
         void resize(int const new_width, int const new_height);
+        void schedule_resize(int const new_width, int const new_height);
 
         void start_resizing();
         void stop_resizing();
@@ -201,6 +202,8 @@ class GUI
             private:
                 GUI& gui;
         };
+
+        static constexpr int SCHEDULED_RESIZE_WAIT = 100;
 
         static constexpr double ASPECT_RATIO = WIDTH_FLOAT / HEIGHT_FLOAT;
 
@@ -249,6 +252,8 @@ class GUI
             OptionSelector* const controller_selector
         );
 
+        void handle_scheduled_resize();
+
         bool const show_vst_logo;
 
         char default_status_line[DEFAULT_STATUS_LINE_MAX_LENGTH];
@@ -279,8 +284,11 @@ class GUI
         unsigned int active_voices_count;
         unsigned int polyphony;
 
+        uint64_t prev_resize_time_ms;
         int width;
         int height;
+        int new_width;
+        int new_height;
 
         bool resizing_allowed;
 };
@@ -358,6 +366,8 @@ class WidgetBase
         );
 
         virtual void delete_image(GUI::Image image);
+
+        virtual uint64_t monotonic_clock_ms();
 
         virtual bool is_on_screen() const;
         virtual void show();
@@ -498,8 +508,6 @@ class WidgetBase
          *                      needs to be run.
          */
         virtual bool mouse_wheel(double const delta, bool const modifier);
-
-        virtual uint64_t monotonic_clock_ms();
 
         virtual void fill_rectangle(
             int const left,

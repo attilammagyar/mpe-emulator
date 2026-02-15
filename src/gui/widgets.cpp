@@ -259,11 +259,12 @@ void TabBody::show_param_editors()
 }
 
 
-Background::Background()
+Background::Background(GUI& gui)
     : Widget("MPE Emulator", 0, 0, GUI::WIDTH, GUI::HEIGHT, Type::BACKGROUND),
     body(NULL),
     next_full_refresh(FULL_REFRESH_TICKS)
 {
+    set_gui(gui);
 }
 
 
@@ -1784,10 +1785,8 @@ bool DiscreteParamEditor::mouse_wheel(double const delta, bool const modifier)
 }
 
 
-ResizerHandle::ResizerHandle(GUI& gui, GUI::EventHandler& event_handler)
+ResizerHandle::ResizerHandle(GUI& gui)
     : TransparentWidget("Resize", LEFT, TOP, WIDTH, HEIGHT, Type::RESIZER_HANDLE),
-    event_handler(event_handler),
-    prev_resize_time_ms(0),
     click_x(0),
     click_y(0)
 {
@@ -1797,7 +1796,9 @@ ResizerHandle::ResizerHandle(GUI& gui, GUI::EventHandler& event_handler)
 
 bool ResizerHandle::mouse_down(int const x, int const y)
 {
-    gui->start_resizing();
+    if (MPE_EMULATOR_LIKELY(gui != NULL)) {
+        gui->start_resizing();
+    }
 
     TransparentWidget::mouse_down(x, y);
 
@@ -1809,7 +1810,6 @@ bool ResizerHandle::mouse_down(int const x, int const y)
 
 void ResizerHandle::init_movement(int const x, int const y)
 {
-    prev_resize_time_ms = monotonic_clock_ms();
     click_x = x;
     click_y = y;
 }
@@ -1817,7 +1817,9 @@ void ResizerHandle::init_movement(int const x, int const y)
 
 bool ResizerHandle::mouse_up(int const x, int const y)
 {
-    gui->stop_resizing();
+    if (MPE_EMULATOR_LIKELY(gui != NULL)) {
+        gui->stop_resizing();
+    }
 
     TransparentWidget::mouse_up(x, y);
 
@@ -1828,8 +1830,12 @@ bool ResizerHandle::mouse_up(int const x, int const y)
 }
 
 
-bool ResizerHandle::handle_movement(int const x, int const y)
+void ResizerHandle::handle_movement(int const x, int const y)
 {
+    if (MPE_EMULATOR_UNLIKELY(gui == NULL)) {
+        return;
+    }
+
     double scale;
     int const current_width = gui->get_width();
     int const current_height = gui->get_height();
@@ -1842,12 +1848,10 @@ bool ResizerHandle::handle_movement(int const x, int const y)
     gui->apply_size_constraints(new_width, new_height, scale);
 
     if (new_width == current_width && new_height == current_height) {
-        return false;
+        return;
     }
 
-    event_handler.handle_resize_request(new_width, new_height);
-
-    return true;
+    gui->schedule_resize(new_width, new_height);
 }
 
 
@@ -1855,18 +1859,13 @@ bool ResizerHandle::mouse_move(int const x, int const y, bool const modifier)
 {
     TransparentWidget::mouse_move(x, y, modifier);
 
-    if (is_clicking && gui != NULL) {
-        uint64_t const now = monotonic_clock_ms();
+    if (is_clicking) {
+        handle_movement(x, y);
 
-        if (
-                (now - prev_resize_time_ms) > RESIZE_MOVE_INTERVAL_MS
-                && handle_movement(x, y)
-        ) {
-            prev_resize_time_ms = now;
-        }
+        return true;
     }
 
-    return is_clicking;
+    return false;
 }
 
 }

@@ -208,8 +208,11 @@ GUI::GUI(
     platform_data(platform_data),
     active_voices_count(0),
     polyphony(0),
+    prev_resize_time_ms(0),
     width(WIDTH),
     height(HEIGHT),
+    new_width(WIDTH),
+    new_height(HEIGHT),
     resizing_allowed(true)
 
 {
@@ -254,7 +257,7 @@ GUI::GUI(
 
     vst_logo_image = dummy_widget->load_image(this->platform_data, "VSTLOGO");
 
-    background = new Background();
+    background = new Background(*this);
 
     this->parent_window = new ExternallyCreatedWindow(this->platform_data, parent_window);
     this->parent_window->own(background);
@@ -333,7 +336,7 @@ void GUI::build_about_body(char const* const sdk_version)
 
     background->own(about_body);
 
-    about_body->own(new ResizerHandle(*this, *event_handler));
+    about_body->own(new ResizerHandle(*this));
     about_body->own(new AboutText(sdk_version, show_vst_logo ? vst_logo_image : NULL));
 
     about_body->hide();
@@ -351,7 +354,7 @@ void GUI::build_zone_1_body(
 
     background->own(zone_1_body);
 
-    zone_1_body->own(new ResizerHandle(*this, *event_handler));
+    zone_1_body->own(new ResizerHandle(*this));
 
     POSITION_RELATIVE_BEGIN(592, 19);
 
@@ -574,9 +577,13 @@ void GUI::resize(int const new_width, int const new_height)
         return;
     }
 
+    if (MPE_EMULATOR_UNLIKELY(dummy_widget == NULL)) {
+        return;
+    }
+
     scale = new_scale;
-    width = constrained_new_width;
-    height = constrained_new_height;
+    width = this->new_width = constrained_new_width;
+    height = this->new_height = constrained_new_height;
 
     dummy_widget->set_scale(scale);
 
@@ -587,6 +594,41 @@ void GUI::resize(int const new_width, int const new_height)
 
     background->set_scale(scale);
     background->redraw();
+
+    prev_resize_time_ms = dummy_widget->monotonic_clock_ms();
+}
+
+
+void GUI::schedule_resize(int const new_width, int const new_height)
+{
+    double new_scale;
+    int constrained_new_width = new_width;
+    int constrained_new_height = new_height;
+
+    apply_size_constraints(constrained_new_width, constrained_new_height, new_scale);
+
+    this->new_width = constrained_new_width;
+    this->new_height = constrained_new_height;
+}
+
+
+void GUI::handle_scheduled_resize()
+{
+    if (MPE_EMULATOR_LIKELY(new_width == width && new_height == height)) {
+        return;
+    }
+
+    if (MPE_EMULATOR_UNLIKELY(dummy_widget == NULL)) {
+        return;
+    }
+
+    uint64_t now = dummy_widget->monotonic_clock_ms();
+
+    if ((now - prev_resize_time_ms) < SCHEDULED_RESIZE_WAIT) {
+        return;
+    }
+
+    event_handler->handle_resize_request(new_width, new_height);
 }
 
 
