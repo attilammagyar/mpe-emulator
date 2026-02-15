@@ -118,12 +118,13 @@ static constexpr char const* FST_OP_CODE_NAMES[FST_OP_CODE_NAMES_LEN] = {
 
 AEffect* FstPlugin::create_instance(
         audioMasterCallback const host_callback_ptr,
-        GUI::PlatformData const platform_data
+        GUI::PlatformData const platform_data,
+        bool const need_gui_idle
 ) noexcept {
     AEffect* const effect = new AEffect();
 
     FstPlugin* const fst_plugin = new FstPlugin(
-        effect, host_callback_ptr, platform_data
+        effect, host_callback_ptr, platform_data, need_gui_idle
     );
 
     memset(effect, 0, sizeof(AEffect));
@@ -485,9 +486,11 @@ void FstPlugin::export_parameters(
 FstPlugin::FstPlugin(
         AEffect* const effect,
         audioMasterCallback const host_callback_ptr,
-        GUI::PlatformData const platform_data
+        GUI::PlatformData const platform_data,
+        bool const need_gui_idle
 ) noexcept
     : proxy(),
+    need_gui_idle(need_gui_idle),
     effect(effect),
     host_callback_ptr(host_callback_ptr),
     platform_data(platform_data),
@@ -1343,7 +1346,9 @@ void FstPlugin::gui_idle()
         return;
     }
 
-    gui->idle();
+    if (need_gui_idle) {
+        gui->idle();
+    }
 }
 
 
