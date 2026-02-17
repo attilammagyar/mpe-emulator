@@ -452,7 +452,7 @@ class Proxy : public Midi::EventHandler
         static constexpr size_t RULES = 9;
 
         Proxy() noexcept;
-        ~Proxy();
+        ~Proxy() noexcept;
 
         bool is_dirty() const noexcept;
         void clear_dirty_flag() noexcept;
@@ -600,7 +600,7 @@ class Proxy : public Midi::EventHandler
         {
             public:
                 ParamIdHashTable() noexcept;
-                ~ParamIdHashTable();
+                ~ParamIdHashTable() noexcept;
 
                 void add(std::string const& name, ParamId const param_id) noexcept;
                 ParamId lookup(std::string const& name) noexcept;
@@ -627,7 +627,7 @@ class Proxy : public Midi::EventHandler
                             ParamId const param_id
                         ) noexcept;
 
-                        ~Entry();
+                        ~Entry() noexcept;
 
                         void set(
                             const char* const name,

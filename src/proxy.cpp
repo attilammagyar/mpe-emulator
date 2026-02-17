@@ -337,7 +337,7 @@ void Proxy::reset_available_channels() noexcept
 }
 
 
-Proxy::~Proxy()
+Proxy::~Proxy() noexcept
 {
 }
 
@@ -1764,7 +1764,7 @@ Proxy::ParamIdHashTable::Entry::Entry(
 }
 
 
-Proxy::ParamIdHashTable::Entry::~Entry()
+Proxy::ParamIdHashTable::Entry::~Entry() noexcept
 {
     if (next != NULL) {
         delete next;
