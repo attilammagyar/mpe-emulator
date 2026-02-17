@@ -1,6 +1,6 @@
 ###############################################################################
 # This file is part of MPE Emulator.
-# Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+# Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
 # Copyright (C) 2023  @aimixsaka (https://github.com/aimixsaka/)
 #
 # MPE Emulator is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ API_DOC_DIR ?= doc
 
 TEST_MAX_ARRAY_PRINT ?= 20
 
+CXX_WARNINGS ?= -Werror
+
 MPE_EMULATOR_CXXINCS = \
 	-I./lib \
 	-I./src
@@ -48,7 +50,7 @@ MPE_EMULATOR_CXXFLAGS = \
 	-D MPE_EMULATOR_TARGET_PLATFORM=$(TARGET_PLATFORM) \
 	-D MPE_EMULATOR_INSTRUCTION_SET=$(INSTRUCTION_SET) \
 	-Wall \
-	-Werror \
+	$(CXX_WARNINGS) \
 	-ffast-math \
 	-O3 \
 	-std=c++17

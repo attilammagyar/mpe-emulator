@@ -1002,6 +1002,7 @@ following commands to run tests and compile MPE Emulator for Windows:
     SET PATH=C:\mingw64\bin;%PATH%
     SET TARGET_PLATFORM=x86_64-w64-mingw32
     SET DEV_OS=windows
+    SET CXX_WARNINGS=
 
     mingw32-make.exe check
     mingw32-make.exe all
@@ -1012,11 +1013,11 @@ The following commands (on a 64 bit Linux environment) will compile MPE
 Emulator for 64 bit Windows, 32 bit Windows, `x86_64` Linux, `x86` Linux, and
 `RISC-V 64` Linux respectively:
 
-    TARGET_PLATFORM=x86_64-w64-mingw32 make all
-    TARGET_PLATFORM=i686-w64-mingw32 make all
-    TARGET_PLATFORM=x86_64-gpp make all
-    TARGET_PLATFORM=i686-gpp make all
-    TARGET_PLATFORM=riscv64-gpp make all
+    TARGET_PLATFORM=x86_64-w64-mingw32 CXX_WARNINGS= make all
+    TARGET_PLATFORM=i686-w64-mingw32 CXX_WARNINGS= make all
+    TARGET_PLATFORM=x86_64-gpp CXX_WARNINGS= make all
+    TARGET_PLATFORM=i686-gpp CXX_WARNINGS= make all
+    TARGET_PLATFORM=riscv64-gpp CXX_WARNINGS= make all
 
 Run `make check` in a similar fashion to run unit tests.
 
