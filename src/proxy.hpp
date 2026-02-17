@@ -381,7 +381,6 @@ class Proxy : public Midi::EventHandler
 
                 std::string const name;
 
-                double const min_value_dbl;
                 double const range_dbl;
                 double const range_inv;
 

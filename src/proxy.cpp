@@ -49,7 +49,6 @@ Proxy::Param::Param(
         unsigned int const default_value
 ) noexcept
     : name(name),
-    min_value_dbl((double)min_value),
     range_dbl((double)(max_value - min_value)),
     range_inv(1.0 / range_dbl),
     min_value(min_value),
