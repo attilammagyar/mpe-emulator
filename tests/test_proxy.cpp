@@ -104,7 +104,7 @@ TEST(can_look_up_param_id_by_name, {
     for (int i = 0; i != Proxy::ParamId::PARAM_ID_COUNT; ++i) {
         std::string const name = proxy.get_param_name((Proxy::ParamId)i);
         Proxy::ParamId const param_id = proxy.get_param_id(name);
-        assert_eq((Proxy::ParamId)i, param_id, "i=%d, name=\"%s\"", i, name);
+        assert_eq((Proxy::ParamId)i, param_id, "i=%d, name=\"%s\"", i, name.c_str());
     }
 })
 
