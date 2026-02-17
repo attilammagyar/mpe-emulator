@@ -85,11 +85,11 @@ class GUI
         static constexpr double HEIGHT_FLOAT = (double)HEIGHT;
 
         static constexpr int INIT_WIDTH = (
-            (int)std::round(INIT_SCALE * WIDTH_FLOAT)
+            (int)(INIT_SCALE * WIDTH_FLOAT + 0.5)
         );
 
         static constexpr int INIT_HEIGHT = (
-            (int)std::round(INIT_SCALE * HEIGHT_FLOAT)
+            (int)(INIT_SCALE * HEIGHT_FLOAT + 0.5)
         );
 
         static constexpr int MIN_WIDTH = WIDTH / 4;
