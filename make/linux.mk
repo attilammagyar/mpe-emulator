@@ -23,7 +23,11 @@ COPY ?= cp -v
 CPP_DEV_PLATFORM ?= /usr/bin/g++
 CPPCHECK ?= /usr/bin/cppcheck
 DOXYGEN ?= /usr/bin/doxygen
+
 VALGRIND ?= /usr/bin/valgrind
+VALGRIND_FLAGS = --error-exitcode=99 --track-origins=yes --leak-check=yes --quiet
+
+CHECK_MEMORY = $(VALGRIND) $(VALGRIND_FLAGS)
 
 LINK_DEV_EXE = $(CPP_DEV_PLATFORM) -Wall
 
@@ -38,5 +42,3 @@ CPPCHECK_FLAGS = \
 	--suppressions-list=.cppcheck \
 	-I./src \
 	-I./tests
-
-VALGRIND_FLAGS = --error-exitcode=99 --track-origins=yes --leak-check=yes --quiet

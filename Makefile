@@ -331,8 +331,6 @@ COMPILE_DEV = \
 		$(TEST_CXXFLAGS) \
 		$(DEBUG_LOG_CXXFLAGS)
 
-RUN_WITH_VALGRIND = $(VALGRIND) $(VALGRIND_FLAGS)
-
 show_fst_dir:
 	@echo $(FST_DIR)
 
@@ -517,7 +515,7 @@ $(OBJ_DEV_VSTXMLGEN): $(VSTXMLGEN_SOURCES) $(FST_HEADERS) | $(DEV_DIR)
 $(DEV_DIR)/test_example$(DEV_EXE): \
 		tests/test_example.cpp $(TEST_LIBS) | $(DEV_DIR)
 	$(COMPILE_DEV) -o $@ $<
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(DEV_DIR)/test_bank$(DEV_EXE): \
 		$(OBJ_DEV_BANK) \
@@ -526,7 +524,7 @@ $(DEV_DIR)/test_bank$(DEV_EXE): \
 		$(OBJ_DEV_TEST_BANK) \
 		| $(DEV_DIR) show_versions $(TEST_PROXY_BINS)
 	$(LINK_DEV_EXE) $^ -o $@
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(OBJ_DEV_TEST_BANK): \
 		tests/test_bank.cpp \
@@ -543,7 +541,7 @@ $(DEV_DIR)/test_gui$(DEV_EXE): \
 		$(OBJ_DEV_TEST_GUI) \
 		| $(DEV_DIR) show_versions $(TEST_PROXY_BINS)
 	$(LINK_DEV_EXE) $^ -o $@
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(OBJ_DEV_TEST_GUI): \
 		tests/test_gui.cpp $(GUI_COMMON_HEADERS) $(TEST_LIBS) \
@@ -564,7 +562,7 @@ $(DEV_DIR)/test_midi$(DEV_EXE): \
 		$(TEST_LIBS) \
 		| $(DEV_DIR) show_versions
 	$(COMPILE_DEV) -o $@ $<
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(DEV_DIR)/test_note_stack$(DEV_EXE): \
 		tests/test_note_stack.cpp \
@@ -574,7 +572,7 @@ $(DEV_DIR)/test_note_stack$(DEV_EXE): \
 		$(TEST_LIBS) \
 		| $(DEV_DIR) show_versions
 	$(COMPILE_DEV) -o $@ $<
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(DEV_DIR)/test_proxy$(DEV_EXE): \
 		tests/test_proxy.cpp \
@@ -583,7 +581,7 @@ $(DEV_DIR)/test_proxy$(DEV_EXE): \
 		$(PROXY_SOURCES) \
 		| $(DEV_DIR) show_versions
 	$(COMPILE_DEV) -o $@ $<
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(DEV_DIR)/test_queue$(DEV_EXE): \
 		tests/test_queue.cpp \
@@ -592,7 +590,7 @@ $(DEV_DIR)/test_queue$(DEV_EXE): \
 		$(TEST_LIBS) \
 		| $(DEV_DIR) show_versions
 	$(COMPILE_DEV) -o $@ $<
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(DEV_DIR)/test_serializer$(DEV_EXE): \
 		$(OBJ_DEV_SERIALIZER) \
@@ -600,7 +598,7 @@ $(DEV_DIR)/test_serializer$(DEV_EXE): \
 		$(OBJ_DEV_TEST_SERIALIZER) \
 		| $(DEV_DIR) show_versions $(TEST_PROXY_BINS)
 	$(LINK_DEV_EXE) $^ -o $@
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(OBJ_DEV_TEST_SERIALIZER): \
 		tests/test_serializer.cpp \
@@ -616,7 +614,7 @@ $(DEV_DIR)/test_spscqueue$(DEV_EXE): \
 		$(TEST_LIBS) \
 		| $(DEV_DIR) show_versions
 	$(COMPILE_DEV) -o $@ $<
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(DEV_DIR)/test_strings$(DEV_EXE): \
 		$(OBJ_DEV_STRINGS) \
@@ -624,7 +622,7 @@ $(DEV_DIR)/test_strings$(DEV_EXE): \
 		$(OBJ_DEV_TEST_STRINGS) \
 		| $(DEV_DIR) show_versions $(TEST_PROXY_BINS)
 	$(LINK_DEV_EXE) $^ -o $@
-	$(RUN_WITH_VALGRIND) $@
+	$(CHECK_MEMORY) $@
 
 $(OBJ_DEV_TEST_STRINGS): \
 		tests/test_strings.cpp \
