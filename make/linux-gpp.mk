@@ -55,13 +55,7 @@ OBJ_TARGET_GUI_EXTRA = \
 	$(LIB_PATH)/libcairo.so \
 	$(LIB_PATH)/libxcb.so \
 	$(LIB_PATH)/libxcb-render.so \
-	$(BUILD_DIR)/img_about.o \
-	$(BUILD_DIR)/img_distortions.o \
-	$(BUILD_DIR)/img_midpoint_states.o \
-	$(BUILD_DIR)/img_knob_states.o \
-	$(BUILD_DIR)/img_rocker_switch.o \
-	$(BUILD_DIR)/img_vst_logo.o \
-	$(BUILD_DIR)/img_zone1.o
+	$(foreach GUI_IMAGE,$(GUI_IMAGES),$(BUILD_DIR)/img_$(GUI_IMAGE).o)
 
 $(BUILD_DIR)/img_%.o: gui/img/%.png | $(BUILD_DIR)
 	/usr/bin/objcopy \

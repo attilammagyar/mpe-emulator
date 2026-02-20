@@ -121,6 +121,15 @@ OBJ_DEV_TEST_GUI = $(DEV_DIR)/test_gui.o
 OBJ_DEV_TEST_SERIALIZER = $(DEV_DIR)/test_serializer.o
 OBJ_DEV_TEST_STRINGS = $(DEV_DIR)/test_strings.o
 
+GUI_IMAGES = \
+	about \
+	distortions \
+	midpoint_states \
+	knob_states \
+	rocker_switch \
+	vst_logo \
+	zone1
+
 TEST_OBJS = \
 	$(OBJ_DEV_BANK) \
 	$(OBJ_DEV_GUI_STUB) \

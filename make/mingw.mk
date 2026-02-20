@@ -39,18 +39,12 @@ GUI_PLAYGROUND_SOURCES = src/gui/win32-playground.cpp
 GUI_TARGET_PLATFORM_HEADERS = src/gui/win32.hpp
 GUI_TARGET_PLATFORM_SOURCES = src/gui/win32.cpp
 
-GUI_IMAGES = \
-	gui/img/about.png \
-	gui/img/distortions.png \
-	gui/img/midpoint_states.png \
-	gui/img/knob_states.png \
-	gui/img/rocker_switch.png \
-	gui/img/vst_logo.png \
-	gui/img/zone1.png
+GUI_IMAGE_SOURCES = \
+	$(foreach GUI_IMAGE,$(GUI_IMAGES),gui/img/$(GUI_IMAGE).png)
 
 OBJ_TARGET_GUI_EXTRA = $(BUILD_DIR)/gui-$(SUFFIX).res
 
-$(OBJ_TARGET_GUI_EXTRA): src/gui/gui.rc $(GUI_IMAGES) | $(BUILD_DIR)
+$(OBJ_TARGET_GUI_EXTRA): src/gui/gui.rc $(GUI_IMAGE_SOURCES) | $(BUILD_DIR)
 	$(WINDRES) -i $< --input-format=rc -o $@ -O coff
 
 MINGW_CXXFLAGS = -D OEMRESOURCE -D WINVER=0x0601 -D _WIN32_WINNT=0x0601
