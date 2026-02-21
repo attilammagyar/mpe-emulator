@@ -1059,7 +1059,9 @@ void KnobParamEditor::Knob::update()
 {
     size_t const index = knob_states->ratio_to_index(this->ratio);
 
-    set_image(knob_states->images[index]);
+    if (knob_states->images != NULL) {
+        set_image(knob_states->images[index]);
+    }
 }
 
 
@@ -1631,7 +1633,7 @@ void DiscreteParamEditor::update()
 {
     update_value_str(proxy.param_ratio_to_value(param_id, ratio));
 
-    if (state_images != NULL) {
+    if (state_images != NULL && state_images->images != NULL) {
         set_image(state_images->images[state_images->ratio_to_index(ratio)]);
     }
 }
