@@ -412,7 +412,9 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
         VstInt32 remaining_samples_before_next_cc_ui_update;
         VstInt32 min_samples_before_next_bank_update;
         VstInt32 remaining_samples_before_next_bank_update;
+#ifdef MPE_EMULATOR_FST_DEBUG
         VstInt32 prev_logged_op_code;
+#endif
         int gui_width;
         int gui_height;
         bool had_midi_cc_event;
