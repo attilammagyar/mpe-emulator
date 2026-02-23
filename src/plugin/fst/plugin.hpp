@@ -413,7 +413,6 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
         VstInt32 min_samples_before_next_bank_update;
         VstInt32 remaining_samples_before_next_bank_update;
         VstInt32 prev_logged_op_code;
-        char program_name[kVstMaxProgNameLen];
         int gui_width;
         int gui_height;
         bool had_midi_cc_event;
