@@ -20,6 +20,7 @@
 #define MPE_EMULATOR__GUI_STUB_CPP
 
 #include <cstddef>
+#include <cstdio>
 #include <string>
 
 #include "common.hpp"
@@ -137,11 +138,15 @@ namespace MpeEmulator {
 
 void ImportSettingsButton::click()
 {
+    import_settings("", 0);
 }
 
 
 void ExportSettingsButton::click()
 {
+    std::string const& settings = Serializer::serialize(proxy);
+
+    fprintf(stdout, "%s\n", settings.c_str());
 }
 
 
