@@ -451,7 +451,6 @@ class KnobParamEditor : public TransparentWidget
                 ParamStateImages const* const knob_states;
 
                 KnobParamEditor& editor;
-                GUI::Image knob_state;
                 double prev_x;
                 double prev_y;
                 double ratio;

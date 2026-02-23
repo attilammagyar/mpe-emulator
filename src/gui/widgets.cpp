@@ -1013,7 +1013,6 @@ KnobParamEditor::Knob::Knob(
     steps(steps),
     knob_states(knob_states),
     editor(editor),
-    knob_state(NULL),
     ratio(0.0),
     mouse_move_delta(0.0),
     is_editing_(false),
