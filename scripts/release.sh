@@ -259,7 +259,7 @@ call_make_for_build_platform()
     case "$build_platform" in
         "x86_64")   call_make "x86_64-w64-mingw32" "sse2" "$@" ;;
         "riscv64")  call_make "riscv64-gpp" "none" "$@" ;;
-        *) error "Unsupported build platform: $uname" ;;
+        *) error "Unsupported build platform: $build_platform" ;;
     esac
 }
 
