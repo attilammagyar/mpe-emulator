@@ -399,15 +399,14 @@ package_vst3_bundle()
     local dist_dir="mpe-emulator-$version_as_file_name-$instruction_set-vst3_bundle"
     local vst3_base_dir="$DIST_DIR_BASE/$dist_dir"
     local proc_id
-    local doc_dir="$vst3_base_dir/mpe-emulator.vst3/Resources/Documentation"
+    local doc_dir="$vst3_base_dir/mpe-emulator.vst3/Contents/Resources/Documentation"
 
     proc_id="$(get_vst3_snapshot_id)"
 
-    mkdir --verbose --parents "$vst3_base_dir/mpe-emulator.vst3/Contents"
-    mkdir --verbose --parents "$vst3_base_dir/mpe-emulator.vst3/Resources/Snapshots"
+    mkdir --verbose --parents "$vst3_base_dir/mpe-emulator.vst3/Contents/Resources/Snapshots"
     mkdir --verbose --parents "$doc_dir"
 
-    cp --verbose "mpe-emulator.png" "$vst3_base_dir/mpe-emulator.vst3/Resources/Snapshots/${proc_id}_snapshot.png"
+    cp --verbose "mpe-emulator.png" "$vst3_base_dir/mpe-emulator.vst3/Contents/Resources/Snapshots/${proc_id}_snapshot.png"
 
     cp --verbose "$README_HTML" "$doc_dir/README.html"
 
