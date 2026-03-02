@@ -54,7 +54,7 @@ main()
 
     if [[ "$plugin_type" = "" ]]; then plugin_type="fst"; fi
     if [[ "$target_os" = "" ]]; then target_os="linux"; fi
-    if [[ "$arch" = "" ]]; then arch="64bit"; fi
+    if [[ "$arch" = "" ]]; then arch="x86_64"; fi
 
     if [[ "$arch" = "riscv64" ]]
     then
