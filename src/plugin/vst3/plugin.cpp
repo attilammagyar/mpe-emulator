@@ -469,6 +469,46 @@ void Vst3Plugin::Processor::process_events() noexcept
 void Vst3Plugin::Processor::process_event(Event const& event) noexcept
 {
     switch (event.type) {
+        case Event::Type::PARAM_CHANGE:
+            proxy.process_message(
+                Proxy::MessageType::SET_PARAM, (Proxy::ParamId)event.note_or_ctl, event.velocity_or_value
+            );
+            break;
+
+        case Event::Type::CONTROL_CHANGE:
+            proxy.control_change(
+                event.time_offset,
+                0,
+                event.note_or_ctl,
+                float_to_midi_byte(event.velocity_or_value)
+            );
+            break;
+
+        case Event::Type::PITCH_WHEEL:
+            proxy.pitch_wheel_change(
+                event.time_offset,
+                0,
+                float_to_midi_word(event.velocity_or_value)
+            );
+            break;
+
+        case Event::Type::CHANNEL_PRESSURE:
+            proxy.channel_pressure(
+                event.time_offset,
+                0,
+                float_to_midi_byte(event.velocity_or_value)
+            );
+            break;
+
+        case Event::Type::NOTE_OFF:
+            proxy.note_off(
+                event.time_offset,
+                event.channel,
+                event.note_or_ctl,
+                float_to_midi_byte(event.velocity_or_value)
+            );
+            break;
+
         case Event::Type::NOTE_ON: {
             Midi::Byte const velocity = float_to_midi_byte(event.velocity_or_value);
 
@@ -487,46 +527,6 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
                 event.channel,
                 event.note_or_ctl,
                 float_to_midi_byte(event.velocity_or_value)
-            );
-            break;
-
-        case Event::Type::NOTE_OFF:
-            proxy.note_off(
-                event.time_offset,
-                event.channel,
-                event.note_or_ctl,
-                float_to_midi_byte(event.velocity_or_value)
-            );
-            break;
-
-        case Event::Type::PITCH_WHEEL:
-            proxy.pitch_wheel_change(
-                event.time_offset,
-                0,
-                float_to_midi_word(event.velocity_or_value)
-            );
-            break;
-
-        case Event::Type::CONTROL_CHANGE:
-            proxy.control_change(
-                event.time_offset,
-                0,
-                event.note_or_ctl,
-                float_to_midi_byte(event.velocity_or_value)
-            );
-            break;
-
-        case Event::Type::CHANNEL_PRESSURE:
-            proxy.channel_pressure(
-                event.time_offset,
-                0,
-                float_to_midi_byte(event.velocity_or_value)
-            );
-            break;
-
-        case Event::Type::PARAM_CHANGE:
-            proxy.process_message(
-                Proxy::MessageType::SET_PARAM, (Proxy::ParamId)event.note_or_ctl, event.velocity_or_value
             );
             break;
 
