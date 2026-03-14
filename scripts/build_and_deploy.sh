@@ -29,11 +29,15 @@ FST_DIRS_LINUX_64="$BASE_DIR/vst"
 FST_DIRS_WINE_32="$BASE_DIR/.wine/drive_c/vst"
 FST_DIRS_WINE_64="$BASE_DIR/.wine/drive_c/vst"
 
+FST_DIR_MACOS="$BASE_DIR/Library/Audio/Plug-Ins/VST"
+
 VST3_DIRS_LINUX_32="$BASE_DIR/vst $BASE_DIR/.vst3"
 VST3_DIRS_LINUX_64="$BASE_DIR/vst $BASE_DIR/.vst3"
 
 VST3_DIRS_WINE_32="$BASE_DIR/.wine/drive_c/vst $BASE_DIR/.wine/drive_c/Program*Files/Common*Files/VST3"
 VST3_DIRS_WINE_64="$BASE_DIR/.wine/drive_c/vst $BASE_DIR/.wine/drive_c/Program*Files/Common*Files/VST3"
+
+VST3_DIR_MACOS="$BASE_DIR/Library/Audio/Plug-Ins/VST3"
 
 
 main()
@@ -43,12 +47,13 @@ main()
     local arch="$3"
     local instruction_set=""
     local target_platform=""
+    local dev_os=""
     local built_plugin=""
     local suffix=""
 
     if [[ "$plugin_type$target_os$arch" = "" ]]
     then
-        echo "Usage: $0 fst|vst3 linux|windows x86|x86_64|riscv64" >&2
+        echo "Usage: $0 fst|vst3 linux|macos|windows x86|x86_64|arm64|riscv64" >&2
         return 1
     fi
 
@@ -67,7 +72,7 @@ main()
 
     case "$arch" in
         "x86") target_platform="i686" ;;
-        "x86_64"|"riscv64") target_platform="$arch" ;;
+        "x86_64"|"arm64"|"riscv64") target_platform="$arch" ;;
         *)
             echo "Unknown architecture: \"$arch\" - should be either \"x86\" or \"x86_64\" or \"riscv64\"" >&2
             return 1
@@ -75,10 +80,10 @@ main()
     esac
 
     case "$target_os" in
-        "linux") target_platform="$target_platform-gpp" ;;
+        "linux"|"macos") target_platform="$target_platform-gpp" ;;
         "windows") target_platform="$target_platform-w64-mingw32" ;;
         *)
-            echo "Unknown target OS: \"$target_os\" - should be either \"linux\" or \"windows\"" >&2
+            echo "Unknown target OS: \"$target_os\" - should be either \"linux\", \"macos\", or \"windows\"" >&2
             return 1
             ;;
     esac
@@ -87,23 +92,35 @@ main()
 
     case "$target_os-$plugin_type" in
         "linux-fst") built_plugin="$built_plugin/mpe-emulator.so" ;;
+        "macos-fst") built_plugin="$built_plugin/mpe-emulator.vst" ;;
         "windows-fst") built_plugin="$built_plugin/mpe-emulator.dll" ;;
-        "linux-vst3"|"windows-vst3") built_plugin="$built_plugin/mpe-emulator.vst3" ;;
+        "linux-vst3"|"macos-vst3"|"windows-vst3") built_plugin="$built_plugin/mpe-emulator.vst3" ;;
         *)
             echo "Unknown plugin type: \"$plugin_type\" - should be either \"fst\" or \"vst3\"" >&2
             return 1
             ;;
     esac
 
+    if [[ "$target_os" = "macos" ]]
+    then
+        dev_os="macos"
+    else
+        dev_os="linux"
+    fi
+
     echo "Building; plugin_type=\"$plugin_type\", target_os=\"$target_os\", arch=\"$arch\", instruction_set=\"$instruction_set\"" >&2
 
-    TARGET_PLATFORM="$target_platform" INSTRUCTION_SET="$instruction_set" make "$plugin_type"
+    DEV_OS="$dev_os" TARGET_PLATFORM="$target_platform" INSTRUCTION_SET="$instruction_set" make "$plugin_type"
 
     case "$target_os-$plugin_type-$arch" in
         "linux-fst-x86_64")     replace_in_dir "$built_plugin" $FST_DIRS_LINUX_64 ;;
         "linux-vst3-x86_64")    replace_in_dir "$built_plugin" $VST3_DIRS_LINUX_64 ;;
         "linux-fst-riscv64")    replace_in_dir "$built_plugin" $VST3_DIRS_LINUX_64 ;;
         "linux-vst3-riscv64")   replace_in_dir "$built_plugin" $VST3_DIRS_LINUX_64 ;;
+        "macos-fst-arm64")      replace_in_dir "$built_plugin" $FST_DIR_MACOS ;;
+        "macos-vst3-arm64")     replace_in_dir "$built_plugin" $VST3_DIR_MACOS ;;
+        "macos-fst-x86_64")     replace_in_dir "$built_plugin" $FST_DIR_MACOS ;;
+        "macos-vst3-x86_64")    replace_in_dir "$built_plugin" $VST3_DIR_MACOS ;;
         "windows-fst-x86_64")   replace_in_dir "$built_plugin" $FST_DIRS_WINE_64 ;;
         "windows-vst3-x86_64")  replace_in_dir "$built_plugin" $VST3_DIRS_WINE_64 ;;
         "linux-fst-x86")        replace_in_dir "$built_plugin" $FST_DIRS_LINUX_32 ;;
@@ -131,7 +148,7 @@ replace_in_dir()
         echo ""
         echo "Replacing MPE Emulator; dir=\"$dir\""
         rm -rfv "$dir"/mpe-emulator.*
-        cp -v "$built_plugin" "$dir/"
+        cp -rv "$built_plugin" "$dir/"
         shift
     done
 }
