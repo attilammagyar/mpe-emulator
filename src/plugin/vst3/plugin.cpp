@@ -41,8 +41,10 @@
 #include "plugin/vst3/plugin-xcb.cpp"
 #elif SMTG_OS_WINDOWS
 #include "plugin/vst3/plugin-win32.cpp"
+#elif SMTG_OS_MACOS
+#include "plugin/vst3/plugin-macos.cpp"
 #else
-#error "Unsupported OS, currently MPE Emulator can be compiled only for Linux and Windows. (Or did something go wrong with the SMTG_OS_LINUX and SMTG_OS_WINDOWS macros?)"
+#error "Unsupported OS, currently MPE Emulator can be compiled only for Linux, Windows, and MacOS. (Or did something go wrong with the SMTG_OS_LINUX, SMTG_OS_WINDOWS, and SMTG_OS_MACOS macros?)"
 #endif
 
 #include "midi.hpp"
@@ -811,10 +813,12 @@ Vst3Plugin::GUI::GUI(Proxy& proxy, ViewRect& gui_size)
     : CPluginView(&gui_size),
     proxy(proxy),
     gui_size(gui_size),
-    gui(NULL),
-    run_loop(NULL),
+    gui(NULL)
+#if SMTG_OS_LINUX
+    , run_loop(NULL),
     event_handler(NULL),
     timer_handler(NULL)
+#endif
 {
 }
 

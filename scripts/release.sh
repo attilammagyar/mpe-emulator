@@ -2,7 +2,7 @@
 
 ###############################################################################
 # This file is part of MPE Emulator.
-# Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+# Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
 # Copyright (C) 2023  @aimixsaka (https://github.com/aimixsaka/)
 #
 # MPE Emulator is free software: you can redistribute it and/or modify
@@ -169,7 +169,7 @@ main()
             "$target_platform" "$instruction_set" \
             "$version_str" "$version_int" "$version_as_file_name"
 
-        package_vst3_single_file \
+        package_vst3_single \
             "$target_platform" "$instruction_set" \
             "$version_str" "$version_int" "$version_as_file_name"
     done
@@ -368,7 +368,7 @@ convert_text_file()
     cat "$src_file" | sed 's/$/\r/g' >"$dst_file"
 }
 
-package_vst3_single_file()
+package_vst3_single()
 {
     local target_platform="$1"
     local instruction_set="$2"
@@ -454,7 +454,7 @@ copy_vst3()
 
     mkdir --verbose --parents "$dir"
     cp --verbose \
-        "$DIST_DIR_BASE/mpe-emulator-$version_as_file_name-$src_dir-vst3_single_file/mpe-emulator.vst3" \
+        "$DIST_DIR_BASE/mpe-emulator-$version_as_file_name-$src_dir-vst3_single/mpe-emulator.vst3" \
         "$dir/$dst_file"
 }
 

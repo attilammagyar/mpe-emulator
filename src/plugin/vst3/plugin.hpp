@@ -215,9 +215,11 @@ class Vst3Plugin
                 ViewRect& gui_size;
                 MpeEmulator::GUI* gui;
 
+#if SMTG_OS_LINUX
                 void* run_loop;
                 void* event_handler;
                 void* timer_handler;
+#endif
         };
 
         class Controller : public Vst::EditControllerEx1, public Vst::IMidiMapping

@@ -164,18 +164,18 @@ These are the file names that you will find on GitHub on the "Releases" page:
 
  * VST 3 single file editions for Windows:
 
-    * `mpe-emulator-X_Y_Z-windows-x86_64-sse2-vst3_single_file.zip`: for
+    * `mpe-emulator-X_Y_Z-windows-x86_64-sse2-vst3_single.zip`: for
       64 bit CPUs with SSE2 support.
 
-    * `mpe-emulator-X_Y_Z-windows-x86-sse2-vst3_single_file.zip`: for
+    * `mpe-emulator-X_Y_Z-windows-x86-sse2-vst3_single.zip`: for
       32 bit CPUs with SSE2 support.
 
  * VST 3 single file editions for Linux:
 
-    * `mpe-emulator-X_Y_Z-linux-x86_64-sse2-vst3_single_file.zip`: for
+    * `mpe-emulator-X_Y_Z-linux-x86_64-sse2-vst3_single.zip`: for
       64 bit CPUs with SSE2 support.
 
-    * `mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single_file.zip`: for
+    * `mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single.zip`: for
       32 bit CPUs with SSE2 support.
 
  * MPE Emulator Lite for any platform that is supported by
