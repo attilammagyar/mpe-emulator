@@ -93,6 +93,15 @@ UPGRADE_SETTINGS = $(DEV_DIR)/upgrade-settings$(DEV_EXE)
 
 all: dirs fst vst3
 
+GUI_IMAGES = \
+	about \
+	distortions \
+	midpoint_states \
+	knob_states \
+	rocker_switch \
+	vst_logo \
+	zone1
+
 include make/$(DEV_OS)-$(TARGET_PLATFORM).mk
 
 OBJ_TARGET_FST_MAIN = $(BUILD_DIR)/fst-main.o
@@ -120,15 +129,6 @@ OBJ_DEV_TEST_BANK = $(DEV_DIR)/test_bank.o
 OBJ_DEV_TEST_GUI = $(DEV_DIR)/test_gui.o
 OBJ_DEV_TEST_SERIALIZER = $(DEV_DIR)/test_serializer.o
 OBJ_DEV_TEST_STRINGS = $(DEV_DIR)/test_strings.o
-
-GUI_IMAGES = \
-	about \
-	distortions \
-	midpoint_states \
-	knob_states \
-	rocker_switch \
-	vst_logo \
-	zone1
 
 TEST_OBJS = \
 	$(OBJ_DEV_BANK) \
@@ -368,6 +368,7 @@ clean:
 		$(FST_OBJS) \
 		$(GUI_PLAYGROUND) \
 		$(GUI_PLAYGROUND_OBJS) \
+		$(GUI_PLAYGROUND_EXTRA) \
 		$(TEST_BINS) \
 		$(TEST_OBJS) \
 		$(UPGRADE_SETTINGS) \
@@ -436,7 +437,7 @@ $(FST_DIR) $(VST3_DIR): | $(DIST_DIR_BASE)
 	$(MKDIR) $@
 
 $(GUI_PLAYGROUND): $(GUI_PLAYGROUND_OBJS) | $(BUILD_DIR) show_versions
-	$(LINK_TARGET_EXE) $^ -o $@ $(TARGET_PLATFORM_LFLAGS)
+	$(LINK_GUI_PLAYGROUND) $^ -o $@ $(TARGET_PLATFORM_LFLAGS)
 
 $(OBJ_TARGET_GUI_PLAYGROUND): \
 		$(GUI_PLAYGROUND_SOURCES) \

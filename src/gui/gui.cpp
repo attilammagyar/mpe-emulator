@@ -38,17 +38,6 @@ void GUI::EventHandler::handle_resize_request(
 }
 
 
-constexpr GUI::Color GUI::rgb(
-        ColorComponent const red,
-        ColorComponent const green,
-        ColorComponent const blue
-) {
-    return (Color)(
-        (unsigned int)red << 16 | (unsigned int)green << 8 | (unsigned int)blue
-    );
-}
-
-
 const GUI::Color GUI::TEXT_COLOR = GUI::rgb(181, 181, 189);
 const GUI::Color GUI::TEXT_BACKGROUND = GUI::rgb(0, 0, 0);
 const GUI::Color GUI::TEXT_HIGHLIGHT_COLOR = GUI::rgb(230, 230, 235);
@@ -57,24 +46,6 @@ const GUI::Color GUI::STATUS_LINE_BACKGROUND = GUI::rgb(21, 21, 32);
 const GUI::Color GUI::TOGGLE_OFF_COLOR = GUI::rgb(0, 0, 0);
 const GUI::Color GUI::TOGGLE_ON_COLOR = GUI::rgb(150, 200, 230);
 const GUI::Color GUI::TOGGLE_ON_BLUR_COLOR = GUI::rgb(75, 100, 115);
-
-
-constexpr GUI::ColorComponent GUI::red(Color const color)
-{
-    return color >> 16;
-}
-
-
-constexpr GUI::ColorComponent GUI::green(Color const color)
-{
-    return color >> 8;
-}
-
-
-constexpr GUI::ColorComponent GUI::blue(Color const color)
-{
-    return color;
-}
 
 
 double GUI::clamp_ratio(double const ratio)

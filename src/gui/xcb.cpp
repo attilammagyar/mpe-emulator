@@ -1168,6 +1168,8 @@ GUI::Image Widget::load_image(
     StringToImageMap::const_iterator it = IMAGES.find(name);
 
     if (it == IMAGES.end()) {
+        MPE_EMULATOR_ASSERT_NOT_REACHED();
+
         return NULL;
     }
 
@@ -1657,6 +1659,8 @@ void Widget::hide()
 
 void Widget::bring_to_top()
 {
+    WidgetBase::bring_to_top();
+
     uint32_t value = XCB_STACK_MODE_ABOVE;
 
     xcb_configure_window(xcb_connection(), window_id(), XCB_CONFIG_WINDOW_STACK_MODE, &value);
@@ -1665,6 +1669,8 @@ void Widget::bring_to_top()
 
 void Widget::redraw()
 {
+    WidgetBase::redraw();
+
     if (!this->is_on_screen()) {
         return;
     }
