@@ -441,7 +441,12 @@ void mpe_emulator_widget_draw_text(
 MpeEmulator::GUI::Image mpe_emulator_widget_load_image(char const* const name)
 {
     NSString* ns_name = [NSString stringWithUTF8String:name];
-    NSString* path = [[NSBundle bundleForClass:[CocoaWidget class]] pathForResource:ns_name ofType:@"png"];
+    NSString* path = [
+        [NSBundle bundleForClass:[CocoaWidget class]]
+        pathForResource:ns_name
+        ofType:@"png"
+        inDirectory:@"img"
+    ];
 
     if (!path) {
         return NULL;
