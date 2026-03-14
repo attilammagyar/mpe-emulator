@@ -17,6 +17,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #include <algorithm>
 #include <cstring>
@@ -536,7 +537,12 @@ bool mpe_emulator_import_settings(
 ) {
     NSOpenPanel* panel = [NSOpenPanel openPanel];
 
-    panel.allowedFileTypes = @[@"mpe"];
+    if (@available(macOS 11.0, *)) {
+        [panel setAllowedContentTypes:@[[UTType typeWithFilenameExtension:@"mpe"]]];
+    } else {
+        [panel setAllowedFileTypes:@[@"mpe"]];
+    }
+
     panel.allowsOtherFileTypes = YES;
     panel.canChooseFiles = YES;
     panel.canChooseDirectories = NO;
@@ -587,7 +593,12 @@ void mpe_emulator_export_settings(char const* const buffer, size_t const length)
 {
     NSSavePanel* panel = [NSSavePanel savePanel];
 
-    panel.allowedFileTypes = @[@"mpe"];
+    if (@available(macOS 11.0, *)) {
+        [panel setAllowedContentTypes:@[[UTType typeWithFilenameExtension:@"mpe"]]];
+    } else {
+        [panel setAllowedFileTypes:@[@"mpe"]];
+    }
+
     panel.allowsOtherFileTypes = YES;
     panel.canCreateDirectories = YES;
     panel.nameFieldStringValue = @"settings.mpe";
