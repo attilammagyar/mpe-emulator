@@ -1,6 +1,6 @@
 /*
  * This file is part of MPE Emulator.
- * Copyright (C) 2023, 2024  Attila M. Magyar
+ * Copyright (C) 2023, 2024, 2026  Attila M. Magyar
  * Copyright (C) 2023  Patrik Ehringer
  *
  * MPE Emulator is free software: you can redistribute it and/or modify
@@ -131,7 +131,6 @@ class Bank
 
         Program programs[NUMBER_OF_PROGRAMS];
         size_t current_program_index;
-        size_t non_blank_programs;
 };
 
 }
