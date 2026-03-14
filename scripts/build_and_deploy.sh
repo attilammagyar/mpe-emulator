@@ -53,7 +53,7 @@ main()
 
     if [[ "$plugin_type$target_os$arch" = "" ]]
     then
-        echo "Usage: $0 fst|vst3 linux|macos|windows x86|x86_64|arm64|riscv64" >&2
+        echo "Usage: $0 fst|vst3 linux|macos|windows x86|x86_64|-|riscv64" >&2
         return 1
     fi
 
@@ -65,22 +65,25 @@ main()
     then
         instruction_set="none"
     else
-        instruction_set="sse2"
+        instruction_set="native"
     fi
 
     if [[ "$plugin_type" = "vst3" ]]; then suffix="_single" ; fi
 
     case "$arch" in
         "x86") target_platform="i686" ;;
-        "x86_64"|"arm64"|"riscv64") target_platform="$arch" ;;
+        "x86_64"|"riscv64") target_platform="$arch" ;;
+        "-") arch="" ;;
         *)
             echo "Unknown architecture: \"$arch\" - should be either \"x86\" or \"x86_64\" or \"riscv64\"" >&2
+            echo "Unknown architecture: \"$arch\" - should be either \"x86\", \"x86_64\", \"-\" (for macOS), or \"riscv64\"" >&2
             return 1
             ;;
     esac
 
     case "$target_os" in
-        "linux"|"macos") target_platform="$target_platform-gpp" ;;
+        "linux") target_platform="$target_platform-gpp" ;;
+        "macos") target_platform="gpp" ;;
         "windows") target_platform="$target_platform-w64-mingw32" ;;
         *)
             echo "Unknown target OS: \"$target_os\" - should be either \"linux\", \"macos\", or \"windows\"" >&2
@@ -117,10 +120,8 @@ main()
         "linux-vst3-x86_64")    replace_in_dir "$built_plugin" $VST3_DIRS_LINUX_64 ;;
         "linux-fst-riscv64")    replace_in_dir "$built_plugin" $VST3_DIRS_LINUX_64 ;;
         "linux-vst3-riscv64")   replace_in_dir "$built_plugin" $VST3_DIRS_LINUX_64 ;;
-        "macos-fst-arm64")      replace_in_dir "$built_plugin" $FST_DIR_MACOS ;;
-        "macos-vst3-arm64")     replace_in_dir "$built_plugin" $VST3_DIR_MACOS ;;
-        "macos-fst-x86_64")     replace_in_dir "$built_plugin" $FST_DIR_MACOS ;;
-        "macos-vst3-x86_64")    replace_in_dir "$built_plugin" $VST3_DIR_MACOS ;;
+        "macos-fst-")           replace_in_dir "$built_plugin" $FST_DIR_MACOS ;;
+        "macos-vst3-")          replace_in_dir "$built_plugin" $VST3_DIR_MACOS ;;
         "windows-fst-x86_64")   replace_in_dir "$built_plugin" $FST_DIRS_WINE_64 ;;
         "windows-vst3-x86_64")  replace_in_dir "$built_plugin" $VST3_DIRS_WINE_64 ;;
         "linux-fst-x86")        replace_in_dir "$built_plugin" $FST_DIRS_LINUX_32 ;;
