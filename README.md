@@ -4,7 +4,10 @@ MPE Emulator
 A [VST® plugin](https://en.wikipedia.org/wiki/Virtual_Studio_Technology) for
 enhancing ordinary MIDI controllers with MPE
 ([MIDI Polyphonic Expression](https://en.wikipedia.org/wiki/MIDI#MIDI_Polyphonic_Expression))
-capabilities based on configurable mappings and rules, for Linux and Windows.
+capabilities based on configurable mappings and rules, for Linux, Windows,
+and macOS.
+
+<img src="https://raw.githubusercontent.com/attilammagyar/mpe-emulator/main/mpe-emulator.png" alt="Screenshot of MPE Emulator" />
 
 MPE Emulator is a MIDI proxy: an intermediary plugin which turns
 non-polyphonic, single channel aftertouch (channel pressure), pitch bend, or
@@ -14,8 +17,6 @@ whole keyboard or restricted to a range of keys based on a configurable
 keyboard split point. It can also remap and reshape controller data, and do
 various other tricks to increase the expressiveness of a musical performance.
 
-<img src="https://raw.githubusercontent.com/attilammagyar/mpe-emulator/main/mpe-emulator.png" alt="Screenshot of MPE Emulator" />
-
 To download MPE Emulator, visit its website at
 [https://attilammagyar.github.io/mpe-emulator](https://attilammagyar.github.io/mpe-emulator),
 or look for the "[Releases](https://github.com/attilammagyar/mpe-emulator/releases)"
@@ -23,8 +24,9 @@ section at its GitHub page at
 [https://github.com/attilammagyar/mpe-emulator](https://github.com/attilammagyar/mpe-emulator).
 
 See the "[Before Installing: Choosing a Distribution](#install-dist)" section
-below to find out which package you need. TL;DR: it's most probably the
-`x86_64` FST edition if your host application supports VST 2 plugins.
+below to find out which package you need. TL;DR: if your host application
+supports VST 2.4 plugins, then it's most probably the `x86_64` FST edition for
+Linux and Windows, and the universal FST edition for macOS.
 
 (The source code is also available on GitHub under the terms of the GNU General
 Public License Version 3.)
@@ -41,20 +43,35 @@ Table of Contents
  * [MPE Emulator Lite](#lite)
  * [Installation](#install)
     * [Before Installing: Choosing a Distribution](#install-dist)
+       * [Linux, Windows](#install-dist-pc)
+       * [macOS](#install-dist-mac)
     * [System Requirements](#system-reqs)
-       * [Dependencies on Windows](#windows-deps)
-       * [Dependencies on Linux](#linux-deps)
-    * [FST (VST 2.4) on Windows](#fst-windows)
-    * [FST (VST 2.4) on Linux](#fst-linux)
-    * [VST 3 Bundle on Windows](#vst3-bundle-windows)
-    * [VST 3 Bundle on Linux](#vst3-bundle-linux)
-    * [VST 3 Single File on Windows](#vst3-single-windows)
-    * [VST 3 Single File on Linux](#vst3-single-linux)
+       * [General Information](#system-reqs)
+       * [Linux](#system-reqs-linux)
+          * [Dependencies](#linux-deps)
+       * [Windows](#system-reqs-windows)
+          * [Dependencies](#windows-deps)
+       * [macOS](#system-reqs-macos)
+    * [Installing on Linux](#install-linux)
+       * [VST 3 Bundle](#vst3-bundle-linux)
+       * [VST 3 Single File](#vst3-single-linux)
+       * [FST (VST 2.4)](#fst-linux)
+       * [Uninstalling](#uninstall-linux)
+    * [Installing on Windows](#install-windows)
+       * [VST 3 Bundle](#vst3-bundle-windows)
+       * [VST 3 Single File](#vst3-single-windows)
+       * [FST (VST 2.4)](#fst-windows)
+       * [Uninstalling](#uninstall-windows)
+    * [Installing on macOS](#install-macos)
+       * [VST 3 Bundle](#vst3-bundle-macos)
+       * [FST (VST 2.4) Bundle](#fst-macos)
+       * [Uninstalling](#uninstall-macos)
     * [MPE Emulator Lite](#install-lite)
  * [Usage](#usage)
     * [Knobs](#usage-knobs)
     * [Zone Configuration](#usage-zone)
     * [Rules](#usage-rule)
+    * [Resizing the User Interface](#usage-resizing)
  * [Bugs](#bugs)
     * [Known Issues and Quirks](#bugs-known)
        * [REAPER 7.18 (and below) lets raw MIDI control data pass through the VST 3 version](#bugs-known-reaper-7-18)
@@ -63,7 +80,6 @@ Table of Contents
        * [VST 3 Note On and CC event ordering issues](#bugs-known-vst3)
        * [The mod wheel or a CC event is not handled with polyphony despite matching one of the rules](#bugs-known-ccpoly)
  * [Frequently Asked Questions](#faq)
-    * [Mac version?](#faq-mac)
     * [FL Studio: How to set up MPE Emulator?](#faq-flstudio)
     * [FL Studio: How to set up the Sustain Pedal?](#faq-flstudio-sustain)
     * [Why do you say FST instead of VST 2?](#faq-fst)
@@ -119,14 +135,25 @@ If your plugin host application supports VST 2.4, then you should download and
 install the FST version of MPE Emulator.
 
 If your plugin host only supports VST 3, or if you can live with a few quirks
-and edge case bugs due to the incomplete MIDI support in the VST 3 protocol,
-then you should try the VST 3 bundle on both Windows and Linux.
+and edge case bugs due to the incomplete MIDI support in the VST 3 protocol
+itself, then you should try the VST 3 bundle.
 
-If you are using an older VST 3 host, or if you are running a 32 bit (also
-known as "i686" or "x86") VST 3 host on a 64 bit Linux system, then it might
-not be able to load the VST 3 bundle, so you will have to go with a VST 3
-single file MPE Emulator package that matches the architecture of your host
-application.
+The source code distribution can be compiled for various CPU architectures and
+operating systems. Ready-to-use binary distributions are available for
+Linux and Windows "`x86_64`" and "`x86`" compatible systems (like most desktop
+PCs and laptops), and universal binaries are available for macOS.
+
+<a href="#toc">Table of Contents</a>
+
+<a id="install-dist-pc"></a>
+
+#### Linux, Windows
+
+If the FST (VST 2.4) version is not an option for you, and you are using an
+older VST 3 host, or if you are running a 32 bit (also known as "`i686`" or
+"`x86`") VST 3 host on a 64 bit Linux system, then it might not be able to load
+the VST 3 bundle, so you will have to go with th VST 3 single file MPE Emulator
+package that matches the architecture of your host application.
 
 The 32 bit versions are usually only needed by those who deliberately use a 32
 bit plugin host application, e.g. because they want to keep using some really
@@ -137,17 +164,18 @@ application doesn't recognize it, then try the VST 3 bundle, and if that still
 fails to load, then try the 64 bit VST 3 single file version, then the 32 bit
 FST version, then the 32 bit VST 3 single file version, and so on.
 
-#### Packages
+##### Packages
 
-These are the file names that you will find on GitHub on the "Releases" page:
+These are the file names that you will find on GitHub on the
+"[Releases](https://github.com/attilammagyar/mpe-emulator/releases)" page:
 
  * FST editions for Windows:
 
     * `mpe-emulator-X_Y_Z-windows-x86_64-sse2-fst.zip`: for 64 bit CPUs with
       SSE2 support.
 
-    * `mpe-emulator-X_Y_Z-windows-x86-sse2-fst.zip`: for 32 bit CPUs with
-      SSE2 support.
+    * `mpe-emulator-X_Y_Z-windows-x86-sse2-fst.zip`: for 32 bit CPUs with SSE2
+      support.
 
  * FST editions for Linux:
 
@@ -157,36 +185,66 @@ These are the file names that you will find on GitHub on the "Releases" page:
     * `mpe-emulator-X_Y_Z-linux-x86-sse2-fst.zip`: for 32 bit CPUs with SSE2
       support.
 
- * VST 3 bundles for both Windows and Linux:
+ * VST 3 bundle for both Windows and Linux:
 
     * `mpe-emulator-X_Y_Z-sse2-vst3_bundle.zip`: for 64 or 32 bit CPUs with
       SSE2 support.
 
  * VST 3 single file editions for Windows:
 
-    * `mpe-emulator-X_Y_Z-windows-x86_64-sse2-vst3_single.zip`: for
-      64 bit CPUs with SSE2 support.
+    * `mpe-emulator-X_Y_Z-windows-x86_64-sse2-vst3_single.zip`: for 64 bit CPUs
+      with SSE2 support.
 
-    * `mpe-emulator-X_Y_Z-windows-x86-sse2-vst3_single.zip`: for
-      32 bit CPUs with SSE2 support.
+    * `mpe-emulator-X_Y_Z-windows-x86-sse2-vst3_single.zip`: for 32 bit CPUs
+      with SSE2 support.
 
  * VST 3 single file editions for Linux:
 
-    * `mpe-emulator-X_Y_Z-linux-x86_64-sse2-vst3_single.zip`: for
-      64 bit CPUs with SSE2 support.
+    * `mpe-emulator-X_Y_Z-linux-x86_64-sse2-vst3_single.zip`: for 64 bit CPUs
+      with SSE2 support.
 
-    * `mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single.zip`: for
-      32 bit CPUs with SSE2 support.
+    * `mpe-emulator-X_Y_Z-linux-x86-sse2-vst3_single.zip`: for 32 bit CPUs
+      with SSE2 support.
 
- * MPE Emulator Lite for any platform that is supported by
-   [REAPER](https://reaper.fm/):
+ * MPE Emulator Lite for any platform that is supported by REAPER:
 
     * `MPE_Emulator_Lite-vX_Y_Z.jsfx`
 
- * Source:
+ * Source code:
 
     * `mpe-emulator-X_Y_Z-src.zip`: the source code of the plugin which you can
-      compile for any CPU architecture. (See the "Development" section below.)
+      compile for any CPU architecture. (See the "[Development](#dev)" section
+      for the details.)
+
+<a href="#toc">Table of Contents</a>
+
+<a id="install-dist-mac"></a>
+
+#### macOS
+
+The universal packages are built for macOS 11 Big Sur for M1, M2, etc. and
+newer CPUs (`arm64`) and for macOS 10.12 Sierra for Intel CPUs (`x86_64` with
+[SSE2 instructions](https://en.wikipedia.org/wiki/SSE2)),
+and were tested on macOS 26 Tahoe.
+
+[Compiling from source code](#dev) for older macOS versions and different CPUs
+might be possible, but it may require some technical knowledge and a few tweaks
+in the `Makefile` and `make/macos-gpp.mk`.
+
+##### Packages
+
+These are the file names that you will find on GitHub on the
+"[Releases](https://github.com/attilammagyar/mpe-emulator/releases)" page:
+
+ * VST 3 bundle: `mpe-emulator-X_Y_Z-macos-universal-vst3_bundle-signed.pkg`.
+
+ * FST bundle: `mpe-emulator-X_Y_Z-macos-universal-fst_bundle-signed.pkg`.
+
+ * MPE Emulator Lite for any platform that is supported by REAPER:
+   `MPE_Emulator_Lite-vX_Y_Z.jsfx`
+
+ * Source code: `mpe-emulator-X_Y_Z-src.zip`. (See the "[Development](#dev)" section
+   for the details of compiling.)
 
 <a href="#toc">Table of Contents</a>
 
@@ -194,20 +252,61 @@ These are the file names that you will find on GitHub on the "Releases" page:
 
 ### System Requirements
 
- * Operating System: Windows 7 or newer, or Linux (e.g. Ubuntu 22.04)
- * CPU: SSE2 support, 32 bit (i686) or 64 bit (x86-64)
- * RAM: around 30 MB per instance
+#### General Information
 
-The plugin can also be compiled for RISC-V 64 from its source code.
+Tested with [REAPER](https://www.reaper.fm) 7.14.
 
-Tested with [REAPER](https://www.reaper.fm/) 7.19.
+**RAM**: around 30 MB is used per instance, depending on settings like
+sample rate, buffer sizes, etc.
 
 MPE Emulator Lite runs on any operating system and CPU where REAPER runs. The
 required minimum version of REAPER is v6.74.
 
+**Note**: the source code can be compiled for RISC-V 64 as well.
+
+<a href="#toc">Table of Contents</a>
+
+<a id="system-reqs-linux"></a>
+
+#### Linux
+
+ * **CPU**: SSE2 support, 32 bit (`i686`) or 64 bit (`x86_64`).
+
+<a id="linux-deps"></a>
+
+##### Dependencies
+
+Required packages:
+
+ * `libxcb`,
+ * `libxcb-render`,
+ * `libcairo`,
+ * either `kdialog` or `zenity`.
+
+These are usually already installed on most desktop systems, but to install
+them on Debian based distributions (e.g. Ubuntu), you can use the following
+command:
+
+    sudo apt-get install libxcb1 libxcb-render0 libcairo2 zenity kdialog
+
+**Note**: if you want to run the 32 bit version of MPE Emulator on a 64 bit
+system, then you will have to install the 32 bit version of the packages, for
+example:
+
+    sudo apt-get install libxcb1:i386 libxcb-render0:i386 libcairo2:i386 zenity kdialog
+
+<a href="#toc">Table of Contents</a>
+
+<a id="system-reqs-windows"></a>
+
+#### Windows
+
+ * **Operating System**: Windows 7 or newer.
+ * **CPU**: SSE2 support, 32 bit (`i686`) or 64 bit (`x86_64`).
+
 <a id="windows-deps"></a>
 
-#### Dependencies on Windows
+##### Dependencies
 
 Typical Windows systems usually have the MSVC library already installed, but in
 case you need it, you can download it from
@@ -215,30 +314,77 @@ case you need it, you can download it from
 
 (Most people need the `X64` version of this library. To use the 32 bit version
 of the plugin, you will need the `X86` version of the library. See the
-[Before Installing: Choosing a Distribution](#install-dist) section below for
-more information.)
+[Before Installing: Choosing a Distribution](#install-dist) section for more
+information.)
 
-<a id="linux-deps"></a>
+<a href="#toc">Table of Contents</a>
 
-#### Dependencies on Linux
+<a id="system-reqs-macos"></a>
 
-On Linux, the `libxcb`, `libxcb-render`, and `libcairo` libraries, and either
-the `kdialog` or the `zenity` application are required to run MPE Emulator. To
-install them on Debian based distributions (e.g. Ubuntu), you can use the
-following command:
+#### macOS
 
-    sudo apt-get install libxcb1 libxcb-render0 libcairo2 zenity kdialog
+ * **Operating System**:
+    * M1, M2, etc. and newer CPUs: macOS 11 Big Sur or newer.
+    * Intel CPUs: macOS 10.12 Sierra or newer.
+ * **CPU**: either M1, M2, or newer, or Intel-based `x86_64` CPUs.
 
-Note: if you want to run the 32 bit version of MPE Emulator on a 64 bit system,
-then you will have to install the 32 bit version of the libraries, for example:
+<a href="#toc">Table of Contents</a>
 
-    sudo apt-get install libxcb1:i386 libxcb-render0:i386 libcairo2:i386 zenity kdialog
+<a id="install-linux"></a>
+
+### Installing on Linux
+
+<a id="fst-linux"></a>
+
+#### FST (VST 2.4)
+
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
+2. Extract the ZIP archive.
+3. Copy the `mpe-emulator.so` file to the directory where you keep your VST 2.4
+   plugins.
+4. Optionally, if your host application can load `.vstxml` files, it is
+   recommended to copy the `mpe-emulator.vstxml` file as well to the directory where
+   you keep your VST 2.4 plugins.
+
+**Note**: VST 2.4 plugins are usually put in the `~/.vst` directory.
+
+<a id="vst3-bundle-linux"></a>
+
+#### VST 3 Bundle
+
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
+2. Extract the ZIP archive.
+3. Copy the entire `mpe-emulator.vst3` directory to your VST 3 directory which
+   is usually `~/.vst3`.
+
+<a id="vst3-single-linux"></a>
+
+#### VST 3 Single File
+
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
+2. Extract the ZIP archive.
+3. Copy the `mpe-emulator.vst3` file to your VST 3 directory which is usually
+   `~/.vst3`.
+
+<a id="uninstall-linux"></a>
+
+#### Uninstalling
+
+1. Use a file manager application to locate MPE Emulator in your VST 2.4 or
+   VST 3 folder where you installed it.
+2. Delete it or drag it to the Trash.
+
+<a href="#toc">Table of Contents</a>
+
+<a id="install-windows"></a>
+
+### Installing on Windows
 
 <a id="fst-windows"></a>
 
-### FST (VST 2.4) on Windows
+#### FST (VST 2.4)
 
-1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator).
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
 2. Extract the ZIP archive.
 3. Copy the `mpe-emulator.dll` file to the folder where you keep your VST 2.4
    plugins.
@@ -246,58 +392,69 @@ then you will have to install the 32 bit version of the libraries, for example:
    recommended to copy the `mpe-emulator.vstxml` file as well to the folder
    where you keep your VST 2.4 plugins.
 
-Note: VST 2.4 plugins are usually put in the `C:\Program Files\VstPlugins`
+**Note**: VST 2.4 plugins are usually put in the `C:\Program Files\VstPlugins`
 folder.
-
-<a id="fst-linux"></a>
-
-### FST (VST 2.4) on Linux
-
-1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator).
-2. Extract the ZIP archive.
-3. Copy the `mpe-emulator.so` file to the directory where you keep your VST 2.4
-   plugins.
-4. Optionally, if your host application can load `.vstxml` files, it is
-   recommended to copy the `mpe-emulator.vstxml` file as well to the directory
-   where you keep your VST 2.4 plugins.
-
-Note: VST 2.4 plugins are usually put in the `~/.vst` directory.
 
 <a id="vst3-bundle-windows"></a>
 
-### VST 3 Bundle on Windows
+#### VST 3 Bundle
 
-1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator).
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
 2. Extract the ZIP archive.
 3. Copy the entire `mpe-emulator.vst3` folder to your VST 3 folder which is
    usually `C:\Users\YourUserName\AppData\Local\Programs\Common\VST3`.
 
-<a id="vst3-bundle-linux"></a>
-
-### VST 3 Bundle on Linux
-
-1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator).
-2. Extract the ZIP archive.
-3. Copy the entire `mpe-emulator.vst3` directory to your VST 3 directory which
-   is usually `~/.vst3`.
-
 <a id="vst3-single-windows"></a>
 
-### VST 3 Single File on Windows
+#### VST 3 Single File
 
-1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator).
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
 2. Extract the ZIP archive.
 3. Copy the `mpe-emulator.vst3` file to your VST 3 folder which is usually
    `C:\Users\YourUserName\AppData\Local\Programs\Common\VST3`.
 
-<a id="vst3-single-linux"></a>
+<a id="uninstall-windows"></a>
 
-### VST 3 Single File on Linux
+#### Uninstalling
 
-1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator).
-2. Extract the ZIP archive.
-3. Copy the `mpe-emulator.vst3` file to your VST 3 directory which is usually
-   `~/.vst3`.
+1. Use File Explorer to locate MPE Emulator in your VST 2.4 or VST 3 folder
+   where you installed it.
+2. Delete it or drag it to the Recycle Bin.
+
+<a href="#toc">Table of Contents</a>
+
+<a id="install-macos"></a>
+
+### Installing on macOS
+
+<a id="vst3-bundle-macos"></a>
+
+<a id="fst-macos"></a>
+
+#### FST (VST 2.4) Bundle
+
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
+2. Locate the downloaded `.pkg` file in Finder and double click on it.
+3. Follow the on-screen installation instructions.
+4. MPE Emulator will be installed in the `/Library/Audio/Plug-Ins/VST` folder.
+
+#### VST 3 Bundle
+
+1. [Download MPE Emulator](https://attilammagyar.github.io/mpe-emulator/index.html#download).
+2. Locate the downloaded `.pkg` file in Finder and double click on it.
+3. Follow the on-screen installation instructions.
+4. MPE Emulator will be installed in the `/Library/Audio/Plug-Ins/VST3` folder.
+
+<a id="uninstall-macos"></a>
+
+#### Uninstalling
+
+1. Use Finder to locate the `mpe-emulator.vst` or `mpe-emulator.vst3` package
+   in the `/Library/Audio/Plug-Ins/VST` or `/Library/Audio/Plug-Ins/VST3`
+   folder.
+2. Drag it to the Trash.
+
+<a href="#toc">Table of Contents</a>
 
 <a id="install-lite"></a>
 
@@ -319,7 +476,7 @@ Usage
 Place MPE Emulator in the signal chain between the raw MIDI input and a
 synthesizer plugin in the plugin host application. The exact steps to set up
 MIDI routing vary between different plugin host applications, so consult the
-documentation of your one.
+documentation of the one you use.
 
     +---------------+ single channel +--------------+           +-------------+
     |               | raw MIDI data  |              | MPE data  |             |
@@ -660,6 +817,14 @@ non-linearity curve that the rule will use when its
 
 <a href="#toc">Table of Contents</a>
 
+<a id="usage-resizing"></a>
+
+### Resizing the User Interface
+
+Drag the bottom right corner of the window to resize the user interface.
+
+<a href="#toc">Table of Contents</a>
+
 <a id="bugs"></a>
 
 Bugs
@@ -809,26 +974,6 @@ then please
 Frequently Asked Questions
 --------------------------
 
-<a id="faq-mac"></a>
-
-### Mac version?
-
-Sorry, it's not likely to happen anytime soon, unless someone is willing to
-create and maintain a Mac fork of MPE Emulator. For me to do it, it would
-require quite a large investment, both in terms of effort and financially. If
-MacOS would be available (at a reasonable price) for installing it in a virtual
-machine that could be used for testing, I'd consider that. But as long as it
-cannot be obtained (legally) without also buying a Mac, and I'm happy with my
-current computer, I'm not going to invest in a new one.
-
-If you use [REAPER](https://www.reaper.fm/) (or any DAW which supports REAPER's
-[JSFX](https://www.reaper.fm/sdk/js/js.php) plugin format), then you should try
-[MPE Emulator Lite](#lite) which implements most of MPE Emulator's features,
-and it runs on any platform that is supported by REAPER, including various Mac
-configurations.
-
-<a href="#toc">Table of Contents</a>
-
 <a id="faq-flstudio"></a>
 
 ### FL Studio: How to set up MPE Emulator?
@@ -952,6 +1097,12 @@ MPE Emulator and want to compile it themselves.
  * [WinLibs MinGW-w64 13.1.0+ (MSVCRT)](https://winlibs.com/)
  * [Doxygen 1.9.6+](https://www.doxygen.nl/)
 
+#### macOS
+
+ * MPE Emulator can be built using the standard Xcode and BSD command-line
+   development tools. Install them by running `xcode-select --install` in a
+   Terminal window.
+
 <a id="dev-dep"></a>
 
 ### Dependencies
@@ -966,25 +1117,34 @@ contains what is required for compiling MPE Emulator.
 
 #### Linux
 
-To compile MPE Emulator on e.g. Ubuntu Linux 22.04 for all supported platforms,
-the following packages need to be installed:
+To compile MPE Emulator on e.g. Ubuntu Linux 22.04, the following packages need
+to be installed:
 
     apt-get install \
         binutils \
         build-essential \
         cppcheck \
         g++ \
+        libcairo2-dev \
+        libx11-dev \
+        libxcb1-dev \
+        libxcb-render0-dev
+
+Additionally, to compile the 32 bit version, the following packages are also
+necessary (don't forget to run `sudo dpkg --add-architecture i386` if you have
+not already done that):
+
+    apt-get install \
         gcc-multilib \
         g++-multilib \
-        libcairo2-dev \
         libcairo2-dev:i386 \
-        libx11-dev \
         libx11-dev:i386 \
-        libxcb1-dev \
         libxcb1-dev:i386 \
-        libxcb-render0-dev \
-        libxcb-render0-dev:i386 \
-        mingw-w64
+        libxcb-render0-dev:i386
+
+The Windows version can also be built on Linux after installing the following:
+
+    apt-get install mingw-w64
 
 <a id="dev-compile"></a>
 
@@ -1007,6 +1167,9 @@ following commands to run tests and compile MPE Emulator for Windows:
     mingw32-make.exe check
     mingw32-make.exe all
 
+To optimize MPE Emulator for the CPU on which it is compiled, insert the
+following variable to the beginning of the above: `SET INSTRUCTION_SET=native`.
+
 #### Linux
 
 The following commands (on a 64 bit Linux environment) will compile MPE
@@ -1019,6 +1182,46 @@ Emulator for 64 bit Windows, 32 bit Windows, `x86_64` Linux, `x86` Linux, and
     TARGET_PLATFORM=i686-gpp CXX_WARNINGS= make all
     TARGET_PLATFORM=riscv64-gpp CXX_WARNINGS= make all
 
+Insert `INSTRUCTION_SET=native` to the beginning of the above commands to
+optimize MPE Emulator for the CPU on which it is compiled.
+
 Run `make check` in a similar fashion to run unit tests.
+
+#### macOS
+
+If you have a working set of the standard Xcode and BSD command-line
+development tools (e.g. you have successfully run `xcode-select --install`),
+then the following commands should compile MPE Emulator for your system:
+
+    cd mpe-emulator-1_2_0-src
+    export DEV_OS=macos
+    export TARGET_PLATFORM=gpp
+    export CXX_WARNINGS=
+    export SDKROOT=$(xcrun --show-sdk-path)
+    make all
+
+Run `make check` in a similar fashion to run unit tests.
+
+After successful compilation, you will have to copy either the entire
+`mpe-emulator.vst` or the entire `mpe-emulator.vst3` directory to the
+appropriate plugin directory under `/Users/YOUR-NAME/Library/Audio/Plug-Ins`,
+e.g.:
+
+    mkdir -p ~/Library/Audio/Plug-Ins/VST
+    cp -rv dist/mpe-emulator-dev-macos--native-fst/mpe-emulator.vst ~/Library/Audio/Plug-Ins/VST
+
+or:
+
+    mkdir -p ~/Library/Audio/Plug-Ins/VST3
+    cp -rv dist/mpe-emulator-dev-macos--native-vst3_single/mpe-emulator.vst3 ~/Library/Audio/Plug-Ins/VST3
+
+Note: some host applications don't look for VST plugins in the
+`/Users/YOUR-NAME/Library/Audio/Plug-Ins` directory by default. Please refer to
+the documentation of your host application to find out how to configure it to
+do so, or copy the compiled MPE Emulator plugin to the system plugin directory
+using `sudo`, for example:
+
+    sudo mkdir -p /Library/Audio/Plug-Ins/VST
+    sudo cp -rv dist/mpe-emulator-dev-macos--native-fst/mpe-emulator.vst /Library/Audio/Plug-Ins/VST
 
 <a href="#toc">Table of Contents</a>
