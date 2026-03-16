@@ -600,7 +600,7 @@ class ToggleSwitchParamEditor: public TransparentWidget
         void start_editing();
         void stop_editing();
 
-        int const box_left;
+        double const box_left;
 
         Proxy& proxy;
 

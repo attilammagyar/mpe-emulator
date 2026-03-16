@@ -137,6 +137,7 @@ class GUI
         static Color const STATUS_LINE_BACKGROUND;
         static Color const TOGGLE_OFF_COLOR;
         static Color const TOGGLE_ON_COLOR;
+        static Color const TOGGLE_ON_BLUR_COLOR;
 
         static void param_ratio_to_str(
             Proxy const& proxy,
