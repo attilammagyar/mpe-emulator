@@ -1,3 +1,9 @@
+v1.2.0 (2026-03-17)
+ * The plugin now runs on macOS as well.
+ * The GUI is now resizable which should also fix various font sizing problems.
+ * Improved VST 3 event processing order consistency.
+ * Bugfix: VST 3 bundles now follow the correct structure.
+
 v1.1.0 (2025-11-09)
  * Added ability to handle the sustain pedal, making it possible to send
    expression events to sustained notes as well.
