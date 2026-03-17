@@ -138,9 +138,9 @@ Packages for macOS
 These are the file names that you will find on GitHub on the
 "Releases" page (https://github.com/attilammagyar/mpe-emulator/releases):
 
- * VST 3 bundle: "mpe-emulator-X_Y_Z-macos-universal-vst3_bundle-signed.pkg".
-
  * FST bundle: "mpe-emulator-X_Y_Z-macos-universal-fst_bundle-signed.pkg".
+
+ * VST 3 bundle: "mpe-emulator-X_Y_Z-macos-universal-vst3_bundle-signed.pkg".
 
  * MPE Emulator Lite for any platform that is supported by REAPER:
    "MPE_Emulator_Lite-vX_Y_Z.jsfx"
@@ -217,6 +217,19 @@ Requirements on macOS
 Installing on Linux
 -------------------
 
+FST (VST 2.4)
+~~~~~~~~~~~~~
+
+1. Download MPE Emulator from https://attilammagyar.github.io/mpe-emulator .
+2. Extract the ZIP archive.
+3. Copy the "mpe-emulator.so" file to the directory where you keep your VST 2.4
+   plugins.
+4. Optionally, if your host application can load ".vstxml" files, it is
+   recommended to copy the "mpe-emulator.vstxml" file as well to the directory
+   where you keep your VST 2.4 plugins.
+
+Note: VST 2.4 plugins are usually put in the "~/.vst" directory.
+
 VST 3 Bundle
 ~~~~~~~~~~~~
 
@@ -233,19 +246,6 @@ VST 3 Single File
 3. Copy the "mpe-emulator.vst3" file to your VST 3 directory which is usually
    "~/.vst3".
 
-FST (VST 2.4)
-~~~~~~~~~~~~~
-
-1. Download MPE Emulator from https://attilammagyar.github.io/mpe-emulator .
-2. Extract the ZIP archive.
-3. Copy the "mpe-emulator.so" file to the directory where you keep your VST 2.4
-   plugins.
-4. Optionally, if your host application can load ".vstxml" files, it is
-   recommended to copy the "mpe-emulator.vstxml" file as well to the directory
-   where you keep your VST 2.4 plugins.
-
-Note: VST 2.4 plugins are usually put in the "~/.vst" directory.
-
 Uninstalling
 ~~~~~~~~~~~~
 
@@ -255,6 +255,20 @@ Uninstalling
 
 Installing on Windows
 ---------------------
+
+FST (VST 2.4)
+~~~~~~~~~~~~~
+
+1. Download MPE Emulator from https://attilammagyar.github.io/mpe-emulator .
+2. Extract the ZIP archive.
+3. Copy the "mpe-emulator.dll" file to the folder where you keep your VST 2.4
+   plugins.
+4. Optionally, if your host application can load ".vstxml" files, it is
+   recommended to copy the "mpe-emulator.vstxml" file as well to the folder
+   where you keep your VST 2.4 plugins.
+
+Note: VST 2.4 plugins are usually put in the "C:\Program Files\VstPlugins"
+folder.
 
 VST 3 Bundle
 ~~~~~~~~~~~~
@@ -272,20 +286,6 @@ VST 3 Single File
 3. Copy the "mpe-emulator.vst3" file to your VST 3 folder which is usually
    "C:\Users\YourUserName\AppData\Local\Programs\Common\VST3".
 
-FST (VST 2.4)
-~~~~~~~~~~~~~
-
-1. Download MPE Emulator from https://attilammagyar.github.io/mpe-emulator .
-2. Extract the ZIP archive.
-3. Copy the "mpe-emulator.dll" file to the folder where you keep your VST 2.4
-   plugins.
-4. Optionally, if your host application can load ".vstxml" files, it is
-   recommended to copy the "mpe-emulator.vstxml" file as well to the folder
-   where you keep your VST 2.4 plugins.
-
-Note: VST 2.4 plugins are usually put in the "C:\Program Files\VstPlugins"
-folder.
-
 Uninstalling
 ~~~~~~~~~~~~
 
@@ -296,14 +296,6 @@ Uninstalling
 Installing on macOS
 -------------------
 
-VST 3 Bundle
-~~~~~~~~~~~~
-
-1. Download MPE Emulator from https://attilammagyar.github.io/mpe-emulator .
-2. Locate the downloaded ".pkg" file in Finder and double click on it.
-3. Follow the on-screen installation instructions.
-4. MPE Emulator will be installed in the "/Library/Audio/Plug-Ins/VST3" folder.
-
 FST (VST 2.4) Bundle
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -311,6 +303,14 @@ FST (VST 2.4) Bundle
 2. Locate the downloaded ".pkg" file in Finder and double click on it.
 3. Follow the on-screen installation instructions.
 4. MPE Emulator will be installed in the "/Library/Audio/Plug-Ins/VST" folder.
+
+VST 3 Bundle
+~~~~~~~~~~~~
+
+1. Download MPE Emulator from https://attilammagyar.github.io/mpe-emulator .
+2. Locate the downloaded ".pkg" file in Finder and double click on it.
+3. Follow the on-screen installation instructions.
+4. MPE Emulator will be installed in the "/Library/Audio/Plug-Ins/VST3" folder.
 
 Uninstalling
 ~~~~~~~~~~~~

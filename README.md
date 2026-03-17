@@ -53,18 +53,18 @@ Table of Contents
           * [Dependencies](#windows-deps)
        * [macOS](#system-reqs-macos)
     * [Installing on Linux](#install-linux)
+       * [FST (VST 2.4)](#fst-linux)
        * [VST 3 Bundle](#vst3-bundle-linux)
        * [VST 3 Single File](#vst3-single-linux)
-       * [FST (VST 2.4)](#fst-linux)
        * [Uninstalling](#uninstall-linux)
     * [Installing on Windows](#install-windows)
+       * [FST (VST 2.4)](#fst-windows)
        * [VST 3 Bundle](#vst3-bundle-windows)
        * [VST 3 Single File](#vst3-single-windows)
-       * [FST (VST 2.4)](#fst-windows)
        * [Uninstalling](#uninstall-windows)
     * [Installing on macOS](#install-macos)
-       * [VST 3 Bundle](#vst3-bundle-macos)
        * [FST (VST 2.4) Bundle](#fst-macos)
+       * [VST 3 Bundle](#vst3-bundle-macos)
        * [Uninstalling](#uninstall-macos)
     * [MPE Emulator Lite](#install-lite)
  * [Usage](#usage)
@@ -236,9 +236,9 @@ in the `Makefile` and `make/macos-gpp.mk`.
 These are the file names that you will find on GitHub on the
 "[Releases](https://github.com/attilammagyar/mpe-emulator/releases)" page:
 
- * VST 3 bundle: `mpe-emulator-X_Y_Z-macos-universal-vst3_bundle-signed.pkg`.
-
  * FST bundle: `mpe-emulator-X_Y_Z-macos-universal-fst_bundle-signed.pkg`.
+
+ * VST 3 bundle: `mpe-emulator-X_Y_Z-macos-universal-vst3_bundle-signed.pkg`.
 
  * MPE Emulator Lite for any platform that is supported by REAPER:
    `MPE_Emulator_Lite-vX_Y_Z.jsfx`
@@ -427,8 +427,6 @@ folder.
 
 ### Installing on macOS
 
-<a id="vst3-bundle-macos"></a>
-
 <a id="fst-macos"></a>
 
 #### FST (VST 2.4) Bundle
@@ -437,6 +435,8 @@ folder.
 2. Locate the downloaded `.pkg` file in Finder and double click on it.
 3. Follow the on-screen installation instructions.
 4. MPE Emulator will be installed in the `/Library/Audio/Plug-Ins/VST` folder.
+
+<a id="vst3-bundle-macos"></a>
 
 #### VST 3 Bundle
 
