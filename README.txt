@@ -46,15 +46,15 @@ itself, then you should try the VST 3 bundle.
 
 The source code distribution can be compiled for various CPU architectures and
 operating systems. Ready-to-use binary distributions are available for
-Linux and Windows "`x86_64`" and "`x86`" compatible systems (like most desktop
+Linux and Windows "x86_64" and "x86" compatible systems (like most desktop
 PCs and laptops), and universal binaries are available for macOS.
 
 Choosing a Distribution for Linux or Windows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If the FST (VST 2.4) version is not an option for you, and you are using an
-older VST 3 host, or if you are running a 32 bit (also known as "`i686`" or
-"`x86`") VST 3 host on a 64 bit Linux system, then it might not be able to load
+older VST 3 host, or if you are running a 32 bit (also known as "i686" or
+"x86") VST 3 host on a 64 bit Linux system, then it might not be able to load
 the VST 3 bundle, so you will have to go with th VST 3 single file MPE Emulator
 package that matches the architecture of your host application.
 
@@ -124,7 +124,7 @@ Choosing a Distribution for macOS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The universal packages are built for macOS 11 Big Sur for M1, M2, etc. and
-newer CPUs (arm64) and for macOS 10.12 Sierra for Intel CPUs `x86_64 with
+newer CPUs ("arm64") and for macOS 10.12 Sierra for Intel CPUs ("x86_64" with
 SSE2 instructions, see https://en.wikipedia.org/wiki/SSE2),
 and were tested on macOS 26 Tahoe.
 
@@ -267,8 +267,8 @@ FST (VST 2.4)
    recommended to copy the "mpe-emulator.vstxml" file as well to the folder
    where you keep your VST 2.4 plugins.
 
-Note: VST 2.4 plugins are usually put in the "C:\Program Files\VstPlugins"
-folder.
+Note: VST 2.4 plugins are usually put in the
+"C:\Program Files\Steinberg\VstPlugins" folder.
 
 VST 3 Bundle
 ~~~~~~~~~~~~

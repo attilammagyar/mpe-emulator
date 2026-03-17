@@ -392,8 +392,8 @@ information.)
    recommended to copy the `mpe-emulator.vstxml` file as well to the folder
    where you keep your VST 2.4 plugins.
 
-**Note**: VST 2.4 plugins are usually put in the `C:\Program Files\VstPlugins`
-folder.
+**Note**: VST 2.4 plugins are usually put in the
+`C:\Program Files\Steinberg\VstPlugins` folder.
 
 <a id="vst3-bundle-windows"></a>
 
