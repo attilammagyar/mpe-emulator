@@ -19,8 +19,8 @@ https://github.com/attilammagyar/mpe-emulator .
 
 See the "Before Installing: Choosing a Distribution" section
 below to find out which package you need. TL;DR: if your host application
-supports VST 2.4 plugins, then it's most probably the x86_64 FST edition for
-Linux and Windows, and the universal FST edition for macOS.
+supports VST 2.4 plugins, then it's most probably the "X64" or "x86_64" FST
+edition for Linux and Windows, and the universal FST edition for macOS.
 
 (The source code is also available on GitHub under the terms of the GNU General
 Public License Version 3.)
@@ -46,8 +46,9 @@ itself, then you should try the VST 3 bundle.
 
 The source code distribution can be compiled for various CPU architectures and
 operating systems. Ready-to-use binary distributions are available for
-Linux and Windows "x86_64" and "x86" compatible systems (like most desktop
-PCs and laptops), and universal binaries are available for macOS.
+Linux "x86_64" and "i686" and Windows "X64" and "X86" compatible
+systems (like most desktop PCs and laptops), and universal binaries are
+available for macOS.
 
 Choosing a Distribution for Linux or Windows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,10 +63,11 @@ The 32 bit versions are usually only needed by those who deliberately use a 32
 bit plugin host application, e.g. because they want to keep using some really
 old plugins which are not available for 64 bit systems.
 
-If you are in doubt, then try the 64 bit FST version, and if your plugin host
-application doesn't recognize it, then try the VST 3 bundle, and if that still
-fails to load, then try the 64 bit VST 3 single file version, then the 32 bit
-FST version, then the 32 bit VST 3 single file version, and so on.
+If you are in doubt, then try the 64 bit FST version ("x64_64" or "X64"),
+and if your plugin host application doesn't recognize it, then try the VST 3
+bundle, and if that still fails to load, then try the 64 bit VST 3 single file
+version, then the 32 bit FST version ("X86"), then the 32 bit VST 3 single
+file version, and so on.
 
 Packages for Linux and Windows
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,7 +168,7 @@ Note: the source code can be compiled for RISC-V 64 as well.
 Requirements on Linux
 ~~~~~~~~~~~~~~~~~~~~~
 
- * CPU: SSE2 support, 32 bit (i686) or 64 bit (x86_64).
+ * CPU: SSE2 support, 64 bit ("x86_64") or 32 bit ("i686").
 
 Dependencies on Linux
 ~~~~~~~~~~~~~~~~~~~~~
@@ -193,7 +195,7 @@ Requirements on Windows
 ~~~~~~~~~~~~~~~~~~~~~~~
 
  * Operating System: Windows 7 or newer.
- * CPU: SSE2 support, 32 bit (i686) or 64 bit (x86_64).
+ * CPU: SSE2 support, 64 bit ("X64") or  32 bit ("X86").
 
 Dependencies on Windows
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -202,8 +204,8 @@ Typical Windows systems usually have the MSVC library already installed, but in
 case you need it, you can download it from Microsoft's website at
 https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist .
 
-(Most people need the X64 version of this library. To use the 32 bit version
-of the plugin, you will need the X86 version of the library. See the
+(Most people need the "X64" version of this library. To use the 32 bit version
+of the plugin, you will need the "X86" version of the library. See the
 Before Installing: Choosing a Distribution section for more information.)
 
 Requirements on macOS
@@ -212,7 +214,7 @@ Requirements on macOS
  * Operating System:
     * M1, M2, etc. and newer CPUs: macOS 11 Big Sur or newer.
     * Intel CPUs: macOS 10.12 Sierra or newer.
- * CPU: either M1, M2, or newer, or Intel-based x86_64 CPUs.
+ * CPU: either M1, M2, or newer, or Intel-based "x86_64" CPUs.
 
 Installing on Linux
 -------------------

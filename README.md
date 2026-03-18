@@ -25,8 +25,8 @@ section at its GitHub page at
 
 See the "[Before Installing: Choosing a Distribution](#install-dist)" section
 below to find out which package you need. TL;DR: if your host application
-supports VST 2.4 plugins, then it's most probably the `x86_64` FST edition for
-Linux and Windows, and the universal FST edition for macOS.
+supports VST 2.4 plugins, then it's most probably the `X64` or `x86_64` FST
+edition for Linux and Windows, and the universal FST edition for macOS.
 
 (The source code is also available on GitHub under the terms of the GNU General
 Public License Version 3.)
@@ -140,8 +140,9 @@ itself, then you should try the VST 3 bundle.
 
 The source code distribution can be compiled for various CPU architectures and
 operating systems. Ready-to-use binary distributions are available for
-Linux and Windows "`x86_64`" and "`x86`" compatible systems (like most desktop
-PCs and laptops), and universal binaries are available for macOS.
+Linux "`x86_64`" and "`i686`" and Windows "`X64`" and "`X86`" compatible
+systems (like most desktop PCs and laptops), and universal binaries are
+available for macOS.
 
 <a href="#toc">Table of Contents</a>
 
@@ -151,7 +152,7 @@ PCs and laptops), and universal binaries are available for macOS.
 
 If the FST (VST 2.4) version is not an option for you, and you are using an
 older VST 3 host, or if you are running a 32 bit (also known as "`i686`" or
-"`x86`") VST 3 host on a 64 bit Linux system, then it might not be able to load
+"`X86`") VST 3 host on a 64 bit Linux system, then it might not be able to load
 the VST 3 bundle, so you will have to go with th VST 3 single file MPE Emulator
 package that matches the architecture of your host application.
 
@@ -159,10 +160,11 @@ The 32 bit versions are usually only needed by those who deliberately use a 32
 bit plugin host application, e.g. because they want to keep using some really
 old plugins which are not available for 64 bit systems.
 
-If you are in doubt, then try the 64 bit FST version, and if your plugin host
-application doesn't recognize it, then try the VST 3 bundle, and if that still
-fails to load, then try the 64 bit VST 3 single file version, then the 32 bit
-FST version, then the 32 bit VST 3 single file version, and so on.
+If you are in doubt, then try the 64 bit FST version ("`x64_64`" or "`X64`"),
+and if your plugin host application doesn't recognize it, then try the VST 3
+bundle, and if that still fails to load, then try the 64 bit VST 3 single file
+version, then the 32 bit FST version ("`X86`"), then the 32 bit VST 3 single
+file version, and so on.
 
 ##### Packages
 
@@ -270,7 +272,7 @@ required minimum version of REAPER is v6.74.
 
 #### Linux
 
- * **CPU**: SSE2 support, 32 bit (`i686`) or 64 bit (`x86_64`).
+ * **CPU**: SSE2 support, 64 bit (`x86_64`) or 32 bit (`i686`).
 
 <a id="linux-deps"></a>
 
@@ -302,7 +304,7 @@ example:
 #### Windows
 
  * **Operating System**: Windows 7 or newer.
- * **CPU**: SSE2 support, 32 bit (`i686`) or 64 bit (`x86_64`).
+ * **CPU**: SSE2 support, 64 bit (`X64`) or 32 bit (`X86`).
 
 <a id="windows-deps"></a>
 
