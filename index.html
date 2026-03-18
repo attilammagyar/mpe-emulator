@@ -760,8 +760,9 @@ itself, then you should try the VST 3 bundle.</p>
 
 <p>The source code distribution can be compiled for various CPU architectures and
 operating systems. Ready-to-use binary distributions are available for
-Linux and Windows "<code>x86_64</code>" and "<code>x86</code>" compatible systems (like most desktop
-PCs and laptops), and universal binaries are available for macOS.</p>
+Linux "<code>x86_64</code>" and "<code>i686</code>" and Windows "<code>X64</code>" and "<code>X86</code>" compatible
+systems (like most desktop PCs and laptops), and universal binaries are
+available for macOS.</p>
 
 <p><a href="#toc">Table of Contents</a></p>
 
@@ -771,7 +772,7 @@ PCs and laptops), and universal binaries are available for macOS.</p>
 
 <p>If the FST (VST 2.4) version is not an option for you, and you are using an
 older VST 3 host, or if you are running a 32 bit (also known as "<code>i686</code>" or
-"<code>x86</code>") VST 3 host on a 64 bit Linux system, then it might not be able to load
+"<code>X86</code>") VST 3 host on a 64 bit Linux system, then it might not be able to load
 the VST 3 bundle, so you will have to go with th VST 3 single file MPE Emulator
 package that matches the architecture of your host application.</p>
 
@@ -779,10 +780,11 @@ package that matches the architecture of your host application.</p>
 bit plugin host application, e.g. because they want to keep using some really
 old plugins which are not available for 64 bit systems.</p>
 
-<p>If you are in doubt, then try the 64 bit FST version, and if your plugin host
-application doesn't recognize it, then try the VST 3 bundle, and if that still
-fails to load, then try the 64 bit VST 3 single file version, then the 32 bit
-FST version, then the 32 bit VST 3 single file version, and so on.</p>
+<p>If you are in doubt, then try the 64 bit FST version ("<code>x64_64</code>" or "<code>X64</code>"),
+and if your plugin host application doesn't recognize it, then try the VST 3
+bundle, and if that still fails to load, then try the 64 bit VST 3 single file
+version, then the 32 bit FST version ("<code>X86</code>"), then the 32 bit VST 3 single
+file version, and so on.</p>
 
 <h5>Packages</h5>
 
@@ -896,7 +898,7 @@ required minimum version of REAPER is v6.74.</p>
 <h4>Linux</h4>
 
 <ul>
-<li><strong>CPU</strong>: SSE2 support, 32 bit (<code>i686</code>) or 64 bit (<code>x86_64</code>).</li>
+<li><strong>CPU</strong>: SSE2 support, 64 bit (<code>x86_64</code>) or 32 bit (<code>i686</code>).</li>
 </ul>
 
 <p><a id="linux-deps"></a></p>
@@ -934,7 +936,7 @@ example:</p>
 
 <ul>
 <li><strong>Operating System</strong>: Windows 7 or newer.</li>
-<li><strong>CPU</strong>: SSE2 support, 32 bit (<code>i686</code>) or 64 bit (<code>x86_64</code>).</li>
+<li><strong>CPU</strong>: SSE2 support, 64 bit (<code>X64</code>) or 32 bit (<code>X86</code>).</li>
 </ul>
 
 <p><a id="windows-deps"></a></p>
