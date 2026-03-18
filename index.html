@@ -112,6 +112,10 @@ a#download-recommended-link {
   border-radius: 15px;
 }
 
+p#download-recommended-description {
+  font-size: 12px;
+}
+
 a#download-recommended-link:hover {
   background-color: #1b5075;
   color: #ffffff;
@@ -371,7 +375,6 @@ small {
             </a>
           </div>
           <p id="download-recommended-description"></p>
-          <p>Find other options below.</p>
         </div>
       </div>
       <div class="section">
@@ -583,6 +586,8 @@ small {
     if (url_re === null) {
         return;
     }
+
+    description += " Find other options below.";
 
     try {
         links = document.getElementById("download").getElementsByTagName("a");
