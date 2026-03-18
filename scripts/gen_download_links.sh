@@ -31,7 +31,7 @@ main()
       | while read
         do
             plugin_type="$(get_plugin_type "$REPLY")"
-            print_link "$REPLY" "$plugin_type"
+            print_link "$REPLY" "$plugin_type universal"
         done
 
     for instruction_set in "sse2"
@@ -50,7 +50,7 @@ main()
             do
                 arch="$(get_arch "$REPLY")"
                 plugin_type="$(get_plugin_type "$REPLY")"
-                print_link "$REPLY" "$arch-bit, $plugin_type"
+                print_link "$REPLY" "$arch$plugin_type"
             done
 
         find dist -name "MPE_Emulator_Lite-v*.jsfx" \
@@ -93,13 +93,29 @@ get_arch()
 {
     local file_name="$1"
 
-    if [[ "$file_name" =~ x86_64 ]]
+    if [[ "$file_name" =~ windows.*x86_64 ]]
     then
-        echo "64"
+        echo "X64, "
         return
     fi
 
-    echo "32"
+    if [[ "$file_name" =~ windows.*x86 ]]
+    then
+        echo "X86, "
+        return
+    fi
+
+    if [[ "$file_name" =~ linux.*x86_64 ]]
+    then
+        echo "x86_64, "
+        return
+    fi
+
+    if [[ "$file_name" =~ linux.*x86 ]]
+    then
+        echo "i686, "
+        return
+    fi
 }
 
 get_plugin_type()
@@ -107,8 +123,7 @@ get_plugin_type()
     local file_name="$1"
 
     printf "%s\n" "$file_name" \
-        | cut -d"-" -f7 \
-        | cut -d"." -f1 \
+        | grep -o "[fv]st3*[_a-z]*" \
         | sed "s/fst/FST (VST 2.4)/ ; s/vst3_single/VST 3 Single File/ ; s/vst3/VST 3/ ; s/_bundle//"
 }
 
