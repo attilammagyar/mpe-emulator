@@ -162,9 +162,6 @@ class Vst3Plugin
                     bool const is_pre_note_on_setup
                 ) const noexcept;
 
-                Midi::Byte float_to_midi_byte(double const number) const noexcept;
-                Midi::Word float_to_midi_word(double const number) const noexcept;
-
                 void generate_samples(Vst::ProcessData& data) noexcept;
 
                 void import_patch(std::string const& serialized) noexcept;

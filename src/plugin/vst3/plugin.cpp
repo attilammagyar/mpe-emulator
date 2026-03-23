@@ -482,7 +482,7 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
                 event.time_offset,
                 0,
                 event.note_or_ctl,
-                float_to_midi_byte(event.velocity_or_value)
+                Midi::float_to_byte(event.velocity_or_value)
             );
             break;
 
@@ -490,7 +490,7 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
             proxy.pitch_wheel_change(
                 event.time_offset,
                 0,
-                float_to_midi_word(event.velocity_or_value)
+                Midi::float_to_word(event.velocity_or_value)
             );
             break;
 
@@ -498,7 +498,7 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
             proxy.channel_pressure(
                 event.time_offset,
                 0,
-                float_to_midi_byte(event.velocity_or_value)
+                Midi::float_to_byte(event.velocity_or_value)
             );
             break;
 
@@ -507,12 +507,12 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
                 event.time_offset,
                 event.channel,
                 event.note_or_ctl,
-                float_to_midi_byte(event.velocity_or_value)
+                Midi::float_to_byte(event.velocity_or_value)
             );
             break;
 
         case Event::Type::NOTE_ON: {
-            Midi::Byte const velocity = float_to_midi_byte(event.velocity_or_value);
+            Midi::Byte const velocity = Midi::float_to_byte(event.velocity_or_value);
 
             if (velocity == 0) {
                 proxy.note_off(event.time_offset, event.channel, event.note_or_ctl, 64);
@@ -528,33 +528,13 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
                 event.time_offset,
                 event.channel,
                 event.note_or_ctl,
-                float_to_midi_byte(event.velocity_or_value)
+                Midi::float_to_byte(event.velocity_or_value)
             );
             break;
 
         default:
             break;
     }
-}
-
-
-Midi::Byte Vst3Plugin::Processor::float_to_midi_byte(
-        double const number
-) const noexcept {
-    return std::min(
-        (Midi::Byte)127,
-        std::max((Midi::Byte)0, (Midi::Byte)std::round(number * 127.0))
-    );
-}
-
-
-Midi::Word Vst3Plugin::Processor::float_to_midi_word(
-        double const number
-) const noexcept {
-    return std::min(
-        (Midi::Word)16383,
-        std::max((Midi::Word)0, (Midi::Word)std::round(number * 16383.0))
-    );
 }
 
 

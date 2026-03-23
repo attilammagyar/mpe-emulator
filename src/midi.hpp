@@ -1,6 +1,6 @@
 /*
  * This file is part of MPE Emulator.
- * Copyright (C) 2023, 2024, 2025  Attila M. Magyar
+ * Copyright (C) 2023, 2024, 2025, 2026  Attila M. Magyar
  *
  * MPE Emulator is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ typedef Byte Command;
 template<typename FloatType>
 inline Byte float_to_byte(FloatType const value) noexcept
 {
-    return (Byte)std::min(127, std::max(0, (int)std::round(value * 127.0f)));
+    return (Byte)std::min(127, std::max(0, (int)std::round(value * 127.0)));
 }
 
 
