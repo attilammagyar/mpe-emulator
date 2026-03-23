@@ -76,7 +76,7 @@ Table of Contents
     * [Known Issues and Quirks](#bugs-known)
        * [REAPER 7.18 (and below) lets raw MIDI control data pass through the VST 3 version](#bugs-known-reaper-7-18)
        * [Ardour 8.6 (and below) ignores Channel Pressure (Aftertouch) events emitted by plugins](#bugs-known-ardour)
-       * [FL Studio quirks (e.g. VST 3 Pitch Bend problems)](#bugs-known-fl-studio)
+       * [FL Studio quirks](#bugs-known-fl-studio)
        * [VST 3 Note On and CC event ordering issues](#bugs-known-vst3)
        * [The mod wheel or a CC event is not handled with polyphony despite matching one of the rules](#bugs-known-ccpoly)
  * [Frequently Asked Questions](#faq)
@@ -878,16 +878,12 @@ Channel Pressure (Aftertouch) events (and Program Change events in case of VST
 
 <a id="bugs-known-fl-studio"></a>
 
-#### FL Studio quirks (e.g. VST 3 Pitch Bend problems)
+#### FL Studio quirks
 
 FL Studio v2024.1.1 build 4239 (and below) seems to have a few quirks:
 
  * Control messages emitted by the VST 3 version of MPE Emulator are lost when
    the synthesizer is a VST 2 plugin.
-
- * FL Studio seems to misinterpret Pitch Bend messages emitted by the VST 3
-   version of MPE Emulator, resulting in random (and sometimes invalid) values
-   being sent to synthesizer plugins.
 
  * [Setting up plugins that output MIDI requires a few steps](#faq-flstudio).
 
@@ -980,9 +976,8 @@ Frequently Asked Questions
 
 ### FL Studio: How to set up MPE Emulator?
 
-Due to the broken MIDI support in the VST 3 protocol itself and the
-[bugs in some versions of FL Studio](#bugs-known-fl-studio), it is recommended
-for FL Studio users to use the FST edition of MPE Emulator.
+Due to the broken MIDI support in the VST 3 protocol itself, it is recommended
+to use the FST edition of MPE Emulator.
 
 Create an instance of MPE Emulator and create an instance of the synthesizer
 that you want to use with MPE. Then you will have to connect these two, and you
@@ -1015,9 +1010,11 @@ the pitch bend range as well.
    cogwheel icon near the top left corner of its FL Studio plugin window.
 
 2. Near the top right corner of the plugin window, you will find an input box
-   titled "_Pitch knob range (semitones)_". Its default value is 2.
+   titled "_Pitch knob range (semitones)_".
 
-3. Set its value to 12.
+3. Set its value to 12 if you are using the FST version of MPE Emulator, and
+   make sure to have it set to 2 (the default) if you are using the VST 3
+   version.
 
 4. Repeat the same steps for the synthesizer.
 
@@ -1041,11 +1038,6 @@ the pitch bend range as well.
    when you want to play a synthesizer with MPE, otherwise the data from your
    MIDI input device will go directly to the selected synthesizer, without MPE
    Emulator getting a chance to enhance it.
-
- * As of its v2024.1.1 build 4239 version,
-   [FL Studio seems to have some quirks](#bugs-known-fl-studio) when it comes
-   to MIDI plugins (e.g. Pitch Bend messages emitted by the VST 3 version of
-   MPE Emulator get messed up by FL Studio).
 
  * Use CC 64 for setting up the sustain pedal, and the "_Ch AT_" (FST, VST 2.4)
    or "_Channel Pressure (Aftertouch)_" (VST 3) parameter for setting up
