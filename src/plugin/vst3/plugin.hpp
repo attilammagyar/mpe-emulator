@@ -169,7 +169,8 @@ class Vst3Plugin
                 void reset_for_state_change(TBool const new_state) noexcept;
 
                 Proxy proxy;
-                std::vector<Event> events;
+                std::vector<Event> param_events;
+                std::vector<Event> note_events;
                 double sample_rate;
                 size_t new_program;
 

@@ -130,9 +130,11 @@ FUnknown* Vst3Plugin::Processor::createInstance(void* unused)
 
 Vst3Plugin::Processor::Processor()
     : proxy(),
-    events(8192),
     sample_rate(44100.0)
 {
+    param_events.reserve(8192);
+    note_events.reserve(8192);
+
     setControllerClass(Controller::ID);
 }
 
@@ -262,9 +264,10 @@ tresult PLUGIN_API Vst3Plugin::Processor::process(Vst::ProcessData& data)
     proxy.begin_processing();
     collect_note_events(data);
     collect_param_change_events(data);
-    std::sort(events.begin(), events.end());
+    std::sort(param_events.begin(), param_events.end());
     process_events();
-    events.clear();
+    param_events.clear();
+    note_events.clear();
 
     if (data.outputEvents != NULL) {
         generate_out_events(*data.outputEvents, std::max(0, data.numSamples - 1));
@@ -350,7 +353,7 @@ void Vst3Plugin::Processor::collect_param_change_events_as_midi_ctl(
             continue;
         }
 
-        events.push_back(
+        param_events.push_back(
             Event(
                 event_type,
                 (double)sample_offset / sample_rate,
@@ -387,7 +390,7 @@ void Vst3Plugin::Processor::collect_param_change_events_as_exported_param(
             continue;
         }
 
-        events.push_back(
+        param_events.push_back(
             Event(
                 Event::Type::PARAM_CHANGE,
                 (double)sample_offset / sample_rate,
@@ -418,7 +421,7 @@ void Vst3Plugin::Processor::collect_note_events(Vst::ProcessData& data) noexcept
 
         switch (event.type) {
             case Vst::Event::EventTypes::kNoteOnEvent:
-                events.push_back(
+                note_events.push_back(
                     Event(
                         Event::Type::NOTE_ON,
                         (double)event.sampleOffset / sample_rate,
@@ -430,7 +433,7 @@ void Vst3Plugin::Processor::collect_note_events(Vst::ProcessData& data) noexcept
                 break;
 
             case Vst::Event::EventTypes::kNoteOffEvent:
-                events.push_back(
+                note_events.push_back(
                     Event(
                         Event::Type::NOTE_OFF,
                         (double)event.sampleOffset / sample_rate,
@@ -442,7 +445,7 @@ void Vst3Plugin::Processor::collect_note_events(Vst::ProcessData& data) noexcept
                 break;
 
             case Vst::Event::EventTypes::kPolyPressureEvent:
-                events.push_back(
+                note_events.push_back(
                     Event(
                         Event::Type::NOTE_PRESSURE,
                         (double)event.sampleOffset / sample_rate,
@@ -462,8 +465,30 @@ void Vst3Plugin::Processor::collect_note_events(Vst::ProcessData& data) noexcept
 
 void Vst3Plugin::Processor::process_events() noexcept
 {
-    for (std::vector<Event>::const_iterator it = events.begin(); it != events.end(); ++it) {
-        process_event(*it);
+    std::vector<Event>::const_iterator param_event_it = param_events.begin();
+    std::vector<Event>::const_iterator note_event_it = note_events.begin();
+
+    while (param_event_it != param_events.end() && note_event_it != note_events.end()) {
+        Event const& param_event = *param_event_it;
+        Event const& note_event = *note_event_it;
+
+        if (note_event < param_event) {
+            process_event(note_event);
+            ++note_event_it;
+        } else {
+            process_event(param_event);
+            ++param_event_it;
+        }
+    }
+
+    while (param_event_it != param_events.end()) {
+        process_event(*param_event_it);
+        ++param_event_it;
+    }
+
+    while (note_event_it != note_events.end()) {
+        process_event(*note_event_it);
+        ++note_event_it;
     }
 }
 
