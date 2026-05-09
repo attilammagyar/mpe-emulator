@@ -190,17 +190,20 @@ char const* const Strings::CONTROLLERS_LONG[] = {
     [Proxy::ControllerId::UNDEFINED_15] = "CC 30",
     [Proxy::ControllerId::UNDEFINED_16] = "CC 31",
     [Proxy::ControllerId::BANK_SELECT_LSB] = "CC 32 Bank Select LSB (14 bit)",
-    [Proxy::ControllerId::MODULATION_WHEEL_LSB] = "CC 33 Mod Wheel LSB (14 bit)",
+    [Proxy::ControllerId::MODULATION_WHEEL_LSB] =
+        "CC 33 Mod Wheel LSB (14 bit)",
     [Proxy::ControllerId::BREATH_LSB] = "CC 34 Breath LSB (14 bit)",
     [Proxy::ControllerId::UNDEFINED_1_LSB] = "CC 35 LSB for CC 3 (14 bit)",
     [Proxy::ControllerId::FOOT_PEDAL_LSB] = "CC 36 Foot Pedal LSB (14 bit)",
-    [Proxy::ControllerId::PORTAMENTO_TIME_LSB] = "CC 37 Portamento T LSB (14 bit)",
+    [Proxy::ControllerId::PORTAMENTO_TIME_LSB] =
+        "CC 37 Portamento T LSB (14 bit)",
     [Proxy::ControllerId::DATA_ENTRY_LSB] = "CC 38 Data Entry LSB (14 bit)",
     [Proxy::ControllerId::VOLUME_LSB] = "CC 39 Volume LSB (14 bit)",
     [Proxy::ControllerId::BALANCE_LSB] = "CC 40 Balance LSB (14 bit)",
     [Proxy::ControllerId::UNDEFINED_2_LSB] = "CC 41 LSB for CC 9 (14 bit)",
     [Proxy::ControllerId::PAN_LSB] = "CC 42 Pan LSB (14 bit)",
-    [Proxy::ControllerId::EXPRESSION_PEDAL_LSB] = "CC 43 Expr Pedal LSB (14 bit)",
+    [Proxy::ControllerId::EXPRESSION_PEDAL_LSB] =
+        "CC 43 Expr Pedal LSB (14 bit)",
     [Proxy::ControllerId::FX_CTL_1_LSB] = "CC 44 Effect Ctl 1 LSB (14 bit)",
     [Proxy::ControllerId::FX_CTL_2_LSB] = "CC 45 Effect Ctl 2 LSB (14 bit)",
     [Proxy::ControllerId::UNDEFINED_3_LSB] = "CC 46 LSB for CC 14 (14 bit)",
@@ -255,8 +258,10 @@ char const* const Strings::CONTROLLERS_LONG[] = {
     [Proxy::ControllerId::FX_5] = "CC 95 Effect 5",
     [Proxy::ControllerId::DATA_INCREMENT] = "CC 96 Data Increment",
     [Proxy::ControllerId::DATA_DECREMENT] = "CC 97 Data Decrement",
-    [Proxy::ControllerId::NON_REG_PARAM_NUM_LSB] = "CC 98 Non-Reg Param Num LSB",
-    [Proxy::ControllerId::NON_REG_PARAM_NUM_MSB] = "CC 99 Non-Reg Param Num MSB",
+    [Proxy::ControllerId::NON_REG_PARAM_NUM_LSB] =
+        "CC 98 Non-Reg Param Num LSB",
+    [Proxy::ControllerId::NON_REG_PARAM_NUM_MSB] =
+        "CC 99 Non-Reg Param Num MSB",
     [Proxy::ControllerId::REG_PARAM_NUM_LSB] = "CC 100 Reg Param Num LSB",
     [Proxy::ControllerId::REG_PARAM_NUM_MSB] = "CC 101 Reg Param Num MSB",
     [Proxy::ControllerId::UNDEFINED_23] = "CC 102",
@@ -528,15 +533,17 @@ size_t const Strings::DISTORTIONS_COUNT = 4;
 
 
 char const* const Strings::TRANSPOSE_OPTIONS[] = {
-    "-48", "-47", "-46", "-45", "-44", "-43", "-42", "-41", "-40", "-39", "-38", "-37",
-    "-36", "-35", "-34", "-33", "-32", "-31", "-30", "-29", "-28", "-27", "-26", "-25",
-    "-24", "-23", "-22", "-21", "-20", "-19", "-18", "-17", "-16", "-15", "-14", "-13",
-    "-12", "-11", "-10",  "-9",  "-8",  "-7",  "-6",  "-5",  "-4",  "-3",  "-2",  "-1",
+    "-48", "-47", "-46", "-45", "-44", "-43", "-42", "-41", "-40", "-39",
+    "-38", "-37", "-36", "-35", "-34", "-33", "-32", "-31", "-30", "-29",
+    "-28", "-27", "-26", "-25", "-24", "-23", "-22", "-21", "-20", "-19",
+    "-18", "-17", "-16", "-15", "-14", "-13", "-12", "-11", "-10",  "-9",
+    "-8",  "-7",  "-6",  "-5",  "-4",  "-3",  "-2",  "-1",
     "0",
-     "+1",  "+2",  "+3",  "+4",  "+5",  "+6",  "+7",  "+8",  "+9", "+10", "+11", "+12",
-    "+13", "+14", "+15", "+16", "+17", "+18", "+19", "+20", "+21", "+22", "+23", "+24",
-    "+25", "+26", "+27", "+28", "+29", "+30", "+31", "+32", "+33", "+34", "+35", "+36",
-    "+37", "+38", "+39", "+40", "+41", "+42", "+43", "+44", "+45", "+46", "+47", "+48",
+    "+1",  "+2",  "+3",  "+4",  "+5",  "+6",  "+7",  "+8",  "+9",  "+10",
+    "+11", "+12", "+13", "+14", "+15", "+16", "+17", "+18", "+19", "+20",
+    "+21", "+22", "+23", "+24", "+25", "+26", "+27", "+28", "+29", "+30",
+    "+31", "+32", "+33", "+34", "+35", "+36", "+37", "+38", "+39", "+40",
+    "+41", "+42", "+43", "+44", "+45", "+46", "+47", "+48",
 };
 
 size_t const Strings::TRANSPOSE_OPTIONS_COUNT = 97;
@@ -548,7 +555,8 @@ char const* const Strings::PARAMS[Proxy::ParamId::PARAM_ID_COUNT] = {
     [Proxy::ParamId::Z1CHN] = "Channels",
     [Proxy::ParamId::Z1ENH] = "Excess note handling",
     [Proxy::ParamId::Z1ANC] = "Anchor",
-    [Proxy::ParamId::Z1ORV] = "Override release velocity with triggered velocity",
+    [Proxy::ParamId::Z1ORV] =
+        "Override release velocity with triggered velocity",
     [Proxy::ParamId::Z1R1IN] = "Rule 1 input",
     [Proxy::ParamId::Z1R1OU] = "Rule 1 output",
     [Proxy::ParamId::Z1R1IV] = "Rule 1 initial value (%)",
@@ -646,117 +654,219 @@ char const* const Strings::PARAMS[Proxy::ParamId::PARAM_ID_COUNT] = {
 
 
 Strings::ParamFormat Strings::PARAM_FORMATS[Proxy::ParamId::PARAM_ID_COUNT] = {
-    [Proxy::ParamId::MCM] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::MCM] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
     [Proxy::ParamId::Z1TYP] = {Strings::ZONE_TYPES, Strings::ZONE_TYPES_COUNT},
     [Proxy::ParamId::Z1CHN] = {Strings::CHANNELS, Strings::CHANNELS_COUNT},
-    [Proxy::ParamId::Z1ENH] = {Strings::EXCESS_NOTE_HANDLINGS, Strings::EXCESS_NOTE_HANDLINGS_COUNT},
+    [Proxy::ParamId::Z1ENH] = {
+        Strings::EXCESS_NOTE_HANDLINGS, Strings::EXCESS_NOTE_HANDLINGS_COUNT
+    },
     [Proxy::ParamId::Z1ANC] = {Strings::ANCHORS, Strings::ANCHORS_COUNT},
-    [Proxy::ParamId::Z1ORV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1ORV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R1IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R1OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R1IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R1OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R1IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R1TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R1DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R1DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R1DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R1MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R1RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R1NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R1NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+        },
 
-    [Proxy::ParamId::Z1R2IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R2OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R2IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R2OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R2IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R2TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R2DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R2DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R2DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R2MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R2RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R2NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R2NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R3IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R3OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R3IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R3OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R3IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R3TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R3DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R3DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R3DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R3MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R3RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R3NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R3NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R4IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R4OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R4IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R4OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R4IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R4TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R4DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R4DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R4DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R4MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R4RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R4NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R4NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R5IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R5OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R5IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R5OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R5IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R5TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R5DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R5DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R5DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R5MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R5RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R5NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R5NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R6IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R6OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R6IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R6OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R6IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R6TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R6DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R6DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R6DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R6MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R6RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R6NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R6NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R7IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R7OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R7IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R7OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R7IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R7TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R7DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R7DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R7DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R7MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R7RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R7NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R7NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R8IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R8OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R8IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R8OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R8IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R8TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R8DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R8DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R8DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R8MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R8RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R8NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R8NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R9IN] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
-    [Proxy::ParamId::Z1R9OU] = {Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT},
+    [Proxy::ParamId::Z1R9IN] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
+    [Proxy::ParamId::Z1R9OU] = {
+        Strings::CONTROLLERS_SHORT, Strings::CONTROLLERS_COUNT
+    },
     [Proxy::ParamId::Z1R9IV] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R9TR] = {Strings::TARGETS_SHORT, Strings::TARGETS_COUNT},
-    [Proxy::ParamId::Z1R9DT] = {Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT},
+    [Proxy::ParamId::Z1R9DT] = {
+        Strings::DISTORTIONS, Strings::DISTORTIONS_COUNT
+    },
     [Proxy::ParamId::Z1R9DL] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R9MP] = {"%.2f%%", 100.0},
     [Proxy::ParamId::Z1R9RS] = {Strings::RESETS, Strings::RESETS_COUNT},
-    [Proxy::ParamId::Z1R9NV] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R9NV] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1TRB] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
-    [Proxy::ParamId::Z1TRA] = {Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT},
+    [Proxy::ParamId::Z1TRB] = {
+        Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT
+    },
+    [Proxy::ParamId::Z1TRA] = {
+        Strings::TRANSPOSE_OPTIONS, Strings::TRANSPOSE_OPTIONS_COUNT
+    },
 
-    [Proxy::ParamId::Z1SUS] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1SUS] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 
-    [Proxy::ParamId::Z1R1FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R2FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R3FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R4FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R5FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R6FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R7FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R8FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
-    [Proxy::ParamId::Z1R9FB] = {Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT},
+    [Proxy::ParamId::Z1R1FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R2FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R3FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R4FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R5FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R6FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R7FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R8FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
+    [Proxy::ParamId::Z1R9FB] = {
+        Strings::TOGGLE_STATES, Strings::TOGGLE_STATES_COUNT
+    },
 };
 
 
