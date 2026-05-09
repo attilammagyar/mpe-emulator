@@ -26,6 +26,8 @@
 namespace MpeEmulator
 {
 
-GUI::PlatformData* platform_data = (MpeEmulator::GUI::PlatformData*)&moduleHandle;
+GUI::PlatformData* platform_data = (
+    (MpeEmulator::GUI::PlatformData*)&moduleHandle
+);
 
 }

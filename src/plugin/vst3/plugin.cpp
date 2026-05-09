@@ -55,20 +55,20 @@
 using namespace Steinberg;
 
 
-#define MPE_EMULATOR_VST3_SEND_MSG(msg_id, attr_setter, attr_name, attr_value)  \
-    do {                                                                        \
-        IPtr<Vst::IMessage> message = owned(allocateMessage());                 \
-                                                                                \
-        if (message) {                                                          \
-            message->setMessageID(msg_id);                                      \
-                                                                                \
-            Vst::IAttributeList* const attributes = message->getAttributes();   \
-                                                                                \
-            if (attributes) {                                                   \
-                attributes->attr_setter((attr_name), (attr_value));             \
-                sendMessage(message);                                           \
-            }                                                                   \
-        }                                                                       \
+#define MPE_EMULATOR_VST3_SEND_MSG(msg_id, attr_setter, attr_name, attr_value) \
+    do {                                                                       \
+        IPtr<Vst::IMessage> message = owned(allocateMessage());                \
+                                                                               \
+        if (message) {                                                         \
+            message->setMessageID(msg_id);                                     \
+                                                                               \
+            Vst::IAttributeList* const attributes = message->getAttributes();  \
+                                                                               \
+            if (attributes) {                                                  \
+                attributes->attr_setter((attr_name), (attr_value));            \
+                sendMessage(message);                                          \
+            }                                                                  \
+        }                                                                      \
     } while (false)
 
 
@@ -86,9 +86,13 @@ using namespace Steinberg;
 namespace MpeEmulator
 {
 
-FUID const Vst3Plugin::Processor::ID(0x56535441, 0x4d50456d, 0x7065656d, 0x756c6174);
+FUID const Vst3Plugin::Processor::ID(
+    0x56535441, 0x4d50456d, 0x7065656d, 0x756c6174
+);
 
-FUID const Vst3Plugin::Controller::ID(0x56534541, 0x4d50456d, 0x7065656d, 0x756c6174);
+FUID const Vst3Plugin::Controller::ID(
+    0x56534541, 0x4d50456d, 0x7065656d, 0x756c6174
+);
 
 
 Vst3Plugin::Event::Event()
@@ -202,8 +206,9 @@ tresult PLUGIN_API Vst3Plugin::Processor::notify(Vst::IMessage* message)
 }
 
 
-tresult PLUGIN_API Vst3Plugin::Processor::canProcessSampleSize(int32 symbolic_sample_size)
-{
+tresult PLUGIN_API Vst3Plugin::Processor::canProcessSampleSize(
+        int32 symbolic_sample_size
+) {
     if (
             symbolic_sample_size == Vst::SymbolicSampleSizes::kSample64
             || symbolic_sample_size == Vst::SymbolicSampleSizes::kSample32
@@ -215,8 +220,9 @@ tresult PLUGIN_API Vst3Plugin::Processor::canProcessSampleSize(int32 symbolic_sa
 }
 
 
-tresult PLUGIN_API Vst3Plugin::Processor::setupProcessing(Vst::ProcessSetup& setup)
-{
+tresult PLUGIN_API Vst3Plugin::Processor::setupProcessing(
+        Vst::ProcessSetup& setup
+) {
     double const sample_rate = (double)setup.sampleRate;
 
     this->sample_rate = sample_rate > 0.0 ? sample_rate : 44100.0;
@@ -233,8 +239,9 @@ tresult PLUGIN_API Vst3Plugin::Processor::setProcessing(TBool state)
 }
 
 
-void Vst3Plugin::Processor::reset_for_state_change(TBool const new_state) noexcept
-{
+void Vst3Plugin::Processor::reset_for_state_change(
+        TBool const new_state
+) noexcept {
     if (new_state) {
         proxy.resume();
     } else {
@@ -270,7 +277,9 @@ tresult PLUGIN_API Vst3Plugin::Processor::process(Vst::ProcessData& data)
     note_events.clear();
 
     if (data.outputEvents != NULL) {
-        generate_out_events(*data.outputEvents, std::max(0, data.numSamples - 1));
+        generate_out_events(
+            *data.outputEvents, std::max(0, data.numSamples - 1)
+        );
     }
 
     if (proxy.is_dirty()) {
@@ -325,7 +334,9 @@ void Vst3Plugin::Processor::collect_param_change_events(
             default:
                 if (0 <= ctl_id && ctl_id <= Proxy::ControllerId::MAX_MIDI_CC) {
                     collect_param_change_events_as_midi_ctl(
-                        param_queue, Event::Type::CONTROL_CHANGE, (Midi::Byte)param_tag
+                        param_queue,
+                        Event::Type::CONTROL_CHANGE,
+                        (Midi::Byte)param_tag
                     );
                 } else {
                     collect_param_change_events_as_exported_param(
@@ -468,7 +479,10 @@ void Vst3Plugin::Processor::process_events() noexcept
     std::vector<Event>::const_iterator param_event_it = param_events.begin();
     std::vector<Event>::const_iterator note_event_it = note_events.begin();
 
-    while (param_event_it != param_events.end() && note_event_it != note_events.end()) {
+    while (
+            param_event_it != param_events.end()
+            && note_event_it != note_events.end()
+    ) {
         Event const& param_event = *param_event_it;
         Event const& note_event = *note_event_it;
 
@@ -498,7 +512,9 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
     switch (event.type) {
         case Event::Type::PARAM_CHANGE:
             proxy.process_message(
-                Proxy::MessageType::SET_PARAM, (Proxy::ParamId)event.note_or_ctl, event.velocity_or_value
+                Proxy::MessageType::SET_PARAM,
+                (Proxy::ParamId)event.note_or_ctl,
+                event.velocity_or_value
             );
             break;
 
@@ -537,12 +553,21 @@ void Vst3Plugin::Processor::process_event(Event const& event) noexcept
             break;
 
         case Event::Type::NOTE_ON: {
-            Midi::Byte const velocity = Midi::float_to_byte(event.velocity_or_value);
+            Midi::Byte const velocity = Midi::float_to_byte(
+                event.velocity_or_value
+            );
 
             if (velocity == 0) {
-                proxy.note_off(event.time_offset, event.channel, event.note_or_ctl, 64);
+                proxy.note_off(
+                    event.time_offset, event.channel, event.note_or_ctl, 64
+                );
             } else {
-                proxy.note_on(event.time_offset, event.channel, event.note_or_ctl, velocity);
+                proxy.note_on(
+                    event.time_offset,
+                    event.channel,
+                    event.note_or_ctl,
+                    velocity
+                );
             }
 
             break;
@@ -568,8 +593,9 @@ void Vst3Plugin::Processor::generate_out_events(
         int32 const last_sample_offset
 ) noexcept {
     Vst::Event vst_event;
+    Proxy::OutEvents::const_iterator it;
 
-    for (Proxy::OutEvents::const_iterator it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
+    for (it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
         Midi::Event const& midi_event(*it);
         int32 const sample_offset = (
             midi_event.get_sample_offset<int32>(sample_rate, last_sample_offset)
@@ -587,7 +613,9 @@ void Vst3Plugin::Processor::generate_out_events(
                 );
                 vst_event.noteOff.channel = midi_event.channel;
                 vst_event.noteOff.pitch = midi_event.data_1;
-                vst_event.noteOff.velocity = Midi::byte_to_float<float>(midi_event.data_2);
+                vst_event.noteOff.velocity = Midi::byte_to_float<float>(
+                    midi_event.data_2
+                );
                 vst_event.noteOff.noteId = -1;
                 vst_event.noteOff.tuning = 0.0f;
 
@@ -605,7 +633,9 @@ void Vst3Plugin::Processor::generate_out_events(
                 vst_event.noteOn.channel = midi_event.channel;
                 vst_event.noteOn.pitch = midi_event.data_1;
                 vst_event.noteOn.tuning = 0.0f;
-                vst_event.noteOn.velocity = Midi::byte_to_float<float>(midi_event.data_2);
+                vst_event.noteOn.velocity = Midi::byte_to_float<float>(
+                    midi_event.data_2
+                );
                 vst_event.noteOn.length = 0;
                 vst_event.noteOn.noteId = -1;
 
@@ -709,14 +739,20 @@ void Vst3Plugin::Processor::initialize_cc_event(
 
 void Vst3Plugin::Processor::generate_samples(Vst::ProcessData& data) noexcept
 {
-    if (processSetup.symbolicSampleSize == Vst::SymbolicSampleSizes::kSample64) {
+    if (
+            processSetup.symbolicSampleSize
+            == Vst::SymbolicSampleSizes::kSample64
+    ) {
         double** out_samples = (
             (double**)getChannelBuffersPointer(processSetup, data.outputs[0])
         );
 
         std::fill_n(out_samples[0], data.numSamples, 0.0);
         std::fill_n(out_samples[1], data.numSamples, 0.0);
-    } else if (processSetup.symbolicSampleSize == Vst::SymbolicSampleSizes::kSample32) {
+    } else if (
+            processSetup.symbolicSampleSize
+            == Vst::SymbolicSampleSizes::kSample32
+    ) {
         float** out_samples = (
             (float**)getChannelBuffersPointer(processSetup, data.outputs[0])
         );
@@ -967,7 +1003,10 @@ tresult PLUGIN_API Vst3Plugin::Controller::initialize(FUnknown* context)
 
     addUnit(
         new Vst::Unit(
-            STR("Root"), Vst::kRootUnitId, Vst::kNoParentUnitId, Vst::kNoProgramListId
+            STR("Root"),
+            Vst::kRootUnitId,
+            Vst::kNoParentUnitId,
+            Vst::kNoProgramListId
         )
     );
 
@@ -1080,7 +1119,9 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
         Proxy::ParamId const param_id
 ) const {
     size_t number_of_options;
-    char const* const* const options = Strings::get_options(param_id, number_of_options);
+    char const* const* const options = Strings::get_options(
+        param_id, number_of_options
+    );
 
     if (options == NULL) {
         Vst::RangeParameter* const param = new Vst::RangeParameter(
@@ -1108,7 +1149,11 @@ Vst::Parameter* Vst3Plugin::Controller::create_exported_param(
             USTRING(proxy.get_param_name(param_id).c_str())
         );
 
-        for (size_t i = param_id == Proxy::ParamId::Z1CHN ? 1 : 0; i != number_of_options; ++i) {
+        for (
+                size_t i = param_id == Proxy::ParamId::Z1CHN ? 1 : 0;
+                i != number_of_options;
+                ++i
+        ) {
             param->appendString(USTRING(options[i]));
         }
 
@@ -1145,7 +1190,10 @@ tresult PLUGIN_API Vst3Plugin::Controller::getMidiControllerAssignment(
 ) {
     if (bus_index == 0 && midi_controller_number < Vst::kCountCtrlNumber) {
         if (
-                (0 <= (int)midi_controller_number && midi_controller_number <= (int)Proxy::MAX_MIDI_CC)
+                (
+                    0 <= (int)midi_controller_number
+                    && midi_controller_number <= (int)Proxy::MAX_MIDI_CC
+                )
                 || midi_controller_number == Vst::ControllerNumbers::kPitchBend
                 || midi_controller_number == Vst::ControllerNumbers::kAfterTouch
         ) {
@@ -1177,8 +1225,12 @@ tresult PLUGIN_API Vst3Plugin::Controller::notify(Vst::IMessage* message)
 
     if (FIDStringsEqual(message->getMessageID(), MSG_SHARE_PROXY)) {
         int64 proxy_ptr;
+        Vst::IAttributeList* const attributes = message->getAttributes();
+        tresult const result = attributes->getInt(
+            MSG_SHARE_PROXY_PROXY, proxy_ptr
+        );
 
-        if (message->getAttributes()->getInt(MSG_SHARE_PROXY_PROXY, proxy_ptr) == kResultOk) {
+        if (result  == kResultOk) {
             proxy = (Proxy*)proxy_ptr;
             update_params();
 
@@ -1193,9 +1245,13 @@ tresult PLUGIN_API Vst3Plugin::Controller::notify(Vst::IMessage* message)
         Calling setDirty(true) would suffice, the dummy parameter dance is done
         only to keep parameter behaviour in sync with the FST plugin.
         */
-        Vst::ParamValue const new_value = getParamNormalized(SETTINGS_CHANGED_PARAM_ID) + 0.01;
+        Vst::ParamValue const new_value = (
+            getParamNormalized(SETTINGS_CHANGED_PARAM_ID) + 0.01
+        );
 
-        setParamNormalized(SETTINGS_CHANGED_PARAM_ID, new_value < 1.0 ? new_value : 0.0);
+        setParamNormalized(
+            SETTINGS_CHANGED_PARAM_ID, new_value < 1.0 ? new_value : 0.0
+        );
         setDirty(true);
 
         return kResultOk;

@@ -112,14 +112,26 @@ class Vst3Plugin
                     int32 number_of_outputs
                 ) SMTG_OVERRIDE;
 
-                tresult PLUGIN_API connect(IConnectionPoint* other) SMTG_OVERRIDE;
+                tresult PLUGIN_API connect(
+                    IConnectionPoint* other
+                ) SMTG_OVERRIDE;
+
                 tresult PLUGIN_API notify(Vst::IMessage* message) SMTG_OVERRIDE;
 
-                tresult PLUGIN_API canProcessSampleSize(int32 symbolic_sample_size) SMTG_OVERRIDE;
-                tresult PLUGIN_API setupProcessing(Vst::ProcessSetup& setup) SMTG_OVERRIDE;
+                tresult PLUGIN_API canProcessSampleSize(
+                    int32 symbolic_sample_size
+                ) SMTG_OVERRIDE;
+
+                tresult PLUGIN_API setupProcessing(
+                    Vst::ProcessSetup& setup
+                ) SMTG_OVERRIDE;
+
                 tresult PLUGIN_API setProcessing(TBool state) SMTG_OVERRIDE;
                 tresult PLUGIN_API setActive(TBool state) SMTG_OVERRIDE;
-                tresult PLUGIN_API process(Vst::ProcessData& data) SMTG_OVERRIDE;
+
+                tresult PLUGIN_API process(
+                    Vst::ProcessData& data
+                ) SMTG_OVERRIDE;
 
                 uint32 PLUGIN_API getLatencySamples() SMTG_OVERRIDE;
                 uint32 PLUGIN_API getTailSamples() SMTG_OVERRIDE;
@@ -130,7 +142,9 @@ class Vst3Plugin
             private:
                 void share_proxy() noexcept;
 
-                void collect_param_change_events(Vst::ProcessData& data) noexcept;
+                void collect_param_change_events(
+                    Vst::ProcessData& data
+                ) noexcept;
 
                 void collect_param_change_events_as_midi_ctl(
                     Vst::IParamValueQueue* const param_queue,
@@ -192,9 +206,16 @@ class Vst3Plugin
 
                 virtual ~GUI();
 
-                tresult PLUGIN_API isPlatformTypeSupported(FIDString type) SMTG_OVERRIDE;
+                tresult PLUGIN_API isPlatformTypeSupported(
+                    FIDString type
+                ) SMTG_OVERRIDE;
+
                 tresult PLUGIN_API canResize() SMTG_OVERRIDE;
-                tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) SMTG_OVERRIDE;
+
+                tresult PLUGIN_API checkSizeConstraint(
+                    ViewRect* rect
+                ) SMTG_OVERRIDE;
+
                 tresult PLUGIN_API onSize(ViewRect* newSize) SMTG_OVERRIDE;
 
                 virtual void attachedToParent() override;
@@ -220,7 +241,9 @@ class Vst3Plugin
 #endif
         };
 
-        class Controller : public Vst::EditControllerEx1, public Vst::IMidiMapping
+        class Controller
+            : public Vst::EditControllerEx1,
+            public Vst::IMidiMapping
         {
             public:
                 static FUID const ID;
@@ -233,7 +256,10 @@ class Vst3Plugin
 
                 tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
 
-                tresult PLUGIN_API connect(IConnectionPoint* other) SMTG_OVERRIDE;
+                tresult PLUGIN_API connect(
+                    IConnectionPoint* other
+                ) SMTG_OVERRIDE;
+
                 tresult PLUGIN_API notify(Vst::IMessage* message) SMTG_OVERRIDE;
 
                 tresult PLUGIN_API getMidiControllerAssignment(
@@ -245,7 +271,9 @@ class Vst3Plugin
 
                 IPlugView* PLUGIN_API createView(FIDString name) SMTG_OVERRIDE;
 
-                tresult PLUGIN_API setComponentState(IBStream* state) SMTG_OVERRIDE;
+                tresult PLUGIN_API setComponentState(
+                    IBStream* state
+                ) SMTG_OVERRIDE;
 
             private:
                 void export_parameters(
