@@ -72,7 +72,14 @@ ImportSettingsButton::ImportSettingsButton(
         int const height,
         Proxy& proxy,
         TabBody* const tab_body
-) : TransparentWidget("Import Settings", left, top, width, height, Type::IMPORT_SETTINGS_BUTTON),
+) : TransparentWidget(
+        "Import Settings",
+        left,
+        top,
+        width,
+        height,
+        Type::IMPORT_SETTINGS_BUTTON
+    ),
     tab_body(tab_body),
     proxy(proxy)
 {
@@ -80,8 +87,10 @@ ImportSettingsButton::ImportSettingsButton(
 }
 
 
-void ImportSettingsButton::import_settings(char const* const buffer, int const size) const
-{
+void ImportSettingsButton::import_settings(
+        char const* const buffer,
+        int const size
+) const {
     std::string const settings(
         buffer,
         std::min(
@@ -97,8 +106,11 @@ void ImportSettingsButton::import_settings(char const* const buffer, int const s
 }
 
 
-bool ImportSettingsButton::mouse_move(int const x, int const y, bool const modifier)
-{
+bool ImportSettingsButton::mouse_move(
+        int const x,
+        int const y,
+        bool const modifier
+) {
     TransparentWidget::mouse_move(x, y, modifier);
     gui->set_status_line(text);
 
@@ -122,15 +134,25 @@ ExportSettingsButton::ExportSettingsButton(
         int const width,
         int const height,
         Proxy& proxy
-) : TransparentWidget("Export Settings", left, top, width, height, Type::EXPORT_SETTINGS_BUTTON),
+) : TransparentWidget(
+        "Export Settings",
+        left,
+        top,
+        width,
+        height,
+        Type::EXPORT_SETTINGS_BUTTON
+    ),
     proxy(proxy)
 {
     set_gui(gui);
 }
 
 
-bool ExportSettingsButton::mouse_move(int const x, int const y, bool const modifier)
-{
+bool ExportSettingsButton::mouse_move(
+        int const x,
+        int const y,
+        bool const modifier
+) {
     TransparentWidget::mouse_move(x, y, modifier);
     gui->set_status_line(text);
 
@@ -165,8 +187,9 @@ KnobParamEditor* TabBody::own(KnobParamEditor* const knob_param_editor)
 }
 
 
-ToggleSwitchParamEditor* TabBody::own(ToggleSwitchParamEditor* const toggle_switch_param_editor)
-{
+ToggleSwitchParamEditor* TabBody::own(
+        ToggleSwitchParamEditor* const toggle_switch_param_editor
+) {
     Widget::own(toggle_switch_param_editor);
 
     toggle_switch_param_editors.push_back(toggle_switch_param_editor);
@@ -175,8 +198,9 @@ ToggleSwitchParamEditor* TabBody::own(ToggleSwitchParamEditor* const toggle_swit
 }
 
 
-DiscreteParamEditor* TabBody::own(DiscreteParamEditor* const discrete_param_editor)
-{
+DiscreteParamEditor* TabBody::own(
+        DiscreteParamEditor* const discrete_param_editor
+) {
     Widget::own(discrete_param_editor);
 
     discrete_param_editors.push_back(discrete_param_editor);
@@ -187,7 +211,11 @@ DiscreteParamEditor* TabBody::own(DiscreteParamEditor* const discrete_param_edit
 
 void TabBody::stop_editing()
 {
-    for (GUI::KnobParamEditors::iterator it = knob_param_editors.begin(); it != knob_param_editors.end(); ++it) {
+    for (
+            GUI::KnobParamEditors::iterator it = knob_param_editors.begin();
+            it != knob_param_editors.end();
+            ++it
+    ) {
         (*it)->stop_editing();
     }
 }
@@ -195,15 +223,31 @@ void TabBody::stop_editing()
 
 void TabBody::refresh_all_params()
 {
-    for (GUI::KnobParamEditors::iterator it = knob_param_editors.begin(); it != knob_param_editors.end(); ++it) {
+    for (
+            GUI::KnobParamEditors::iterator it = knob_param_editors.begin();
+            it != knob_param_editors.end();
+            ++it
+    ) {
         (*it)->refresh();
     }
 
-    for (GUI::ToggleSwitchParamEditors::iterator it = toggle_switch_param_editors.begin(); it != toggle_switch_param_editors.end(); ++it) {
+    for (
+            GUI::ToggleSwitchParamEditors::iterator it = (
+                toggle_switch_param_editors.begin()
+            );
+            it != toggle_switch_param_editors.end();
+            ++it
+    ) {
         (*it)->refresh();
     }
 
-    for (GUI::DiscreteParamEditors::iterator it = discrete_param_editors.begin(); it != discrete_param_editors.end(); ++it) {
+    for (
+            GUI::DiscreteParamEditors::iterator it = (
+                discrete_param_editors.begin()
+            );
+            it != discrete_param_editors.end();
+            ++it
+    ) {
         (*it)->refresh();
     }
 
@@ -229,15 +273,31 @@ void TabBody::hide()
 
 void TabBody::hide_param_editors()
 {
-    for (GUI::KnobParamEditors::iterator it = knob_param_editors.begin(); it != knob_param_editors.end(); ++it) {
+    for (
+            GUI::KnobParamEditors::iterator it = knob_param_editors.begin();
+            it != knob_param_editors.end();
+            ++it
+    ) {
         (*it)->hide();
     }
 
-    for (GUI::ToggleSwitchParamEditors::iterator it = toggle_switch_param_editors.begin(); it != toggle_switch_param_editors.end(); ++it) {
+    for (
+            GUI::ToggleSwitchParamEditors::iterator it = (
+                toggle_switch_param_editors.begin()
+            );
+            it != toggle_switch_param_editors.end();
+            ++it
+    ) {
         (*it)->hide();
     }
 
-    for (GUI::DiscreteParamEditors::iterator it = discrete_param_editors.begin(); it != discrete_param_editors.end(); ++it) {
+    for (
+            GUI::DiscreteParamEditors::iterator it = (
+                discrete_param_editors.begin()
+            );
+            it != discrete_param_editors.end();
+            ++it
+    ) {
         (*it)->hide();
     }
 }
@@ -245,15 +305,31 @@ void TabBody::hide_param_editors()
 
 void TabBody::show_param_editors()
 {
-    for (GUI::KnobParamEditors::iterator it = knob_param_editors.begin(); it != knob_param_editors.end(); ++it) {
+    for (
+            GUI::KnobParamEditors::iterator it = knob_param_editors.begin();
+            it != knob_param_editors.end();
+            ++it
+    ) {
         (*it)->show();
     }
 
-    for (GUI::ToggleSwitchParamEditors::iterator it = toggle_switch_param_editors.begin(); it != toggle_switch_param_editors.end(); ++it) {
+    for (
+            GUI::ToggleSwitchParamEditors::iterator it = (
+                toggle_switch_param_editors.begin()
+            );
+            it != toggle_switch_param_editors.end();
+            ++it
+    ) {
         (*it)->show();
     }
 
-    for (GUI::DiscreteParamEditors::iterator it = discrete_param_editors.begin(); it != discrete_param_editors.end(); ++it) {
+    for (
+            GUI::DiscreteParamEditors::iterator it = (
+                discrete_param_editors.begin()
+            );
+            it != discrete_param_editors.end();
+            ++it
+    ) {
         (*it)->show();
     }
 }
@@ -515,7 +591,9 @@ void OptionSelector::select_option(
     }
 
     if (selected_option_index < OPTIONS_SIZE) {
-        Option* const previously_selected_option = options[selected_option_index];
+        Option* const previously_selected_option = (
+            options[selected_option_index]
+        );
 
         if (previously_selected_option != NULL) {
             previously_selected_option->unselect();
@@ -837,12 +915,16 @@ KnobParamEditor::KnobParamEditor(
     param_id(param_id),
     is_continuous(type == KnobType::CONTINUOUS),
     discrete_step_size(
-        is_continuous ? 0.0 : 1.001 / (double)proxy.get_param_max_value(param_id)
+        is_continuous
+            ? 0.0
+            : 1.001 / (double)proxy.get_param_max_value(param_id)
     ),
     knob_states(knob_states),
     value_font_size(is_continuous ? 22 : 20),
     knob_top(knob_top),
-    has_room_for_text(height >= knob_top + knob_states->height + VALUE_TEXT_HEIGHT),
+    has_room_for_text(
+        height >= knob_top + knob_states->height + VALUE_TEXT_HEIGHT
+    ),
     proxy(proxy),
     ratio(0.0),
     knob(NULL)
@@ -851,8 +933,9 @@ KnobParamEditor::KnobParamEditor(
 }
 
 
-void KnobParamEditor::set_up(GUI::PlatformData platform_data, WidgetBase* const parent)
-{
+void KnobParamEditor::set_up(
+        GUI::PlatformData platform_data, WidgetBase* const parent
+) {
     TransparentWidget::set_up(platform_data, parent);
 
     knob = new Knob(
@@ -1005,7 +1088,9 @@ KnobParamEditor::Knob::Knob(
         int const top,
         double const steps,
         ParamStateImages const* const knob_states
-) : Widget(text, left, top, knob_states->width, knob_states->height, Type::KNOB),
+) : Widget(
+        text, left, top, knob_states->width, knob_states->height, Type::KNOB
+    ),
     steps(steps),
     knob_states(knob_states),
     editor(editor),
@@ -1260,7 +1345,11 @@ bool AboutText::paint()
     int const text_width = width - left;
     int top = TEXT_TOP;
 
-    for (std::vector<std::string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+    for (
+            std::vector<std::string>::const_iterator it = lines.begin();
+            it != lines.end();
+            ++it
+    ) {
         draw_text(
             it->c_str(),
             this->scale_value(FONT_SIZE),
@@ -1454,10 +1543,16 @@ bool ToggleSwitchParamEditor::paint()
         platform's rectangle border drawing primitives draw around the specified
         coordinates instead of staying inside them.
         */
-        fill_rectangle(out_left, out_top, out_width, out_height, GUI::TOGGLE_ON_BLUR_COLOR);
-        fill_rectangle(in_left, in_top, in_width, in_height, GUI::TOGGLE_ON_COLOR);
+        fill_rectangle(
+            out_left, out_top, out_width, out_height, GUI::TOGGLE_ON_BLUR_COLOR
+        );
+        fill_rectangle(
+            in_left, in_top, in_width, in_height, GUI::TOGGLE_ON_COLOR
+        );
     } else {
-        fill_rectangle(out_left, out_top, out_width, out_height, GUI::TOGGLE_OFF_COLOR);
+        fill_rectangle(
+            out_left, out_top, out_width, out_height, GUI::TOGGLE_OFF_COLOR
+        );
     }
 
     return true;
@@ -1481,8 +1576,11 @@ bool ToggleSwitchParamEditor::is_on() const
 }
 
 
-bool ToggleSwitchParamEditor::mouse_move(int const x, int const y, bool const modifier)
-{
+bool ToggleSwitchParamEditor::mouse_move(
+        int const x,
+        int const y,
+        bool const modifier
+) {
     TransparentWidget::mouse_move(x, y, modifier);
 
     gui->set_status_line(title);
@@ -1767,8 +1865,11 @@ void DiscreteParamEditor::set_ratio(double const new_ratio)
 
 
 
-bool DiscreteParamEditor::mouse_move(int const x, int const y, bool const modifier)
-{
+bool DiscreteParamEditor::mouse_move(
+        int const x,
+        int const y,
+        bool const modifier
+) {
     TransparentWidget::mouse_move(x, y, modifier);
 
     gui->set_status_line(title);
@@ -1804,7 +1905,9 @@ bool DiscreteParamEditor::mouse_wheel(double const delta, bool const modifier)
 
 
 ResizerHandle::ResizerHandle(GUI& gui)
-    : TransparentWidget("Resize", LEFT, TOP, WIDTH, HEIGHT, Type::RESIZER_HANDLE),
+    : TransparentWidget(
+        "Resize", LEFT, TOP, WIDTH, HEIGHT, Type::RESIZER_HANDLE
+    ),
     click_x(0),
     click_y(0)
 {

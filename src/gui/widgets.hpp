@@ -79,7 +79,13 @@ class ImportSettingsButton : public TransparentWidget
 
     protected:
         virtual void click() override;
-        virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+        virtual bool mouse_move(
+            int const x,
+            int const y,
+            bool const modifier
+        ) override;
+
         virtual bool mouse_leave(int const x, int const y) override;
 
     private:
@@ -103,7 +109,13 @@ class ExportSettingsButton : public TransparentWidget
 
     protected:
         virtual void click() override;
-        virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+        virtual bool mouse_move(
+            int const x,
+            int const y,
+            bool const modifier
+        ) override;
+
         virtual bool mouse_leave(int const x, int const y) override;
 
     private:
@@ -124,8 +136,14 @@ class TabBody : public TransparentWidget
         using TransparentWidget::own;
 
         KnobParamEditor* own(KnobParamEditor* const knob_param_editor);
-        ToggleSwitchParamEditor* own(ToggleSwitchParamEditor* const toggle_switch_param_editor);
-        DiscreteParamEditor* own(DiscreteParamEditor* const discrete_param_editor);
+
+        ToggleSwitchParamEditor* own(
+            ToggleSwitchParamEditor* const toggle_switch_param_editor
+        );
+
+        DiscreteParamEditor* own(
+            DiscreteParamEditor* const discrete_param_editor
+        );
 
         void stop_editing();
 
@@ -272,7 +290,13 @@ class OptionSelector : public Widget
             protected:
                 virtual bool paint() override;
                 virtual bool mouse_up(int const x, int const y) override;
-                virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+                virtual bool mouse_move(
+                    int const x,
+                    int const y,
+                    bool const modifier
+                ) override;
+
                 virtual bool mouse_leave(int const x, int const y) override;
 
             private:
@@ -312,8 +336,14 @@ class ParamStateImages
 
         ParamStateImages(ParamStateImages const& param_state_images) = delete;
         ParamStateImages(ParamStateImages&& param_state_images) = delete;
-        ParamStateImages& operator=(ParamStateImages const& param_state_images) = delete;
-        ParamStateImages& operator=(ParamStateImages&& param_state_images) = delete;
+
+        ParamStateImages& operator=(
+            ParamStateImages const& param_state_images
+        ) = delete;
+
+        ParamStateImages& operator=(
+            ParamStateImages&& param_state_images
+        ) = delete;
 
         size_t ratio_to_index(double const ratio) const;
 
@@ -387,7 +417,13 @@ class KnobParamEditor : public TransparentWidget
         ) override;
 
         virtual bool paint() override;
-        virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+        virtual bool mouse_move(
+            int const x,
+            int const y,
+            bool const modifier
+        ) override;
+
         virtual bool mouse_leave(int const x, int const y) override;
 
     private:
@@ -441,9 +477,19 @@ class KnobParamEditor : public TransparentWidget
                 virtual bool double_click() override;
                 virtual bool mouse_down(int const x, int const y) override;
                 virtual bool mouse_up(int const x, int const y) override;
-                virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+                virtual bool mouse_move(
+                    int const x,
+                    int const y,
+                    bool const modifier
+                ) override;
+
                 virtual bool mouse_leave(int const x, int const y) override;
-                virtual bool mouse_wheel(double const delta, bool const modifier) override;
+
+                virtual bool mouse_wheel(
+                    double const delta,
+                    bool const modifier
+                ) override;
 
             private:
                 double const steps;
@@ -588,7 +634,13 @@ class ToggleSwitchParamEditor: public TransparentWidget
 
         virtual bool paint() override;
         virtual bool mouse_up(int const x, int const y) override;
-        virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+        virtual bool mouse_move(
+            int const x,
+            int const y,
+            bool const modifier
+        ) override;
+
         virtual bool mouse_leave(int const x, int const y) override;
 
     private:
@@ -660,9 +712,19 @@ class DiscreteParamEditor : public TransparentWidget
 
         virtual bool paint() override;
         virtual bool mouse_up(int const x, int const y) override;
-        virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+        virtual bool mouse_move(
+            int const x,
+            int const y,
+            bool const modifier
+        ) override;
+
         virtual bool mouse_leave(int const x, int const y) override;
-        virtual bool mouse_wheel(double const delta, bool const modifier) override;
+
+        virtual bool mouse_wheel(
+            double const delta,
+            bool const modifier
+        ) override;
 
         virtual void update();
         void update_value_str(unsigned char const value);
@@ -706,7 +768,12 @@ class ResizerHandle : public TransparentWidget
     protected:
         virtual bool mouse_down(int const x, int const y) override;
         virtual bool mouse_up(int const x, int const y) override;
-        virtual bool mouse_move(int const x, int const y, bool const modifier) override;
+
+        virtual bool mouse_move(
+            int const x,
+            int const y,
+            bool const modifier
+        ) override;
 
     private:
         void init_movement(int const x, int const y);
