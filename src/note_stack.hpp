@@ -49,8 +49,13 @@ class NoteStackTpl
                 ChannelStats(ChannelStats const& stats) = default;
                 ChannelStats(ChannelStats&& stats) = default;
 
-                ChannelStats& operator=(ChannelStats const& stats) noexcept = default;
-                ChannelStats& operator=(ChannelStats&& stats) noexcept = default;
+                ChannelStats& operator=(
+                    ChannelStats const& stats
+                ) noexcept = default;
+
+                ChannelStats& operator=(
+                    ChannelStats&& stats
+                ) noexcept = default;
 
 #ifdef MPE_EMULATOR_ASSERTIONS
                 std::string to_string() const noexcept;
@@ -100,7 +105,9 @@ class NoteStackTpl
         template<bool should_update_extremes>
         void remove(Midi::Note const note) noexcept;
 
-        void update_extremes_after_remove(Midi::Note const changed_note) noexcept;
+        void update_extremes_after_remove(
+            Midi::Note const changed_note
+        ) noexcept;
 
         bool is_already_pushed(Midi::Note const note) const noexcept;
 
