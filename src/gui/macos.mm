@@ -91,9 +91,13 @@
         if (event.clickCount >= 2) {
             MpeEmulator::Widget::notify_double_click(self.cpp_widget);
         } else {
-            NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
+            NSPoint p = [
+                self convertPoint:[event locationInWindow] fromView:nil
+            ];
 
-            MpeEmulator::Widget::notify_mouse_down(self.cpp_widget, (int)p.x, (int)p.y);
+            MpeEmulator::Widget::notify_mouse_down(
+                self.cpp_widget, (int)p.x, (int)p.y
+            );
         }
     }
 
@@ -105,7 +109,9 @@
 
         NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
 
-        MpeEmulator::Widget::notify_mouse_up(self.cpp_widget, (int)p.x, (int)p.y);
+        MpeEmulator::Widget::notify_mouse_up(
+            self.cpp_widget, (int)p.x, (int)p.y
+        );
     }
 
     - (void) mouseExited:(NSEvent*)event
@@ -116,7 +122,9 @@
 
         NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
 
-        MpeEmulator::Widget::notify_mouse_leave(self.cpp_widget, (int)p.x, (int)p.y);
+        MpeEmulator::Widget::notify_mouse_leave(
+            self.cpp_widget, (int)p.x, (int)p.y
+        );
     }
 
     - (void) mouseDragged:(NSEvent*)event
@@ -209,9 +217,13 @@ MpeEmulator::GUI::PlatformWidget mpe_emulator_create_platform_widget(
         MpeEmulator::GUI::PlatformWidget parent,
         MpeEmulator::WidgetBase::Type const type
 ) {
-    NSRect frame = NSMakeRect((CGFloat)left, (CGFloat)top, (CGFloat)width, (CGFloat)height);
+    NSRect frame = NSMakeRect(
+        (CGFloat)left, (CGFloat)top, (CGFloat)width, (CGFloat)height
+    );
 
-    MPEEmulatorCocoaWidget* cocoa_widget = [[MPEEmulatorCocoaWidget alloc] initWithFrame:frame];
+    MPEEmulatorCocoaWidget* cocoa_widget = [
+        [MPEEmulatorCocoaWidget alloc] initWithFrame:frame
+    ];
     cocoa_widget.cpp_widget = cpp_widget;
 
     if (parent != NULL) {
@@ -227,9 +239,12 @@ MpeEmulator::GUI::PlatformWidget mpe_emulator_create_platform_widget(
 }
 
 
-void mpe_emulator_destroy_platform_widget(MpeEmulator::GUI::PlatformWidget platform_widget)
-{
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge_transfer MPEEmulatorCocoaWidget*)platform_widget;
+void mpe_emulator_destroy_platform_widget(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+) {
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge_transfer MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -250,7 +265,9 @@ void mpe_emulator_widget_resize(
         int const width,
         int const height
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -266,7 +283,9 @@ void mpe_emulator_widget_resize(
 
 void mpe_emulator_widget_show(MpeEmulator::GUI::PlatformWidget platform_widget)
 {
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -278,7 +297,9 @@ void mpe_emulator_widget_show(MpeEmulator::GUI::PlatformWidget platform_widget)
 
 void mpe_emulator_widget_hide(MpeEmulator::GUI::PlatformWidget platform_widget)
 {
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -290,7 +311,9 @@ void mpe_emulator_widget_hide(MpeEmulator::GUI::PlatformWidget platform_widget)
 
 void mpe_emulator_widget_focus(MpeEmulator::GUI::PlatformWidget platform_widget)
 {
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -300,9 +323,12 @@ void mpe_emulator_widget_focus(MpeEmulator::GUI::PlatformWidget platform_widget)
 }
 
 
-void mpe_emulator_widget_bring_to_top(MpeEmulator::GUI::PlatformWidget platform_widget)
-{
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+void mpe_emulator_widget_bring_to_top(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+) {
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -315,9 +341,12 @@ void mpe_emulator_widget_bring_to_top(MpeEmulator::GUI::PlatformWidget platform_
 }
 
 
-void mpe_emulator_widget_redraw(MpeEmulator::GUI::PlatformWidget platform_widget)
-{
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+void mpe_emulator_widget_redraw(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+) {
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -360,7 +389,9 @@ void mpe_emulator_widget_draw_text(
         MpeEmulator::WidgetBase::FontWeight const font_weight,
         MpeEmulator::WidgetBase::TextAlignment const alignment
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (__bridge MPEEmulatorCocoaWidget*)platform_widget;
+    MPEEmulatorCocoaWidget* cocoa_widget = (
+        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    );
 
     if (!cocoa_widget) {
         return;
@@ -432,7 +463,9 @@ void mpe_emulator_widget_draw_text(
 
     [
         ns_text
-        drawInRect:NSMakeRect((CGFloat)left, float_top, (CGFloat)width, float_height)
+        drawInRect:NSMakeRect(
+            (CGFloat)left, float_top, (CGFloat)width, float_height
+        )
         withAttributes:attrs
     ];
 }
@@ -453,7 +486,9 @@ MpeEmulator::GUI::Image mpe_emulator_widget_load_image(char const* const name)
     }
 
     NSImage* ns_image = [[NSImage alloc] initWithContentsOfFile:path];
-    CGImageRef cg_image = [ns_image CGImageForProposedRect:nil context:nil hints:nil];
+    CGImageRef cg_image = [
+        ns_image CGImageForProposedRect:nil context:nil hints:nil
+    ];
     CGImageRetain(cg_image);
 
     return (MpeEmulator::GUI::Image)cg_image;
@@ -552,7 +587,12 @@ bool mpe_emulator_import_settings(
     NSOpenPanel* panel = [NSOpenPanel openPanel];
 
     if (@available(macOS 11.0, *)) {
-        [panel setAllowedContentTypes:@[[UTType typeWithFilenameExtension:@"mpe"]]];
+        [
+            panel
+            setAllowedContentTypes:@[
+                [UTType typeWithFilenameExtension:@"mpe"]
+            ]
+        ];
     } else {
         [panel setAllowedFileTypes:@[@"mpe"]];
     }
@@ -608,7 +648,12 @@ void mpe_emulator_export_settings(char const* const buffer, size_t const length)
     NSSavePanel* panel = [NSSavePanel savePanel];
 
     if (@available(macOS 11.0, *)) {
-        [panel setAllowedContentTypes:@[[UTType typeWithFilenameExtension:@"mpe"]]];
+        [
+            panel
+            setAllowedContentTypes:@[
+                [UTType typeWithFilenameExtension:@"mpe"]
+            ]
+        ];
     } else {
         [panel setAllowedFileTypes:@[@"mpe"]];
     }

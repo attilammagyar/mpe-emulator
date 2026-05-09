@@ -35,9 +35,26 @@ class Widget : public WidgetBase
         static bool notify_double_click(Widget* widget);
         static bool notify_mouse_down(Widget* widget, int const x, int const y);
         static bool notify_mouse_up(Widget* widget, int const x, int const y);
-        static bool notify_mouse_move(Widget* widget, int const x, int const y, bool const modifier);
-        static bool notify_mouse_leave(Widget* widget, int const x, int const y);
-        static bool notify_mouse_wheel(Widget* widget, double const delta, bool const modifier);
+
+        static bool notify_mouse_move(
+            Widget* widget,
+            int const x,
+            int const y,
+            bool const modifier
+        );
+
+        static bool notify_mouse_leave(
+            Widget* widget,
+            int const x,
+            int const y
+        );
+
+        static bool notify_mouse_wheel(
+            Widget* widget,
+            double const delta,
+            bool const modifier
+        );
+
         static bool notify_timer_tick(Widget* widget);
 
         explicit Widget(char const* const text);
@@ -147,7 +164,9 @@ extern "C" {
         MpeEmulator::WidgetBase::Type const type
     );
 
-    void mpe_emulator_destroy_platform_widget(MpeEmulator::GUI::PlatformWidget platform_widget);
+    void mpe_emulator_destroy_platform_widget(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+    );
 
     void mpe_emulator_widget_resize(
         MpeEmulator::GUI::PlatformWidget platform_widget,
@@ -157,11 +176,25 @@ extern "C" {
         int const height
     );
 
-    void mpe_emulator_widget_show(MpeEmulator::GUI::PlatformWidget platform_widget);
-    void mpe_emulator_widget_hide(MpeEmulator::GUI::PlatformWidget platform_widget);
-    void mpe_emulator_widget_focus(MpeEmulator::GUI::PlatformWidget platform_widget);
-    void mpe_emulator_widget_bring_to_top(MpeEmulator::GUI::PlatformWidget platform_widget);
-    void mpe_emulator_widget_redraw(MpeEmulator::GUI::PlatformWidget platform_widget);
+    void mpe_emulator_widget_show(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+    );
+
+    void mpe_emulator_widget_hide(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+    );
+
+    void mpe_emulator_widget_focus(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+    );
+
+    void mpe_emulator_widget_bring_to_top(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+    );
+
+    void mpe_emulator_widget_redraw(
+        MpeEmulator::GUI::PlatformWidget platform_widget
+    );
 
     void mpe_emulator_widget_fill_rectangle(
         int const left,
@@ -184,7 +217,9 @@ extern "C" {
         MpeEmulator::WidgetBase::TextAlignment const alignment
     );
 
-    MpeEmulator::GUI::Image mpe_emulator_widget_load_image(char const* const name);
+    MpeEmulator::GUI::Image mpe_emulator_widget_load_image(
+        char const* const name
+    );
 
     MpeEmulator::GUI::Image mpe_emulator_widget_copy_image_region(
         MpeEmulator::GUI::Image source,
@@ -218,7 +253,10 @@ extern "C" {
         size_t const max_length
     );
 
-    void mpe_emulator_export_settings(char const* const buffer, size_t const length);
+    void mpe_emulator_export_settings(
+        char const* const buffer,
+        size_t const length
+    );
 }
 
 
