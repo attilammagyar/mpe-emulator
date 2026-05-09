@@ -71,8 +71,8 @@ constexpr int pos_rel_offset_top = 0;
     } while (false)
 
 
-#define KNOB(owner, left, top, param_id, ks, cnt)                   \
-    owner->own(                                                     \
+#define KNOB(left, top, param_id, ks, cnt)                          \
+    knob_owner->own(                                                \
         new KnobParamEditor(                                        \
             *this,                                                  \
             pos_rel_offset_left + left,                             \
@@ -81,20 +81,20 @@ constexpr int pos_rel_offset_top = 0;
             KNOB_H,                                                 \
             KNOB_TOP,                                               \
             proxy,                                                  \
-            param_id,                                               \
+            Proxy::ParamId:: param_id,                              \
             ks,                                                     \
             cnt                                                     \
         )                                                           \
     )
 
-#define KNOBC(owner, left, top, param_id, ks)                       \
-    KNOB(owner, left, top, param_id, ks, KnobParamEditor::KnobType::CONTINUOUS)
+#define KNOBC(left, top, param_id, ks)                              \
+    KNOB(left, top, param_id, ks, KnobParamEditor::KnobType::CONTINUOUS)
 
-#define KNOBD(owner, left, top, param_id, ks)                       \
-    KNOB(owner, left, top, param_id, ks, KnobParamEditor::KnobType::DISCRETE)
+#define KNOBD(left, top, param_id, ks)                              \
+    KNOB(left, top, param_id, ks, KnobParamEditor::KnobType::DISCRETE)
 
-#define TOGG(owner, left, top, width, height, box_left, param_id)   \
-    owner->own(                                                     \
+#define TOGG(left, top, width, height, box_left, param_id)          \
+    knob_owner->own(                                                \
         new ToggleSwitchParamEditor(                                \
             *this,                                                  \
             pos_rel_offset_left + left,                             \
@@ -103,12 +103,12 @@ constexpr int pos_rel_offset_top = 0;
             height,                                                 \
             box_left,                                               \
             proxy,                                                  \
-            param_id                                                \
+            Proxy::ParamId:: param_id                               \
         )                                                           \
     )
 
-#define DPEI(owner, left, top, w, h, vleft, vwidth, param_id, imgs) \
-    owner->own(                                                     \
+#define DPEI(left, top, w, h, vleft, vwidth, param_id, imgs)        \
+    knob_owner->own(                                                \
         new DiscreteParamEditor(                                    \
             *this,                                                  \
             pos_rel_offset_left + left,                             \
@@ -118,16 +118,16 @@ constexpr int pos_rel_offset_top = 0;
             vleft,                                                  \
             vwidth,                                                 \
             proxy,                                                  \
-            param_id,                                               \
+            Proxy::ParamId:: param_id,                              \
             imgs                                                    \
         )                                                           \
     )
 
-#define DPET(owner, l, t, w, h, vl, vw, param_id)                   \
-    DPETO(owner, l, t, w, h, vl, vw, param_id, (OptionSelector*)NULL)
+#define DPET(l, t, w, h, vl, vw, param_id)                          \
+    DPETO(l, t, w, h, vl, vw, param_id, (OptionSelector*)NULL)
 
-#define DPETO(owner, l, t, w, h, vl, vw, param_id, option_selector) \
-    (DiscreteParamEditor*)owner->own(                               \
+#define DPETO(l, t, w, h, vl, vw, param_id, option_selector)        \
+    (DiscreteParamEditor*)knob_owner->own(                          \
         new DiscreteParamEditor(                                    \
             *this,                                                  \
             pos_rel_offset_left + l,                                \
@@ -137,13 +137,13 @@ constexpr int pos_rel_offset_top = 0;
             vl,                                                     \
             vw,                                                     \
             proxy,                                                  \
-            param_id,                                               \
+            Proxy::ParamId:: param_id,                              \
             option_selector                                         \
         )                                                           \
     )
 
-#define MIDP(owner, left, top, param_id, ks)                        \
-    owner->own(                                                     \
+#define MIDP(left, top, param_id, ks)                               \
+    knob_owner->own(                                                \
         new KnobParamEditor(                                        \
             *this,                                                  \
             pos_rel_offset_left + left,                             \
@@ -152,7 +152,7 @@ constexpr int pos_rel_offset_top = 0;
             42,                                                     \
             0,                                                      \
             proxy,                                                  \
-            param_id,                                               \
+            Proxy::ParamId:: param_id,                              \
             ks,                                                     \
             KnobParamEditor::KnobType::CONTINUOUS                   \
         )                                                           \
@@ -169,7 +169,9 @@ GUI::GUI(
 )
     : show_vst_logo(show_vst_logo),
     default_event_handler(*this),
-    event_handler(event_handler == NULL ? &default_event_handler : event_handler),
+    event_handler(
+        event_handler == NULL ? &default_event_handler : event_handler
+    ),
     dummy_widget(NULL),
     background(NULL),
     about_body(NULL),
@@ -231,13 +233,17 @@ GUI::GUI(
 
     background = new Background(*this);
 
-    this->parent_window = new ExternallyCreatedWindow(this->platform_data, parent_window);
+    this->parent_window = new ExternallyCreatedWindow(
+        this->platform_data, parent_window
+    );
     this->parent_window->own(background);
 
     status_line = new StatusLine();
     status_line->set_text("");
 
-    controller_selector = new OptionSelector(*background, proxy, "Select controller");
+    controller_selector = new OptionSelector(
+        *background, proxy, "Select controller"
+    );
 
     build_about_body(sdk_version);
     build_zone_1_body(
@@ -309,7 +315,9 @@ void GUI::build_about_body(char const* const sdk_version)
     background->own(about_body);
 
     about_body->own(new ResizerHandle(*this));
-    about_body->own(new AboutText(sdk_version, show_vst_logo ? vst_logo_image : NULL));
+    about_body->own(
+        new AboutText(sdk_version, show_vst_logo ? vst_logo_image : NULL)
+    );
 
     about_body->hide();
 }
@@ -324,6 +332,8 @@ void GUI::build_zone_1_body(
 ) {
     zone_1_body = new TabBody(*this, "Settings");
 
+    TabBody* const knob_owner = zone_1_body;
+
     background->own(zone_1_body);
 
     zone_1_body->own(new ResizerHandle(*this));
@@ -332,178 +342,188 @@ void GUI::build_zone_1_body(
 
     zone_1_body->own(
         new ImportSettingsButton(
-            *this, pos_rel_offset_left + 6, pos_rel_offset_top + 63, 60, 60, proxy, zone_1_body
+            *this,
+            pos_rel_offset_left + 6,
+            pos_rel_offset_top + 63,
+            60,
+            60,
+            proxy, zone_1_body
         )
     );
     zone_1_body->own(
         new ExportSettingsButton(
-            *this, pos_rel_offset_left + 6, pos_rel_offset_top + 123, 60, 60, proxy
+            *this,
+            pos_rel_offset_left + 6,
+            pos_rel_offset_top + 123,
+            60,
+            60,
+            proxy
         )
     );
 
-    KNOBD(zone_1_body, 66 + KNOB_W * 0, 65, Proxy::ParamId::Z1TYP, rocker_switch);
-    KNOBD(zone_1_body, 66 + KNOB_W * 1, 65, Proxy::ParamId::Z1CHN, knob_states);
-    KNOBD(zone_1_body, 66 + KNOB_W * 2, 65, Proxy::ParamId::Z1ENH, knob_states);
-    KNOBD(zone_1_body, 66 + KNOB_W * 3, 65, Proxy::ParamId::Z1ANC, knob_states);
-    KNOBD(zone_1_body, 66 + KNOB_W * 4, 65, Proxy::ParamId::Z1TRB, knob_states);
-    KNOBD(zone_1_body, 66 + KNOB_W * 5, 65, Proxy::ParamId::Z1TRA, knob_states);
+    KNOBD(66 + KNOB_W * 0, 65, Z1TYP, rocker_switch);
+    KNOBD(66 + KNOB_W * 1, 65, Z1CHN, knob_states);
+    KNOBD(66 + KNOB_W * 2, 65, Z1ENH, knob_states);
+    KNOBD(66 + KNOB_W * 3, 65, Z1ANC, knob_states);
+    KNOBD(66 + KNOB_W * 4, 65, Z1TRB, knob_states);
+    KNOBD(66 + KNOB_W * 5, 65, Z1TRA, knob_states);
 
-    TOGG(zone_1_body, 177, 7, 212, 48, 170, Proxy::ParamId::Z1SUS);
-    TOGG(zone_1_body, 413, 7, 221, 48, 179, Proxy::ParamId::Z1ORV);
-    TOGG(zone_1_body, 658, 7, 106, 48, 64, Proxy::ParamId::MCM);
+    TOGG(177, 7, 212, 48, 170, Z1SUS);
+    TOGG(413, 7, 221, 48, 179, Z1ORV);
+    TOGG(658, 7, 106, 48, 64, MCM);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(37, 294);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R1IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R1OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R1IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R1TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R1DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R1IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R1OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R1IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R1TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R1DL, knob_states);
 
-    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R1FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R1NV);
-    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R1RS);
-    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R1MP, midpoint_states);
-    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R1DT, distortions);
+    TOGG(123, 7, 74, 48, 32, Z1R1FB);
+    TOGG(213, 7, 84, 48, 42, Z1R1NV);
+    DPET(312, 13, 122, 42, 50, 68, Z1R1RS);
+    MIDP(505, 13, Z1R1MP, midpoint_states);
+    DPEI(547, 13, 42, 42, 0, 42, Z1R1DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(678, 294);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R2IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R2OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R2IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R2TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R2DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R2IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R2OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R2IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R2TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R2DL, knob_states);
 
-    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R2FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R2NV);
-    DPET(zone_1_body, 311, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R2RS);
-    MIDP(zone_1_body, 504, 13, Proxy::ParamId::Z1R2MP, midpoint_states);
-    DPEI(zone_1_body, 546, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R2DT, distortions);
+    TOGG(123, 7, 74, 48, 32, Z1R2FB);
+    TOGG(213, 7, 84, 48, 42, Z1R2NV);
+    DPET(311, 13, 122, 42, 50, 68, Z1R2RS);
+    MIDP(504, 13, Z1R2MP, midpoint_states);
+    DPEI(546, 13, 42, 42, 0, 42, Z1R2DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(1318, 294);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R3IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R3OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R3IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R3TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R3DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R3IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R3OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R3IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R3TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R3DL, knob_states);
 
-    TOGG(zone_1_body, 124, 7, 74, 48, 32, Proxy::ParamId::Z1R3FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R3NV);
-    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R3RS);
-    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R3MP, midpoint_states);
-    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R3DT, distortions);
+    TOGG(124, 7, 74, 48, 32, Z1R3FB);
+    TOGG(213, 7, 84, 48, 42, Z1R3NV);
+    DPET(312, 13, 122, 42, 50, 68, Z1R3RS);
+    MIDP(505, 13, Z1R3MP, midpoint_states);
+    DPEI(547, 13, 42, 42, 0, 42, Z1R3DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(37, 569);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R4IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R4OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R4IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R4TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R4DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R4IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R4OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R4IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R4TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R4DL, knob_states);
 
-    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R4FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R4NV);
-    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R4RS);
-    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R4MP, midpoint_states);
-    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R4DT, distortions);
+    TOGG(123, 7, 74, 48, 32, Z1R4FB);
+    TOGG(213, 7, 84, 48, 42, Z1R4NV);
+    DPET(312, 13, 122, 42, 50, 68, Z1R4RS);
+    MIDP(505, 13, Z1R4MP, midpoint_states);
+    DPEI(547, 13, 42, 42, 0, 42, Z1R4DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(678, 569);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R5IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R5OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R5IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R5TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R5DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R5IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R5OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R5IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R5TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R5DL, knob_states);
 
-    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R5FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R5NV);
-    DPET(zone_1_body, 311, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R5RS);
-    MIDP(zone_1_body, 504, 13, Proxy::ParamId::Z1R5MP, midpoint_states);
-    DPEI(zone_1_body, 546, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R5DT, distortions);
+    TOGG(123, 7, 74, 48, 32, Z1R5FB);
+    TOGG(213, 7, 84, 48, 42, Z1R5NV);
+    DPET(311, 13, 122, 42, 50, 68, Z1R5RS);
+    MIDP(504, 13, Z1R5MP, midpoint_states);
+    DPEI(546, 13, 42, 42, 0, 42, Z1R5DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(1318, 569);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R6IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R6OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R6IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R6TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R6DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R6IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R6OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R6IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R6TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R6DL, knob_states);
 
-    TOGG(zone_1_body, 124, 7, 74, 48, 32, Proxy::ParamId::Z1R6FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R6NV);
-    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R6RS);
-    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R6MP, midpoint_states);
-    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R6DT, distortions);
+    TOGG(124, 7, 74, 48, 32, Z1R6FB);
+    TOGG(213, 7, 84, 48, 42, Z1R6NV);
+    DPET(312, 13, 122, 42, 50, 68, Z1R6RS);
+    MIDP(505, 13, Z1R6MP, midpoint_states);
+    DPEI(547, 13, 42, 42, 0, 42, Z1R6DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(37, 844);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R7IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R7OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R7IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R7TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R7DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R7IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R7OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R7IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R7TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R7DL, knob_states);
 
-    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R7FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R7NV);
-    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R7RS);
-    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R7MP, midpoint_states);
-    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R7DT, distortions);
+    TOGG(123, 7, 74, 48, 32, Z1R7FB);
+    TOGG(213, 7, 84, 48, 42, Z1R7NV);
+    DPET(312, 13, 122, 42, 50, 68, Z1R7RS);
+    MIDP(505, 13, Z1R7MP, midpoint_states);
+    DPEI(547, 13, 42, 42, 0, 42, Z1R7DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(678, 844);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R8IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R8OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R8IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R8TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R8DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R8IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R8OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R8IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R8TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R8DL, knob_states);
 
-    TOGG(zone_1_body, 123, 7, 74, 48, 32, Proxy::ParamId::Z1R8FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R8NV);
-    DPET(zone_1_body, 311, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R8RS);
-    MIDP(zone_1_body, 504, 13, Proxy::ParamId::Z1R8MP, midpoint_states);
-    DPEI(zone_1_body, 546, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R8DT, distortions);
+    TOGG(123, 7, 74, 48, 32, Z1R8FB);
+    TOGG(213, 7, 84, 48, 42, Z1R8NV);
+    DPET(311, 13, 122, 42, 50, 68, Z1R8RS);
+    MIDP(504, 13, Z1R8MP, midpoint_states);
+    DPEI(546, 13, 42, 42, 0, 42, Z1R8DT, distortions);
 
     POSITION_RELATIVE_END();
 
 
     POSITION_RELATIVE_BEGIN(1318, 844);
 
-    DPETO(zone_1_body, 84, 89, 140, 46, 0, 140, Proxy::ParamId::Z1R9IN, controller_selector);
-    DPETO(zone_1_body, 84, 159, 140, 46, 0, 140, Proxy::ParamId::Z1R9OU, controller_selector);
-    KNOBC(zone_1_body, 10 + KNOB_W * 2, 65, Proxy::ParamId::Z1R9IV, knob_states);
-    KNOBD(zone_1_body, 10 + KNOB_W * 3, 65, Proxy::ParamId::Z1R9TR, knob_states);
-    KNOBC(zone_1_body, 10 + KNOB_W * 4, 65, Proxy::ParamId::Z1R9DL, knob_states);
+    DPETO(84, 89, 140, 46, 0, 140, Z1R9IN, controller_selector);
+    DPETO(84, 159, 140, 46, 0, 140, Z1R9OU, controller_selector);
+    KNOBC(10 + KNOB_W * 2, 65, Z1R9IV, knob_states);
+    KNOBD(10 + KNOB_W * 3, 65, Z1R9TR, knob_states);
+    KNOBC(10 + KNOB_W * 4, 65, Z1R9DL, knob_states);
 
-    TOGG(zone_1_body, 124, 7, 74, 48, 32, Proxy::ParamId::Z1R9FB);
-    TOGG(zone_1_body, 213, 7, 84, 48, 42, Proxy::ParamId::Z1R9NV);
-    DPET(zone_1_body, 312, 13, 122, 42, 50, 68, Proxy::ParamId::Z1R9RS);
-    MIDP(zone_1_body, 505, 13, Proxy::ParamId::Z1R9MP, midpoint_states);
-    DPEI(zone_1_body, 547, 13, 42, 42, 0, 42, Proxy::ParamId::Z1R9DT, distortions);
+    TOGG(124, 7, 74, 48, 32, Z1R9FB);
+    TOGG(213, 7, 84, 48, 42, Z1R9NV);
+    DPET(312, 13, 122, 42, 50, 68, Z1R9RS);
+    MIDP(505, 13, Z1R9MP, midpoint_states);
+    DPEI(547, 13, 42, 42, 0, 42, Z1R9DT, distortions);
 
     POSITION_RELATIVE_END();
 
@@ -543,7 +563,9 @@ void GUI::resize(int const new_width, int const new_height)
     int constrained_new_width = new_width;
     int constrained_new_height = new_height;
 
-    apply_size_constraints(constrained_new_width, constrained_new_height, new_scale);
+    apply_size_constraints(
+        constrained_new_width, constrained_new_height, new_scale
+    );
 
     if (constrained_new_width == width && constrained_new_height == height) {
         return;
@@ -577,7 +599,9 @@ void GUI::schedule_resize(int const new_width, int const new_height)
     int constrained_new_width = new_width;
     int constrained_new_height = new_height;
 
-    apply_size_constraints(constrained_new_width, constrained_new_height, new_scale);
+    apply_size_constraints(
+        constrained_new_width, constrained_new_height, new_scale
+    );
 
     this->new_width = constrained_new_width;
     this->new_height = constrained_new_height;
@@ -685,7 +709,10 @@ void GUI::update_active_voices_count()
     active_voices_count = proxy.get_active_voices_count();
     polyphony = proxy.get_channel_count();
 
-    if (active_voices_count == old_active_voices_count && polyphony == old_polyphony) {
+    if (
+            active_voices_count == old_active_voices_count
+            && polyphony == old_polyphony
+    ) {
         return;
     }
 
@@ -823,7 +850,9 @@ WidgetBase::~WidgetBase()
 
 void WidgetBase::destroy_children()
 {
-    for (GUI::Widgets::iterator it = children.begin(); it != children.end(); ++it) {
+    GUI::Widgets::iterator it;
+
+    for (it = children.begin(); it != children.end(); ++it) {
         delete *it;
     }
 }
@@ -890,7 +919,9 @@ void WidgetBase::update_children_scale_if_changed()
 
     scale_changed = false;
 
-    for (GUI::Widgets::iterator it = children.begin(); it != children.end(); ++it) {
+    GUI::Widgets::iterator it;
+
+    for (it = children.begin(); it != children.end(); ++it) {
         (*it)->set_scale(scale);
     }
 }
@@ -1024,7 +1055,9 @@ bool WidgetBase::paint()
         return false;
     }
 
-    draw_image(image, 0, 0, this->scale_value(width), this->scale_value(height));
+    draw_image(
+        image, 0, 0, this->scale_value(width), this->scale_value(height)
+    );
 
     return true;
 }

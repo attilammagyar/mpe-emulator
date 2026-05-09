@@ -55,7 +55,8 @@ class GUI
         {
             public:
                 /**
-                 * \brief Called when the GUI needs to be resized with external help.
+                 * \brief Called when the GUI needs to be resized with
+                 *        external help.
                  */
                 virtual void handle_resize_request(
                     int const new_width,
@@ -63,9 +64,9 @@ class GUI
                 );
         };
 
-        typedef void* PlatformWidget; ///< \brief GUI platform dependent widget type.
-        typedef void* PlatformData; ///< \brief GUI platform dependent data (e.g. HINSTANCE on Windows).
-        typedef void* Image; ///< \brief GUI platform dependent image handle.
+        typedef void* PlatformWidget; ///< \brief Platform-specific widget type.
+        typedef void* PlatformData; ///< \brief Platform-specific data type.
+        typedef void* Image; ///< \brief Platform-specific image handle.
 
         typedef std::vector<WidgetBase*> Widgets;
 
@@ -127,7 +128,9 @@ class GUI
                 ColorComponent const blue
         ) {
             return (Color)(
-                (unsigned int)red << 16 | (unsigned int)green << 8 | (unsigned int)blue
+                (unsigned int)red << 16
+                | (unsigned int)green << 8
+                | (unsigned int)blue
             );
         }
 
@@ -192,7 +195,11 @@ class GUI
         void start_resizing();
         void stop_resizing();
 
-        void apply_size_constraints(int& new_width, int& new_height, double& new_scale) const;
+        void apply_size_constraints(
+            int& new_width,
+            int& new_height,
+            double& new_scale
+        ) const;
 
         void ignore_resizing();
         int get_width() const;
@@ -226,7 +233,11 @@ class GUI
 
         static constexpr size_t DEFAULT_STATUS_LINE_MAX_LENGTH = 32;
 
-        static constexpr int clamp(int const number, int const min, int const max);
+        static constexpr int clamp(
+            int const number,
+            int const min,
+            int const max
+        );
 
         static void param_ratio_to_str_float(
             Proxy const& proxy,
@@ -477,7 +488,8 @@ class WidgetBase
         virtual bool mouse_up(int const x, int const y);
 
         /**
-         * \brief Event handler to run when the mouse cursor moves over the widget.
+         * \brief Event handler to run when the mouse cursor moves over
+         *        the widget.
          *
          * \param   x           Horizontal coordinate of the cursor relative to
          *                      the top left corner of the widget.
@@ -495,7 +507,8 @@ class WidgetBase
         virtual bool mouse_move(int const x, int const y, bool const modifier);
 
         /**
-         * \brief Event handler to run when the mouse cursor leaves the widget's area.
+         * \brief Event handler to run when the mouse cursor leaves
+         *        the widget's area.
          *
          * \param   x           Horizontal coordinate of the cursor relative to
          *                      the top left corner of the widget.
