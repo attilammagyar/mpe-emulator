@@ -70,7 +70,11 @@ class XcbPlatform
         void unregister_widget(xcb_window_t window_id);
 
         void export_settings(std::string const& settings);
-        void import_settings(ImportSettingsButton* const import_settings_button);
+
+        void import_settings(
+            ImportSettingsButton* const import_settings_button
+        );
+
         void handle_file_selector_dialog();
         void cancel_file_selector_dialog();
         bool is_file_selector_dialog_open() const;
@@ -117,7 +121,9 @@ class XcbPlatform
             cairo_font_weight_t weight
         );
 
-        char const* find_executable(char const* const* const alternatives) const;
+        char const* find_executable(
+            char const* const* const alternatives
+        ) const;
 
         void start_file_selector_dialog(
             char const* const executable,

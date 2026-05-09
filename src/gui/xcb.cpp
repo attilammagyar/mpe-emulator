@@ -323,7 +323,9 @@ cairo_font_face_t* XcbPlatform::get_font_face(
 ) {
     if (font_weight == WidgetBase::FontWeight::NORMAL) {
         if (font_face_normal == NULL) {
-            font_face_normal = find_narrowest_font(cairo, CAIRO_FONT_WEIGHT_NORMAL);
+            font_face_normal = find_narrowest_font(
+                cairo, CAIRO_FONT_WEIGHT_NORMAL
+            );
         }
 
         return font_face_normal;
@@ -363,7 +365,10 @@ cairo_font_face_t* XcbPlatform::find_narrowest_font(
             continue;
         }
 
-        if (narrowest_font_face == NULL || text_extents.width < narrowest_width) {
+        if (
+                narrowest_font_face == NULL
+                || text_extents.width < narrowest_width
+        ) {
             narrowest_width = text_extents.width;
 
             if (narrowest_font_face != NULL) {
@@ -445,8 +450,9 @@ void XcbPlatform::export_settings(std::string const& contents)
 }
 
 
-void XcbPlatform::import_settings(ImportSettingsButton* const import_settings_button)
-{
+void XcbPlatform::import_settings(
+        ImportSettingsButton* const import_settings_button
+) {
     if (is_file_selector_dialog_open()) {
         return;
     }
@@ -475,8 +481,9 @@ void XcbPlatform::import_settings(ImportSettingsButton* const import_settings_bu
 }
 
 
-char const* XcbPlatform::find_executable(char const* const* const alternatives) const
-{
+char const* XcbPlatform::find_executable(
+        char const* const* const alternatives
+) const {
     for (int i = 0; alternatives[i] != NULL; ++i) {
         if (access(alternatives[i], X_OK) != -1) {
             return alternatives[i];
@@ -594,7 +601,9 @@ void XcbPlatform::build_file_selector_env(std::vector<char*>& env) const
 
 void XcbPlatform::free_file_selector_vars(std::vector<char*>& vars) const
 {
-    for (std::vector<char*>::iterator it = vars.begin(); it != vars.end(); ++it) {
+    std::vector<char*>::iterator it;
+
+    for (it = vars.begin(); it != vars.end(); ++it) {
         if (*it != NULL) {
             delete[] *it;
         }
@@ -651,9 +660,16 @@ void XcbPlatform::handle_file_selector_dialog()
         }
 
         switch (active_file_selector_dialog_type) {
-            case FileSelectorDialogType::EXPORT: finish_exporting_settings(); break;
-            case FileSelectorDialogType::IMPORT: finish_importing_settings(); break;
-            default: break;
+            case FileSelectorDialogType::EXPORT:
+                finish_exporting_settings();
+                break;
+
+            case FileSelectorDialogType::IMPORT:
+                finish_importing_settings();
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -689,7 +705,9 @@ void XcbPlatform::read_file_selector_output()
 
         if (FD_ISSET(active_file_selector_dialog_pipe->read_fd, &read_fds)) {
             read_bytes = read(
-                active_file_selector_dialog_pipe->read_fd, buffer, sizeof(buffer)
+                active_file_selector_dialog_pipe->read_fd,
+                buffer,
+                sizeof(buffer)
             );
 
             if (read_bytes == -1 && errno == EINTR) {
@@ -758,7 +776,9 @@ void XcbPlatform::finish_importing_settings()
     std::fill_n(buffer, Serializer::MAX_SIZE, '\x00');
     settings_file.read(buffer, Serializer::MAX_SIZE);
 
-    import_settings_button->import_settings(buffer, (int)settings_file.gcount());
+    import_settings_button->import_settings(
+        buffer, (int)settings_file.gcount()
+    );
 
     delete[] buffer;
 }
@@ -851,16 +871,58 @@ void Widget::process_all_events(
 
     while ((event = xcb_poll_for_event(xcb_connection))) {
         switch (event->response_type & ~0x80) {
-            case 0: handle_error_event(xcb, (xcb_generic_error_t*)event); break;
-            case XCB_EXPOSE: handle_expose_event(xcb, (xcb_expose_event_t*)event); break;
-            case XCB_BUTTON_PRESS: handle_button_press_event(xcb, (xcb_button_press_event_t*)event); break;
-            case XCB_BUTTON_RELEASE: handle_button_release_event(xcb, (xcb_button_release_event_t*)event); break;
-            case XCB_ENTER_NOTIFY: handle_enter_notify_event(xcb, (xcb_enter_notify_event_t*)event); break;
-            case XCB_MOTION_NOTIFY: handle_motion_notify_event(xcb, (xcb_motion_notify_event_t*)event); break;
-            case XCB_LEAVE_NOTIFY: handle_leave_notify_event(xcb, (xcb_leave_notify_event_t*)event); break;
-            case XCB_CLIENT_MESSAGE: handle_client_message_event(xcb, (xcb_client_message_event_t*)event); break;
-            case XCB_DESTROY_NOTIFY: handle_destroy_notify_event(xcb, (xcb_destroy_notify_event_t*)event); break;
-            default: break;
+            case 0:
+                handle_error_event(xcb, (xcb_generic_error_t*)event);
+                break;
+
+            case XCB_EXPOSE:
+                handle_expose_event(xcb, (xcb_expose_event_t*)event);
+                break;
+
+            case XCB_BUTTON_PRESS:
+                handle_button_press_event(
+                    xcb, (xcb_button_press_event_t*)event
+                );
+                break;
+
+            case XCB_BUTTON_RELEASE:
+                handle_button_release_event(
+                    xcb, (xcb_button_release_event_t*)event
+                );
+                break;
+
+            case XCB_ENTER_NOTIFY:
+                handle_enter_notify_event(
+                    xcb, (xcb_enter_notify_event_t*)event
+                );
+                break;
+
+            case XCB_MOTION_NOTIFY:
+                handle_motion_notify_event(
+                    xcb, (xcb_motion_notify_event_t*)event
+                );
+                break;
+
+            case XCB_LEAVE_NOTIFY:
+                handle_leave_notify_event(
+                    xcb, (xcb_leave_notify_event_t*)event
+                );
+                break;
+
+            case XCB_CLIENT_MESSAGE:
+                handle_client_message_event(
+                    xcb, (xcb_client_message_event_t*)event
+                );
+                break;
+
+            case XCB_DESTROY_NOTIFY:
+                handle_destroy_notify_event(
+                    xcb, (xcb_destroy_notify_event_t*)event
+                );
+                break;
+
+            default:
+                break;
         }
 
         free(event);
@@ -878,11 +940,28 @@ void Widget::process_non_editing_events(
 
     while ((event = xcb_poll_for_event(xcb_connection))) {
         switch (event->response_type & ~0x80) {
-            case 0: handle_error_event(xcb, (xcb_generic_error_t*)event); break;
-            case XCB_EXPOSE: handle_expose_event(xcb, (xcb_expose_event_t*)event); break;
-            case XCB_CLIENT_MESSAGE: handle_client_message_event(xcb, (xcb_client_message_event_t*)event); break;
-            case XCB_DESTROY_NOTIFY: handle_destroy_notify_event(xcb, (xcb_destroy_notify_event_t*)event); break;
-            default: break;
+            case 0:
+                handle_error_event(xcb, (xcb_generic_error_t*)event);
+                break;
+
+            case XCB_EXPOSE:
+                handle_expose_event(xcb, (xcb_expose_event_t*)event);
+                break;
+
+            case XCB_CLIENT_MESSAGE:
+                handle_client_message_event(
+                    xcb, (xcb_client_message_event_t*)event
+                );
+                break;
+
+            case XCB_DESTROY_NOTIFY:
+                handle_destroy_notify_event(
+                    xcb, (xcb_destroy_notify_event_t*)event
+                );
+                break;
+
+            default:
+                break;
         }
 
         free(event);
@@ -898,7 +977,10 @@ void Widget::handle_error_event(
 ) {
     // fprintf(
         // stderr,
-        // "XCB ERROR: error_code=%x, sequence=%x, resource_id=%x, major_code=%x, minor_code=%x\n",
+        // (
+            // "XCB ERROR: error_code=%x, sequence=%x, resource_id=%x,"
+            // " major_code=%x, minor_code=%x\n"
+        // ),
         // (unsigned int)error->error_code,
         // (unsigned int)error->sequence,
         // (unsigned int)error->resource_id,
@@ -1019,7 +1101,9 @@ void Widget::handle_enter_notify_event(
     }
 
     widget->mouse_move(
-        (int)event->event_x, (int)event->event_y, is_modifier_active(event->state)
+        (int)event->event_x,
+        (int)event->event_y,
+        is_modifier_active(event->state)
     );
 }
 
@@ -1035,7 +1119,9 @@ void Widget::handle_motion_notify_event(
     }
 
     widget->mouse_move(
-        (int)event->event_x, (int)event->event_y, is_modifier_active(event->state)
+        (int)event->event_x,
+        (int)event->event_y,
+        is_modifier_active(event->state)
     );
 }
 
@@ -1387,14 +1473,16 @@ void Widget::set_up(GUI::PlatformData platform_data, WidgetBase* const parent)
     cairo_surface = cairo_xcb_surface_create(
         xcb_connection, window_id, xcb->get_screen_root_visual(), width, height
     );
-    cairo_device = cairo_device_reference(cairo_surface_get_device(cairo_surface));
+    cairo_device = cairo_device_reference(
+        cairo_surface_get_device(cairo_surface)
+    );
     cairo = cairo_create(cairo_surface);
 
     xcb_map_window(xcb_connection, window_id);
 
     /*
-    Sometimes it can help with debugging if widget initialization is not batched,
-    and events are processed immediately.
+    Sometimes it can help with debugging if widget initialization is not
+    batched, and events are processed immediately.
     */
     // xcb_flush(xcb_connection);
     // Widget::process_events(xcb);
@@ -1486,7 +1574,11 @@ void Widget::update_fake_transparency()
 
     int const parent_image_id = first_parent_with_image->get_image_id();
 
-    if (MPE_EMULATOR_LIKELY(parent_image_id == fake_transparent_background_image_id)) {
+    if (
+            MPE_EMULATOR_LIKELY(
+                parent_image_id == fake_transparent_background_image_id
+            )
+    ) {
         return;
     }
 
@@ -1519,7 +1611,10 @@ WidgetBase* Widget::find_first_parent_with_image()
         fake_transparent_background_top = top;
         WidgetBase* widget = parent;
 
-        while (widget != NULL && (cairo_surface_t*)widget->get_image() == NULL) {
+        while (
+                widget != NULL
+                && (cairo_surface_t*)widget->get_image() == NULL
+        ) {
             fake_transparent_background_left += widget->get_left();
             fake_transparent_background_top += widget->get_top();
             widget = widget->get_parent();
@@ -1582,7 +1677,9 @@ void Widget::draw_text(
     double const green = COLOR_COMPONENT_SCALE * (double)GUI::green(color);
     double const blue = COLOR_COMPONENT_SCALE * (double)GUI::blue(color);
 
-    cairo_font_face_t* const font_face = xcb()->get_font_face(cairo, font_weight);
+    cairo_font_face_t* const font_face = xcb()->get_font_face(
+        cairo, font_weight
+    );
     double text_left;
     double text_top;
     cairo_font_extents_t font_extents;
@@ -1615,7 +1712,9 @@ void Widget::draw_text(
     }
 
     text_top = (
-        (double)(top + height) - font_extents.height * 0.5 + font_extents.descent
+        (double)(top + height)
+        - font_extents.height * 0.5
+        + font_extents.descent
     );
 
     if (type == Type::STATUS_LINE || type == Type::DISCRETE_PARAM_EDITOR) {
@@ -1663,7 +1762,9 @@ void Widget::bring_to_top()
 
     uint32_t value = XCB_STACK_MODE_ABOVE;
 
-    xcb_configure_window(xcb_connection(), window_id(), XCB_CONFIG_WINDOW_STACK_MODE, &value);
+    xcb_configure_window(
+        xcb_connection(), window_id(), XCB_CONFIG_WINDOW_STACK_MODE, &value
+    );
 }
 
 
@@ -1683,8 +1784,9 @@ void Widget::redraw()
 GUI::Image Widget::set_image(GUI::Image new_image)
 {
     GUI::Image old_image = WidgetBase::set_image(new_image);
+    GUI::Widgets::iterator it;
 
-    for (GUI::Widgets::iterator it = children.begin(); it != children.end(); ++it) {
+    for (it = children.begin(); it != children.end(); ++it) {
         Widget* const child = (Widget*)*it;
 
         if (child->is_transparent) {
