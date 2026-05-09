@@ -71,7 +71,9 @@ std::string Bank::Program::sanitize_name(std::string const& name) const
 
     std::fill_n(filtered, buffer_size, '\x00');
 
-    for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
+    std::string::const_iterator it;
+
+    for (it = name.begin(); it != name.end(); ++it) {
         if (next == max_index) {
             break;
         }
@@ -237,10 +239,14 @@ void Bank::Program::import_without_update(
             );
         } else if (
                 is_mpe_emulator_section
-                && Serializer::parse_line_until_value(line_it, line_end, param_name)
-                && strncmp(param_name, "NAME", Serializer::PARAM_NAME_MAX_LENGTH) == 0
+                && Serializer::parse_line_until_value(
+                    line_it, line_end, param_name
+                )
+                && strncmp(
+                    param_name, "NAME", Serializer::PARAM_NAME_MAX_LENGTH
+                ) == 0
         ) {
-            Serializer::skipping_remaining_whitespace_or_comment_reaches_the_end(
+            Serializer::skipping_whitespace_or_comment_reaches_the_end(
                 line_it, line_end
             );
             program_name = &(*line_it);

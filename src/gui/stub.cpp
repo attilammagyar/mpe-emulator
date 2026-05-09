@@ -77,7 +77,9 @@ class Widget : public WidgetBase
                 int const new_width,
                 int const new_height
         ) override {
-            MPE_EMULATOR_ASSERT(new_width <= old_width && new_height <= old_height);
+            MPE_EMULATOR_ASSERT(
+                new_width <= old_width && new_height <= old_height
+            );
 
             return (GUI::Image)new DummyObject();
         }

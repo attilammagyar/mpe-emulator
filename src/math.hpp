@@ -59,7 +59,8 @@ class Math
         static double distort(
             double const level,
             double const number,
-            DistortionCurve const curve = DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH
+            DistortionCurve const curve =
+                DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH
         ) noexcept;
 
         /**
@@ -76,8 +77,14 @@ class Math
 
     private:
         static constexpr size_t DISTORTION_TABLE_SIZE = 0x0800;
-        static constexpr size_t DISTORTION_TABLE_MAX_INDEX = DISTORTION_TABLE_SIZE - 1;
-        static constexpr double DISTORTION_SCALE = (double)DISTORTION_TABLE_MAX_INDEX;
+
+        static constexpr size_t DISTORTION_TABLE_MAX_INDEX = (
+            DISTORTION_TABLE_SIZE - 1
+        );
+
+        static constexpr double DISTORTION_SCALE = (
+            (double)DISTORTION_TABLE_MAX_INDEX
+        );
 
         static Math const math;
 

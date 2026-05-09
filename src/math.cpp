@@ -47,19 +47,27 @@ void Math::init_distortions() noexcept
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH][i] = dist_smooth_smooth(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SMOOTH_SMOOTH][i] = (
+            dist_smooth_smooth(xs[i])
+        );
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[DistortionCurve::DIST_CURVE_SMOOTH_SHARP][i] = dist_smooth_sharp(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SMOOTH_SHARP][i] = (
+            dist_smooth_sharp(xs[i])
+        );
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[DistortionCurve::DIST_CURVE_SHARP_SMOOTH][i] = dist_sharp_smooth(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SHARP_SMOOTH][i] = (
+            dist_sharp_smooth(xs[i])
+        );
     }
 
     for (size_t i = 0; i != DISTORTION_TABLE_SIZE; ++i) {
-        distortions[DistortionCurve::DIST_CURVE_SHARP_SHARP][i] = dist_sharp_sharp(xs[i]);
+        distortions[DistortionCurve::DIST_CURVE_SHARP_SHARP][i] = (
+            dist_sharp_sharp(xs[i])
+        );
     }
 }
 
@@ -78,7 +86,9 @@ double Math::dist_smooth_sharp(double const x) noexcept
 
 double Math::dist_sharp_smooth(double const x) noexcept
 {
-    return std::pow(x * (1.0 - std::log(x + 0.001)) / (1.0 - std::log(1.001)), 1.0 / 3.0);
+    return std::pow(
+        x * (1.0 - std::log(x + 0.001)) / (1.0 - std::log(1.001)), 1.0 / 3.0
+    );
 }
 
 

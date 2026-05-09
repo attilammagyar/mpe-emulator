@@ -316,7 +316,7 @@ bool Serializer::parse_section_name(
 
     std::fill_n(section_name, SECTION_NAME_MAX_LENGTH, '\x00');
 
-    if (skipping_remaining_whitespace_or_comment_reaches_the_end(it, end)) {
+    if (skipping_whitespace_or_comment_reaches_the_end(it, end)) {
         return false;
     }
 
@@ -351,7 +351,7 @@ bool Serializer::parse_section_name(
 
     ++it;
 
-    return skipping_remaining_whitespace_or_comment_reaches_the_end(it, end);
+    return skipping_whitespace_or_comment_reaches_the_end(it, end);
 }
 
 
@@ -361,9 +361,9 @@ bool Serializer::parse_line_until_value(
         ParamName& param_name
 ) noexcept {
     return (
-        !skipping_remaining_whitespace_or_comment_reaches_the_end(it, end)
+        !skipping_whitespace_or_comment_reaches_the_end(it, end)
         && parse_param_name(it, end, param_name)
-        && !skipping_remaining_whitespace_or_comment_reaches_the_end(it, end)
+        && !skipping_whitespace_or_comment_reaches_the_end(it, end)
         && parse_equal_sign(it, end)
     );
 }
@@ -382,11 +382,9 @@ void Serializer::process_line(
 
     if (
             !parse_line_until_value(it, end, param_name)
-            || skipping_remaining_whitespace_or_comment_reaches_the_end(it, end)
+            || skipping_whitespace_or_comment_reaches_the_end(it, end)
             || !parse_number(it, end, number)
-            || !skipping_remaining_whitespace_or_comment_reaches_the_end(
-                it, end
-            )
+            || !skipping_whitespace_or_comment_reaches_the_end(it, end)
     ) {
         return;
     }
@@ -403,7 +401,7 @@ void Serializer::process_line(
 }
 
 
-bool Serializer::skipping_remaining_whitespace_or_comment_reaches_the_end(
+bool Serializer::skipping_whitespace_or_comment_reaches_the_end(
         std::string::const_iterator& it,
         std::string::const_iterator const& end
 ) noexcept {

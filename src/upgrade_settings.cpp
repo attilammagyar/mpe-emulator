@@ -53,17 +53,25 @@ bool is_whole_line_comment_or_white_space(std::string const& line)
 {
     std::string::const_iterator it = line.begin();
 
-    return MpeEmulator::Serializer::skipping_remaining_whitespace_or_comment_reaches_the_end(
-        it, line.end()
+    return (
+        MpeEmulator::Serializer::skipping_whitespace_or_comment_reaches_the_end(
+            it, line.end()
+        )
     );
 }
 
 
-void collect_comments(std::string const& settings, MpeEmulator::Serializer::Lines& comments)
-{
-    MpeEmulator::Serializer::Lines* const lines = MpeEmulator::Serializer::parse_lines(settings);
+void collect_comments(
+        std::string const& settings,
+        MpeEmulator::Serializer::Lines& comments
+) {
+    MpeEmulator::Serializer::Lines* const lines = (
+        MpeEmulator::Serializer::parse_lines(settings)
+    );
 
-    for (MpeEmulator::Serializer::Lines::const_iterator it = lines->begin(); it != lines->end(); ++it) {
+    MpeEmulator::Serializer::Lines::const_iterator it;
+
+    for (it = lines->begin(); it != lines->end(); ++it) {
         std::string const& line = *it;
 
         if (is_whole_line_comment_or_white_space(line)) {
@@ -85,8 +93,9 @@ bool write_settings(
     }
 
     std::string const line_end = MpeEmulator::Serializer::LINE_END;
+    MpeEmulator::Serializer::Lines::const_iterator it;
 
-    for (MpeEmulator::Serializer::Lines::const_iterator it = comments.begin(); it != comments.end(); ++it) {
+    for (it = comments.begin(); it != comments.end(); ++it) {
         std::string const& comment = *it;
         std::cout << "c: " << comment << std::endl;
 
@@ -131,7 +140,13 @@ int upgrade_settings(char const* const settings_file)
 
     collect_comments(settings, comments);
 
-    if (!write_settings(settings_file, MpeEmulator::Serializer::serialize(proxy), comments)) {
+    if (
+            !write_settings(
+                settings_file,
+                MpeEmulator::Serializer::serialize(proxy),
+                comments
+            )
+    ) {
         return error("Error writing settings file", settings_file);
     }
 

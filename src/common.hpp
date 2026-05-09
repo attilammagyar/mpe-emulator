@@ -57,11 +57,17 @@ namespace MpeEmulator
 
 namespace Constants {
     constexpr char const* COMPANY_NAME = "Attila M. Magyar";
-    constexpr char const* COMPANY_WEB = "https://github.com/attilammagyar/mpe-emulator";
+
+    constexpr char const*
+        COMPANY_WEB = "https://github.com/attilammagyar/mpe-emulator";
+
     constexpr char const* COMPANY_EMAIL = "";
 
     constexpr char const* PLUGIN_NAME = "MPE Emulator";
-    constexpr char const* PLUGIN_VERSION_STR = MPE_EMULATOR_TO_STRING(MPE_EMULATOR_VERSION_STR);
+
+    constexpr char const*
+        PLUGIN_VERSION_STR = MPE_EMULATOR_TO_STRING(MPE_EMULATOR_VERSION_STR);
+
     constexpr int PLUGIN_VERSION_INT = MPE_EMULATOR_VERSION_INT;
 }
 
