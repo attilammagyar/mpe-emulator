@@ -85,7 +85,7 @@ TEST(note_stack_is_created_empty, {
 })
 
 
-TEST(when_a_note_is_pushed_on_the_stack_then_stack_is_no_longer_empty_and_the_note_is_on_the_top, {
+TEST(stack_is_not_empty_after_pushing_note_and_the_pushed_note_is_at_the_top, {
     NoteStack note_stack;
 
     note_stack.push(57);

@@ -358,22 +358,22 @@ class Event
                 case AFTERTOUCH:        command_str = "AFTERTOUCH"; break;
                 case CONTROL_CHANGE:    command_str = "CONTROL_CHANGE"; break;
                 case PROGRAM_CHANGE:    command_str = "PROGRAM_CHANGE"; break;
-                case CHANNEL_PRESSURE:  command_str = "CHANNEL_PRESSURE"; break;
-                case PITCH_BEND_CHANGE: command_str = "PITCH_BEND_CHANGE"; break;
+                case CHANNEL_PRESSURE:  command_str = "CH_PRESS"; break;
+                case PITCH_BEND_CHANGE: command_str = "PITCH_BEND"; break;
                 default:                command_str = "UNDEFINED"; break;
             }
 
             snprintf(
                 buffer,
                 buffer_size,
-                "t=%.3f cmd=%s ch=%hhu d1=0x%02hhx d2=0x%02hhx (v=%.3f)%s",
+                "t=%.3f cmd=%s c=%hhu d=[%02hhx %02hhx] (v=%.3f)%s",
                 time_offset,
                 command_str,
                 channel,
                 data_1,
                 data_2,
                 value,
-                is_pre_note_on_setup ? " pre-NOTE_ON setup" : ""
+                is_pre_note_on_setup ? " pre-NOTE_ON" : ""
             );
 
             return std::string(buffer);

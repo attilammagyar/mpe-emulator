@@ -36,14 +36,17 @@ using namespace MpeEmulator;
 constexpr Proxy::MessageType SET_PARAM = Proxy::MessageType::SET_PARAM;
 constexpr Proxy::MessageType REFRESH_PARAM = Proxy::MessageType::REFRESH_PARAM;
 constexpr Proxy::MessageType CLEAR = Proxy::MessageType::CLEAR;
-constexpr Proxy::MessageType CLEAR_DIRTY_FLAG = Proxy::MessageType::CLEAR_DIRTY_FLAG;
+constexpr Proxy::MessageType CLEAR_DIRTY_FLAG = (
+    Proxy::MessageType::CLEAR_DIRTY_FLAG
+);
 
 
 std::string out_events_to_string(Proxy const& proxy)
 {
     std::string result("");
+    Proxy::OutEvents::const_iterator it;
 
-    for (Proxy::OutEvents::const_iterator it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
+    for (it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
         result += it->to_string() + "\n";
     }
 
@@ -54,9 +57,11 @@ std::string out_events_to_string(Proxy const& proxy)
 template<size_t expected_events_count>
 void assert_out_events(
         /*
-        Cppcheck 2.7 seems to fail to understand that `expected_events` is a const ref.
+        Cppcheck 2.7 seems to fail to understand that `expected_events` is a
+        const ref.
         */
-        std::array<char const* const, expected_events_count> const& expected_events, // cppcheck-suppress constParameter
+        std::array<char const* const, expected_events_count> const&
+            expected_events, // cppcheck-suppress constParameter
         Proxy const& proxy
 ) {
     std::string expected_str("");
@@ -99,12 +104,16 @@ TEST(can_look_up_param_id_by_name, {
 
     assert_eq(Proxy::ParamId::INVALID_PARAM_ID, proxy.get_param_id(""));
     assert_eq(Proxy::ParamId::INVALID_PARAM_ID, proxy.get_param_id(" \n"));
-    assert_eq(Proxy::ParamId::INVALID_PARAM_ID, proxy.get_param_id("NO_SUCH_PARAM"));
+    assert_eq(
+        Proxy::ParamId::INVALID_PARAM_ID, proxy.get_param_id("NO_SUCH_PARAM")
+    );
 
     for (int i = 0; i != Proxy::ParamId::PARAM_ID_COUNT; ++i) {
         std::string const name = proxy.get_param_name((Proxy::ParamId)i);
         Proxy::ParamId const param_id = proxy.get_param_id(name);
-        assert_eq((Proxy::ParamId)i, param_id, "i=%d, name=\"%s\"", i, name.c_str());
+        assert_eq(
+            (Proxy::ParamId)i, param_id, "i=%d, name=\"%s\"", i, name.c_str()
+        );
     }
 })
 
@@ -123,7 +132,10 @@ void assert_message_dirtiness(
     proxy.push_message(message_type, Proxy::ParamId::Z1ANC, 0.123);
     assert_false(
         proxy.is_dirty(),
-        "Expected proxy not to become dirty before processing message; message=%d",
+        (
+            "Expected proxy not to become dirty before processing message;"
+            " message=%d"
+        ),
         (int)message_type
     );
 
@@ -132,13 +144,19 @@ void assert_message_dirtiness(
     if (expected_dirtiness) {
         assert_true(
             proxy.is_dirty(),
-            "Expected proxy to become dirty after processing message; message=%d",
+            (
+                "Expected proxy to become dirty after processing message;"
+                " message=%d"
+            ),
             (int)message_type
         );
     } else {
         assert_false(
             proxy.is_dirty(),
-            "Expected proxy not to become dirty after processing message; message=%d",
+            (
+                "Expected proxy not to become dirty after processing message;"
+                " message=%d"
+            ),
             (int)message_type
         );
     }
@@ -146,7 +164,10 @@ void assert_message_dirtiness(
     proxy.clear_dirty_flag();
     assert_false(
         proxy.is_dirty(),
-        "Expected proxy not to remain dirty after clearing the flag; message=%d",
+        (
+            "Expected proxy not to remain dirty after clearing the flag;"
+            " message=%d"
+        ),
         (int)message_type
     );
 
@@ -154,7 +175,10 @@ void assert_message_dirtiness(
     proxy.process_messages();
     assert_false(
         proxy.is_dirty(),
-        "Expected proxy not to become dirty after setting a param again to its current value; message=%d",
+        (
+            "Expected proxy not to become dirty after setting a param again to"
+            " its current value; message=%d"
+        ),
         (int)message_type
     );
 }
@@ -251,9 +275,9 @@ TEST(when_proxy_is_resumed_then_previous_notes_are_turned_off, {
 
     assert_out_events<3>(
         {
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=1 d1=0x40 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x40 (v=0.504)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=1 d=[40 00] (v=0.000)",
+            "t=0.000 cmd=NOTE_OFF c=1 d=[3c 40] (v=0.504)",
         },
         proxy
     );
@@ -275,12 +299,12 @@ TEST(when_sending_mcm_is_turned_on_then_sends_mcm_on_reset, {
 
     assert_out_events<6>(
         {
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x06 d2=0x0a (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x06 d2=0x00 (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[06 0a] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[06 00] (v=0.000)",
         },
         proxy
     );
@@ -306,12 +330,12 @@ TEST(resetting_clears_out_events, {
 
     assert_out_events<6>(
         {
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x06 d2=0x0a (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x06 d2=0x00 (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[06 0a] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[06 00] (v=0.000)",
         },
         proxy
     );
@@ -336,15 +360,15 @@ TEST(when_settings_are_changed_then_processing_triggers_reset, {
 
     assert_out_events<9>(
         {
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=1 d1=0x40 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x40 (v=0.504)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x06 d2=0x0a (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x06 d2=0x00 (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=1 d=[40 00] (v=0.000)",
+            "t=0.000 cmd=NOTE_OFF c=1 d=[3c 40] (v=0.504)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[06 0a] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[06 00] (v=0.000)",
         },
         proxy
     );
@@ -405,19 +429,19 @@ TEST(when_sending_mcm_is_turned_on_then_sends_mcm_on_config_change, {
 
     assert_out_events<6>(
         {
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=15 d1=0x06 d2=0x0a (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x65 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x64 d2=0x06 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x06 d2=0x00 (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=15 d=[06 0a] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[65 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[64 06] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[06 00] (v=0.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_a_cc_does_not_match_any_rule_then_it_is_sent_unmodified_via_the_manager_channel, {
+TEST(when_a_cc_does_not_match_any_rule_then_it_is_sent_raw_on_the_mgr_channel, {
     Proxy proxy;
 
     for (size_t i = 0; i != Proxy::RULES; ++i) {
@@ -431,16 +455,16 @@ TEST(when_a_cc_does_not_match_any_rule_then_it_is_sent_unmodified_via_the_manage
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236)",
+            "t=1.000 cmd=CONTROL_CHANGE c=0 d=[07 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=0 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CH_PRESS c=0 d=[1e 00] (v=0.236)",
         },
         proxy
     );
 })
 
 
-TEST(when_the_target_of_a_cc_is_global_then_it_is_sent_via_the_manager_channel, {
+TEST(when_the_target_of_a_cc_is_global_then_it_is_sent_via_the_mgr_channel, {
     Proxy proxy;
 
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
@@ -462,9 +486,9 @@ TEST(when_the_target_of_a_cc_is_global_then_it_is_sent_via_the_manager_channel, 
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236)",
+            "t=1.000 cmd=CONTROL_CHANGE c=0 d=[4a 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=0 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CH_PRESS c=0 d=[1e 00] (v=0.236)",
         },
         proxy
     );
@@ -521,7 +545,7 @@ TEST(repeated_cc_events_are_sent_only_once_on_the_manager_channel, {
     proxy.control_change(1.0, 7, Proxy::ControllerId::VOLUME, 110);
 
     assert_out_events<1>(
-        {"t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x6e (v=0.866)"},
+        {"t=1.000 cmd=CONTROL_CHANGE c=0 d=[07 6e] (v=0.866)"},
         proxy
     );
 })
@@ -542,9 +566,9 @@ TEST(allocates_new_channel_for_each_note, {
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=3.000 cmd=NOTE_ON ch=12 d1=0x54 d2=0x7f (v=1.000)",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=3.000 cmd=NOTE_ON c=12 d=[54 7f] (v=1.000)",
         },
         proxy
     );
@@ -569,9 +593,9 @@ TEST(can_ignore_new_notes_when_running_out_of_available_channels, {
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=3.000 cmd=NOTE_ON ch=12 d1=0x54 d2=0x7f (v=1.000)",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=3.000 cmd=NOTE_ON c=12 d=[54 7f] (v=1.000)",
         },
         proxy
     );
@@ -595,9 +619,9 @@ TEST(when_excess_notes_are_to_be_ignored_then_ignores_repeated_note_on, {
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=3.000 cmd=NOTE_ON ch=12 d1=0x54 d2=0x7f (v=1.000)",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=3.000 cmd=NOTE_ON c=12 d=[54 7f] (v=1.000)",
         },
         proxy
     );
@@ -624,26 +648,28 @@ TEST(can_steal_channel_when_running_out_of_available_channels, {
 
     assert_out_events<7>(
         {
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=3.000 cmd=NOTE_ON ch=12 d1=0x54 d2=0x7f (v=1.000)",
-            "t=4.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
-            "t=4.000 cmd=NOTE_ON ch=14 d1=0x60 d2=0x73 (v=0.906)",
-            "t=5.000 cmd=NOTE_OFF ch=13 d1=0x48 d2=0x40 (v=0.504)",
-            "t=5.000 cmd=NOTE_ON ch=13 d1=0x62 d2=0x78 (v=0.945)",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=3.000 cmd=NOTE_ON c=12 d=[54 7f] (v=1.000)",
+            "t=4.000 cmd=NOTE_OFF c=14 d=[3c 40] (v=0.504)",
+            "t=4.000 cmd=NOTE_ON c=14 d=[60 73] (v=0.906)",
+            "t=5.000 cmd=NOTE_OFF c=13 d=[48 40] (v=0.504)",
+            "t=5.000 cmd=NOTE_ON c=13 d=[62 78] (v=0.945)",
         },
         proxy
     );
 })
 
 
-TEST(when_excess_notes_are_to_steal_channels_then_repeated_note_on_replaces_existing_note, {
+TEST(excess_notes_may_steal_existing_notes, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
 
     proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
-    proxy.excess_note_handling.set_value(Proxy::ExcessNoteHandling::ENH_STEAL_HIGHEST);
+    proxy.excess_note_handling.set_value(
+        Proxy::ExcessNoteHandling::ENH_STEAL_HIGHEST
+    );
     proxy.begin_processing();
 
     proxy.note_on(1.0, 1, 60, 96);
@@ -654,13 +680,13 @@ TEST(when_excess_notes_are_to_steal_channels_then_repeated_note_on_replaces_exis
 
     assert_out_events<7>(
         {
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=3.000 cmd=NOTE_ON ch=12 d1=0x54 d2=0x7f (v=1.000)",
-            "t=4.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
-            "t=4.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x7f (v=1.000)",
-            "t=5.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
-            "t=5.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x6e (v=0.866)",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=3.000 cmd=NOTE_ON c=12 d=[54 7f] (v=1.000)",
+            "t=4.000 cmd=NOTE_OFF c=14 d=[3c 40] (v=0.504)",
+            "t=4.000 cmd=NOTE_ON c=14 d=[3c 7f] (v=1.000)",
+            "t=5.000 cmd=NOTE_OFF c=14 d=[3c 40] (v=0.504)",
+            "t=5.000 cmd=NOTE_ON c=14 d=[3c 6e] (v=0.866)",
         },
         proxy
     );
@@ -720,22 +746,22 @@ void test_global_cc_reset(Proxy::Reset const reset)
 
     assert_out_events<3>(
         {
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x40 (v=0.500)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x19 d2=0x00 (v=0.200)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x26 (v=0.300)",
+            "t=0.000 cmd=PITCH_BEND c=0 d=[00 40] (v=0.500)",
+            "t=0.000 cmd=CH_PRESS c=0 d=[19 00] (v=0.200)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[4a 26] (v=0.300)",
         },
         proxy
     );
 }
 
 
-TEST(when_reset_is_on_for_a_global_cc_event_then_its_reset_value_is_sent_on_reset, {
+TEST(proxy_reset_sends_reset_value_for_global_cc_events_that_configure_it, {
     test_global_cc_reset(Proxy::Reset::RST_INIT);
     test_global_cc_reset(Proxy::Reset::RST_LAST);
 })
 
 
-TEST(when_reset_is_set_to_init_value_for_a_non_global_cc_event_then_its_initial_value_is_sent_before_note_on, {
+TEST(note_on_sends_init_value_for_non_global_cc_events_which_configure_it, {
     Proxy proxy;
 
     proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
@@ -776,40 +802,40 @@ TEST(when_reset_is_set_to_init_value_for_a_non_global_cc_event_then_its_initial_
 
     assert_out_events<27>(
         {
-            "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200) pre-NOTE_ON setup",
-            "t=1.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200)",
-            "t=1.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x40 (v=0.500)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=2.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200)",
-            "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x19 d2=0x00 (v=0.200) pre-NOTE_ON setup",
-            "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x00 d2=0x40 (v=0.500)",
-            "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x19 d2=0x00 (v=0.200)",
-            "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x40 (v=0.500)",
-            "t=3.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x40 (v=0.500)",
-            "t=3.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x00 d2=0x40 (v=0.500)",
-            "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x19 d2=0x00 (v=0.200)",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200) pre-NOTE_ON setup",
-            "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=3.000 cmd=NOTE_ON ch=14 d1=0x54 d2=0x7f (v=1.000)",
-            "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x00 d2=0x40 (v=0.500)",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x19 d2=0x00 (v=0.200)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x40 (v=0.500)",
+            "t=1.000 cmd=PITCH_BEND c=14 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=1.000 cmd=CH_PRESS c=14 d=[19 00] (v=0.200) pre-NOTE_ON",
+            "t=1.000 cmd=CONTROL_CHANGE c=14 d=[4a 40] (v=0.500) pre-NOTE_ON",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=1.000 cmd=PITCH_BEND c=14 d=[00 40] (v=0.500)",
+            "t=1.000 cmd=CH_PRESS c=14 d=[19 00] (v=0.200)",
+            "t=1.000 cmd=CONTROL_CHANGE c=14 d=[4a 40] (v=0.500)",
+            "t=2.000 cmd=PITCH_BEND c=14 d=[00 40] (v=0.500)",
+            "t=2.000 cmd=PITCH_BEND c=13 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=2.000 cmd=CH_PRESS c=14 d=[19 00] (v=0.200)",
+            "t=2.000 cmd=CH_PRESS c=13 d=[19 00] (v=0.200) pre-NOTE_ON",
+            "t=2.000 cmd=CONTROL_CHANGE c=13 d=[4a 40] (v=0.500) pre-NOTE_ON",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=2.000 cmd=PITCH_BEND c=13 d=[00 40] (v=0.500)",
+            "t=2.000 cmd=CH_PRESS c=13 d=[19 00] (v=0.200)",
+            "t=2.000 cmd=CONTROL_CHANGE c=13 d=[4a 40] (v=0.500)",
+            "t=3.000 cmd=NOTE_OFF c=14 d=[3c 40] (v=0.504)",
+            "t=3.000 cmd=CONTROL_CHANGE c=13 d=[4a 40] (v=0.500)",
+            "t=3.000 cmd=PITCH_BEND c=13 d=[00 40] (v=0.500)",
+            "t=3.000 cmd=PITCH_BEND c=14 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=3.000 cmd=CH_PRESS c=13 d=[19 00] (v=0.200)",
+            "t=3.000 cmd=CH_PRESS c=14 d=[19 00] (v=0.200) pre-NOTE_ON",
+            "t=3.000 cmd=CONTROL_CHANGE c=14 d=[4a 40] (v=0.500) pre-NOTE_ON",
+            "t=3.000 cmd=NOTE_ON c=14 d=[54 7f] (v=1.000)",
+            "t=3.000 cmd=PITCH_BEND c=14 d=[00 40] (v=0.500)",
+            "t=3.000 cmd=CH_PRESS c=14 d=[19 00] (v=0.200)",
+            "t=3.000 cmd=CONTROL_CHANGE c=14 d=[4a 40] (v=0.500)",
         },
         proxy
     );
 })
 
 
-TEST(when_reset_is_set_to_last_value_for_a_non_global_cc_event_then_its_last_value_is_sent_before_note_on, {
+TEST(note_on_sends_last_value_for_non_global_cc_events_that_configure_it, {
     Proxy proxy;
 
     proxy.zone_type.set_value(Proxy::ZoneType::ZT_UPPER);
@@ -850,33 +876,33 @@ TEST(when_reset_is_set_to_last_value_for_a_non_global_cc_event_then_its_last_val
 
     assert_out_events<27>(
         {
-            "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
-            "t=1.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=1.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000)",
-            "t=1.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=2.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000)",
-            "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
-            "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000)",
-            "t=2.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000)",
-            "t=2.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000)",
-            "t=3.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x40 (v=0.504)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=13 d1=0x4a d2=0x7f (v=1.000)",
-            "t=3.000 cmd=PITCH_BEND_CHANGE ch=13 d1=0x7f d2=0x7f (v=1.000)",
-            "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=13 d1=0x7f d2=0x00 (v=1.000)",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
-            "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=3.000 cmd=NOTE_ON ch=14 d1=0x54 d2=0x7f (v=1.000)",
-            "t=3.000 cmd=PITCH_BEND_CHANGE ch=14 d1=0x7f d2=0x7f (v=1.000)",
-            "t=3.000 cmd=CHANNEL_PRESSURE ch=14 d1=0x7f d2=0x00 (v=1.000)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=14 d1=0x4a d2=0x7f (v=1.000)",
+            "t=1.000 cmd=PITCH_BEND c=14 d=[7f 7f] (v=1.000) pre-NOTE_ON",
+            "t=1.000 cmd=CH_PRESS c=14 d=[7f 00] (v=1.000) pre-NOTE_ON",
+            "t=1.000 cmd=CONTROL_CHANGE c=14 d=[4a 7f] (v=1.000) pre-NOTE_ON",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=1.000 cmd=PITCH_BEND c=14 d=[7f 7f] (v=1.000)",
+            "t=1.000 cmd=CH_PRESS c=14 d=[7f 00] (v=1.000)",
+            "t=1.000 cmd=CONTROL_CHANGE c=14 d=[4a 7f] (v=1.000)",
+            "t=2.000 cmd=PITCH_BEND c=14 d=[7f 7f] (v=1.000)",
+            "t=2.000 cmd=PITCH_BEND c=13 d=[7f 7f] (v=1.000) pre-NOTE_ON",
+            "t=2.000 cmd=CH_PRESS c=14 d=[7f 00] (v=1.000)",
+            "t=2.000 cmd=CH_PRESS c=13 d=[7f 00] (v=1.000) pre-NOTE_ON",
+            "t=2.000 cmd=CONTROL_CHANGE c=13 d=[4a 7f] (v=1.000) pre-NOTE_ON",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=2.000 cmd=PITCH_BEND c=13 d=[7f 7f] (v=1.000)",
+            "t=2.000 cmd=CH_PRESS c=13 d=[7f 00] (v=1.000)",
+            "t=2.000 cmd=CONTROL_CHANGE c=13 d=[4a 7f] (v=1.000)",
+            "t=3.000 cmd=NOTE_OFF c=14 d=[3c 40] (v=0.504)",
+            "t=3.000 cmd=CONTROL_CHANGE c=13 d=[4a 7f] (v=1.000)",
+            "t=3.000 cmd=PITCH_BEND c=13 d=[7f 7f] (v=1.000)",
+            "t=3.000 cmd=PITCH_BEND c=14 d=[7f 7f] (v=1.000) pre-NOTE_ON",
+            "t=3.000 cmd=CH_PRESS c=13 d=[7f 00] (v=1.000)",
+            "t=3.000 cmd=CH_PRESS c=14 d=[7f 00] (v=1.000) pre-NOTE_ON",
+            "t=3.000 cmd=CONTROL_CHANGE c=14 d=[4a 7f] (v=1.000) pre-NOTE_ON",
+            "t=3.000 cmd=NOTE_ON c=14 d=[54 7f] (v=1.000)",
+            "t=3.000 cmd=PITCH_BEND c=14 d=[7f 7f] (v=1.000)",
+            "t=3.000 cmd=CH_PRESS c=14 d=[7f 00] (v=1.000)",
+            "t=3.000 cmd=CONTROL_CHANGE c=14 d=[4a 7f] (v=1.000)",
         },
         proxy
     );
@@ -907,12 +933,12 @@ TEST(excess_note_off_events_are_ignored, {
 
     assert_out_events<6>(
         {
-            "t=1.000 cmd=NOTE_ON ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_ON ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=3.000 cmd=NOTE_ON ch=12 d1=0x54 d2=0x7f (v=1.000)",
-            "t=6.000 cmd=NOTE_OFF ch=14 d1=0x3c d2=0x60 (v=0.756)",
-            "t=7.000 cmd=NOTE_OFF ch=13 d1=0x48 d2=0x6f (v=0.874)",
-            "t=8.000 cmd=NOTE_OFF ch=12 d1=0x54 d2=0x7f (v=1.000)",
+            "t=1.000 cmd=NOTE_ON c=14 d=[3c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_ON c=13 d=[48 6f] (v=0.874)",
+            "t=3.000 cmd=NOTE_ON c=12 d=[54 7f] (v=1.000)",
+            "t=6.000 cmd=NOTE_OFF c=14 d=[3c 60] (v=0.756)",
+            "t=7.000 cmd=NOTE_OFF c=13 d=[48 6f] (v=0.874)",
+            "t=8.000 cmd=NOTE_OFF c=12 d=[54 7f] (v=1.000)",
         },
         proxy
     );
@@ -939,9 +965,9 @@ TEST(note_off_velocity_can_be_overridden_with_note_on_velocity, {
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x10 (v=0.126)",
-            "t=1.000 cmd=NOTE_ON ch=1 d1=0x3e d2=0x20 (v=0.252)",
-            "t=2.000 cmd=NOTE_OFF ch=1 d1=0x3e d2=0x20 (v=0.252)",
+            "t=1.000 cmd=NOTE_OFF c=1 d=[3c 10] (v=0.126)",
+            "t=1.000 cmd=NOTE_ON c=1 d=[3e 20] (v=0.252)",
+            "t=2.000 cmd=NOTE_OFF c=1 d=[3e 20] (v=0.252)",
         },
         proxy
     );
@@ -965,13 +991,13 @@ TEST(when_a_note_is_released_then_its_channel_can_be_allocated_for_new_notes, {
     proxy.note_on(3.0, 0, 63, 96);
 
     assert_out_events<1>(
-        {"t=3.000 cmd=NOTE_ON ch=2 d1=0x3f d2=0x60 (v=0.756)"},
+        {"t=3.000 cmd=NOTE_ON c=2 d=[3f 60] (v=0.756)"},
         proxy
     );
 })
 
 
-TEST(when_the_target_of_a_cc_is_not_global_then_it_is_sent_only_on_the_channel_of_the_selected_note, {
+TEST(non_global_cc_is_sent_only_on_the_channel_which_matches_its_target, {
     Proxy proxy;
 
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
@@ -1003,10 +1029,10 @@ TEST(when_the_target_of_a_cc_is_not_global_then_it_is_sent_only_on_the_channel_o
 
     assert_out_events<4>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
-            "t=4.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
+            "t=1.000 cmd=CONTROL_CHANGE c=1 d=[4a 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=2 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE c=3 d=[07 60] (v=0.756)",
+            "t=4.000 cmd=CH_PRESS c=4 d=[1e 00] (v=0.236)",
         },
         proxy
     );
@@ -1038,9 +1064,9 @@ TEST(multiple_rules_can_share_the_same_controller_as_input, {
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x7f d2=0x7f (v=1.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x7f d2=0x00 (v=1.000)",
-            "t=1.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x7f (v=1.000)",
+            "t=1.000 cmd=PITCH_BEND c=1 d=[7f 7f] (v=1.000)",
+            "t=1.000 cmd=CH_PRESS c=0 d=[7f 00] (v=1.000)",
+            "t=1.000 cmd=CONTROL_CHANGE c=2 d=[4a 7f] (v=1.000)",
         },
         proxy
     );
@@ -1084,10 +1110,10 @@ TEST(target_of_a_cc_may_be_below_the_anchor, {
 
     assert_out_events<4>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
-            "t=4.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
+            "t=1.000 cmd=CONTROL_CHANGE c=1 d=[4a 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=2 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE c=3 d=[07 60] (v=0.756)",
+            "t=4.000 cmd=CH_PRESS c=4 d=[1e 00] (v=0.236)",
         },
         proxy
     );
@@ -1131,17 +1157,17 @@ TEST(target_of_a_cc_may_be_above_the_anchor, {
 
     assert_out_events<4>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
-            "t=4.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
+            "t=1.000 cmd=CONTROL_CHANGE c=1 d=[4a 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=2 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE c=3 d=[07 60] (v=0.756)",
+            "t=4.000 cmd=CH_PRESS c=4 d=[1e 00] (v=0.236)",
         },
         proxy
     );
 })
 
 
-TEST(when_cc_target_is_below_the_anchor_but_all_notes_are_above_it_then_cc_is_dropped, {
+TEST(when_cc_target_is_below_anchor_but_all_notes_are_above_then_drops_cc, {
     Proxy proxy;
 
     proxy.anchor.set_value(72);
@@ -1184,7 +1210,7 @@ TEST(when_cc_target_is_below_the_anchor_but_all_notes_are_above_it_then_cc_is_dr
 })
 
 
-TEST(when_cc_target_is_above_the_anchor_but_all_notes_are_below_it_then_cc_is_dropped, {
+TEST(when_cc_target_is_above_anchor_but_all_notes_are_below_then_drops_cc, {
     Proxy proxy;
 
     proxy.anchor.set_value(37);
@@ -1227,7 +1253,7 @@ TEST(when_cc_target_is_above_the_anchor_but_all_notes_are_below_it_then_cc_is_dr
 })
 
 
-TEST(when_reset_is_set_to_init_value_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
+TEST(target_change_resets_cc_for_previous_note_to_init_value_if_configured, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -1255,20 +1281,20 @@ TEST(when_reset_is_set_to_init_value_and_cc_target_changes_then_cc_is_reset_for_
 
     assert_out_events<7>(
         {
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x19 d2=0x00 (v=0.200)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x19 d2=0x00 (v=0.200) pre-NOTE_ON setup",
-            "t=0.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x00 d2=0x40 (v=0.500)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x19 d2=0x00 (v=0.200)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=PITCH_BEND c=3 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=0.000 cmd=CH_PRESS c=2 d=[19 00] (v=0.200)",
+            "t=0.000 cmd=CH_PRESS c=3 d=[19 00] (v=0.200) pre-NOTE_ON",
+            "t=0.000 cmd=NOTE_ON c=3 d=[48 7f] (v=1.000)",
+            "t=0.000 cmd=PITCH_BEND c=3 d=[00 40] (v=0.500)",
+            "t=0.000 cmd=CH_PRESS c=3 d=[19 00] (v=0.200)",
+            "t=1.000 cmd=CH_PRESS c=3 d=[7f 00] (v=1.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_reset_is_set_to_last_value_and_cc_target_changes_then_cc_is_reset_for_previous_note, {
+TEST(target_change_resets_cc_for_previous_note_to_last_value_if_configured, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -1296,20 +1322,20 @@ TEST(when_reset_is_set_to_last_value_and_cc_target_changes_then_cc_is_reset_for_
 
     assert_out_events<7>(
         {
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x7f d2=0x7f (v=1.000) pre-NOTE_ON setup",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
-            "t=0.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=3 d1=0x7f d2=0x7f (v=1.000)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x60 d2=0x00 (v=0.756)",
+            "t=0.000 cmd=PITCH_BEND c=3 d=[7f 7f] (v=1.000) pre-NOTE_ON",
+            "t=0.000 cmd=CH_PRESS c=2 d=[7f 00] (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=3 d=[7f 00] (v=1.000) pre-NOTE_ON",
+            "t=0.000 cmd=NOTE_ON c=3 d=[48 7f] (v=1.000)",
+            "t=0.000 cmd=PITCH_BEND c=3 d=[7f 7f] (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=3 d=[7f 00] (v=1.000)",
+            "t=1.000 cmd=CH_PRESS c=3 d=[60 00] (v=0.756)",
         },
         proxy
     );
 })
 
 
-TEST(when_the_in_cc_of_a_rule_is_midi_learn_then_it_is_replaced_with_the_first_controller_message, {
+TEST(midi_learn_as_input_cc_is_replaced_with_the_one_in_the_first_ctl_message, {
     Proxy proxy;
 
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::MIDI_LEARN);
@@ -1328,8 +1354,8 @@ TEST(when_the_in_cc_of_a_rule_is_midi_learn_then_it_is_replaced_with_the_first_c
 
     assert_out_events<2>(
         {
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x60 d2=0x60 (v=0.756)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x60 (v=0.756)",
+            "t=0.000 cmd=PITCH_BEND c=1 d=[60 60] (v=0.756)",
+            "t=0.000 cmd=CONTROL_CHANGE c=2 d=[4a 60] (v=0.756)",
         },
         proxy
     );
@@ -1362,7 +1388,7 @@ TEST(cc_can_be_inverted, {
     proxy.channel_pressure(0.0, 0, 96);
 
     assert_out_events<1>(
-        {"t=0.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1f d2=0x00 (v=0.244)"},
+        {"t=0.000 cmd=CH_PRESS c=0 d=[1f 00] (v=0.244)"},
         proxy
     );
 })
@@ -1386,7 +1412,7 @@ TEST(cc_can_be_distorted, {
     proxy.channel_pressure(0.0, 0, 10);
 
     assert_out_events<1>(
-        {"t=0.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x00 d2=0x00 (v=0.000)"},
+        {"t=0.000 cmd=CH_PRESS c=0 d=[00 00] (v=0.000)"},
         proxy
     );
 })
@@ -1409,8 +1435,8 @@ TEST(cc_midpoint_can_be_shifted, {
 
     assert_out_events<2>(
         {
-            "t=0.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x30 (v=0.375)",
-            "t=1.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x70 (v=0.875)",
+            "t=0.000 cmd=PITCH_BEND c=0 d=[00 30] (v=0.375)",
+            "t=1.000 cmd=PITCH_BEND c=0 d=[00 70] (v=0.875)",
         },
         proxy
     );
@@ -1452,10 +1478,10 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
 
     assert_out_events<4>(
         {
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x00 d2=0x00 (v=0.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x00 d2=0x00 (v=0.000) pre-NOTE_ON setup",
-            "t=1.000 cmd=NOTE_ON ch=2 d1=0x3c d2=0x7f (v=1.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x00 d2=0x00 (v=0.000)",
+            "t=1.000 cmd=CH_PRESS c=1 d=[00 00] (v=0.000)",
+            "t=1.000 cmd=CH_PRESS c=2 d=[00 00] (v=0.000) pre-NOTE_ON",
+            "t=1.000 cmd=NOTE_ON c=2 d=[3c 7f] (v=1.000)",
+            "t=1.000 cmd=CH_PRESS c=2 d=[00 00] (v=0.000)",
         },
         proxy
     );
@@ -1468,7 +1494,7 @@ TEST(distortions_are_applied_for_initial_value_on_reset, {
     proxy.resume();
 
     assert_out_events<1>(
-        {"t=0.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x00 (v=0.000)"},
+        {"t=0.000 cmd=PITCH_BEND c=0 d=[00 00] (v=0.000)"},
         proxy
     );
 })
@@ -1509,10 +1535,10 @@ TEST(distortions_are_applied_for_last_value_on_reset, {
 
     assert_out_events<4>(
         {
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x00 d2=0x00 (v=0.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x00 d2=0x00 (v=0.000) pre-NOTE_ON setup",
-            "t=1.000 cmd=NOTE_ON ch=2 d1=0x3c d2=0x7f (v=1.000)",
-            "t=1.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x00 d2=0x00 (v=0.000)",
+            "t=1.000 cmd=CH_PRESS c=1 d=[00 00] (v=0.000)",
+            "t=1.000 cmd=CH_PRESS c=2 d=[00 00] (v=0.000) pre-NOTE_ON",
+            "t=1.000 cmd=NOTE_ON c=2 d=[3c 7f] (v=1.000)",
+            "t=1.000 cmd=CH_PRESS c=2 d=[00 00] (v=0.000)",
         },
         proxy
     );
@@ -1526,13 +1552,13 @@ TEST(distortions_are_applied_for_last_value_on_reset, {
     proxy.resume();
 
     assert_out_events<1>(
-        {"t=0.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x00 (v=0.000)"},
+        {"t=0.000 cmd=PITCH_BEND c=0 d=[00 00] (v=0.000)"},
         proxy
     );
 })
 
 
-TEST(when_rule_target_is_all_below_anchor_then_new_note_runs_with_latest_ctl_and_does_not_trigger_reset_for_old_notes, {
+TEST(all_below_anchor_rule_acts_like_global_rule_for_below_anchor_notes, {
     Proxy proxy;
 
     proxy.anchor.set_value(60);
@@ -1559,16 +1585,16 @@ TEST(when_rule_target_is_all_below_anchor_then_new_note_runs_with_latest_ctl_and
 
     assert_out_events<3>(
         {
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
-            "t=0.000 cmd=NOTE_ON ch=4 d1=0x18 d2=0x7f (v=1.000)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=4 d=[7f 00] (v=1.000) pre-NOTE_ON",
+            "t=0.000 cmd=NOTE_ON c=4 d=[18 7f] (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=4 d=[7f 00] (v=1.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_rule_target_is_all_above_anchor_then_new_note_runs_with_latest_ctl_and_does_not_trigger_reset_for_old_notes, {
+TEST(all_above_anchor_rule_acts_like_global_rule_for_above_anchor_notes, {
     Proxy proxy;
 
     proxy.anchor.set_value(60);
@@ -1595,16 +1621,16 @@ TEST(when_rule_target_is_all_above_anchor_then_new_note_runs_with_latest_ctl_and
 
     assert_out_events<3>(
         {
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000) pre-NOTE_ON setup",
-            "t=0.000 cmd=NOTE_ON ch=4 d1=0x54 d2=0x7f (v=1.000)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=4 d=[7f 00] (v=1.000) pre-NOTE_ON",
+            "t=0.000 cmd=NOTE_ON c=4 d=[54 7f] (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=4 d=[7f 00] (v=1.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_rule_target_is_all_below_anchor_then_cc_is_sent_to_all_notes_below_anchor, {
+TEST(all_below_anchor_rule_sends_cc_to_all_notes_below_anchor, {
     Proxy proxy;
 
     proxy.anchor.set_value(60);
@@ -1631,15 +1657,15 @@ TEST(when_rule_target_is_all_below_anchor_then_cc_is_sent_to_all_notes_below_anc
 
     assert_out_events<2>(
         {
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=3 d=[7f 00] (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=2 d=[7f 00] (v=1.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_rule_target_is_all_above_anchor_then_cc_is_sent_to_all_notes_below_anchor, {
+TEST(all_above_anchor_rule_sends_cc_to_all_notes_above_anchor, {
     Proxy proxy;
 
     proxy.anchor.set_value(60);
@@ -1666,15 +1692,15 @@ TEST(when_rule_target_is_all_above_anchor_then_cc_is_sent_to_all_notes_below_anc
 
     assert_out_events<2>(
         {
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=3 d1=0x7f d2=0x00 (v=1.000)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=3 d=[7f 00] (v=1.000)",
+            "t=0.000 cmd=CH_PRESS c=2 d=[7f 00] (v=1.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_reset_is_set_to_last_value_and_target_is_all_below_anchor_then_new_note_above_anchor_is_not_reset, {
+TEST(all_below_anchor_rule_does_not_reset_notes_above_anchor, {
     Proxy proxy;
 
     proxy.anchor.set_value(60);
@@ -1696,12 +1722,12 @@ TEST(when_reset_is_set_to_last_value_and_target_is_all_below_anchor_then_new_not
     proxy.note_on(0.0, 0, 72, 127);
 
     assert_out_events<1>(
-        {"t=0.000 cmd=NOTE_ON ch=1 d1=0x48 d2=0x7f (v=1.000)"}, proxy
+        {"t=0.000 cmd=NOTE_ON c=1 d=[48 7f] (v=1.000)"}, proxy
     );
 })
 
 
-TEST(when_reset_is_set_to_init_value_value_and_target_is_all_above_anchor_then_new_note_below_anchor_is_not_reset, {
+TEST(all_above_anchor_rule_does_not_reset_notes_below_anchor, {
     Proxy proxy;
 
     proxy.anchor.set_value(60);
@@ -1723,7 +1749,7 @@ TEST(when_reset_is_set_to_init_value_value_and_target_is_all_above_anchor_then_n
     proxy.note_on(0.0, 0, 48, 127);
 
     assert_out_events<1>(
-        {"t=0.000 cmd=NOTE_ON ch=1 d1=0x30 d2=0x7f (v=1.000)"}, proxy
+        {"t=0.000 cmd=NOTE_ON c=1 d=[30 7f] (v=1.000)"}, proxy
     );
 })
 
@@ -1751,8 +1777,8 @@ TEST(when_note_off_affects_rule_targets_then_affected_notes_are_reset, {
 
     assert_out_events<2>(
         {
-            "t=0.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
-            "t=0.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x7f d2=0x00 (v=1.000)",
+            "t=0.000 cmd=NOTE_OFF c=1 d=[30 40] (v=0.504)",
+            "t=0.000 cmd=CH_PRESS c=2 d=[7f 00] (v=1.000)",
         },
         proxy
     );
@@ -1784,24 +1810,24 @@ TEST(oldest_released_channel_is_reused_first, {
 
     assert_out_events<9>(
         {
-            "t=0.000 cmd=NOTE_ON ch=1 d1=0x30 d2=0x7f (v=1.000)",
-            "t=1.000 cmd=NOTE_ON ch=2 d1=0x3c d2=0x7f (v=1.000)",
-            "t=2.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
+            "t=0.000 cmd=NOTE_ON c=1 d=[30 7f] (v=1.000)",
+            "t=1.000 cmd=NOTE_ON c=2 d=[3c 7f] (v=1.000)",
+            "t=2.000 cmd=NOTE_ON c=3 d=[48 7f] (v=1.000)",
 
-            "t=3.000 cmd=NOTE_OFF ch=2 d1=0x3c d2=0x40 (v=0.504)",
-            "t=4.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
-            "t=5.000 cmd=NOTE_OFF ch=3 d1=0x48 d2=0x40 (v=0.504)",
+            "t=3.000 cmd=NOTE_OFF c=2 d=[3c 40] (v=0.504)",
+            "t=4.000 cmd=NOTE_OFF c=1 d=[30 40] (v=0.504)",
+            "t=5.000 cmd=NOTE_OFF c=3 d=[48 40] (v=0.504)",
 
-            "t=6.000 cmd=NOTE_ON ch=2 d1=0x32 d2=0x7f (v=1.000)",
-            "t=7.000 cmd=NOTE_ON ch=1 d1=0x3e d2=0x7f (v=1.000)",
-            "t=8.000 cmd=NOTE_ON ch=3 d1=0x4a d2=0x7f (v=1.000)",
+            "t=6.000 cmd=NOTE_ON c=2 d=[32 7f] (v=1.000)",
+            "t=7.000 cmd=NOTE_ON c=1 d=[3e 7f] (v=1.000)",
+            "t=8.000 cmd=NOTE_ON c=3 d=[4a 7f] (v=1.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_no_notes_are_active_when_mapped_cc_events_occur_then_drops_cc_events, {
+TEST(when_no_note_is_active_when_mapped_cc_events_occur_then_drops_cc_events, {
     Proxy proxy;
 
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
@@ -1830,7 +1856,7 @@ TEST(when_no_notes_are_active_when_mapped_cc_events_occur_then_drops_cc_events, 
 
     assert_out_events<1>(
         {
-            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
+            "t=5.000 cmd=CONTROL_CHANGE c=0 d=[07 60] (v=0.756)",
         },
         proxy
     );
@@ -1859,14 +1885,14 @@ TEST(can_transpose_notes_above_and_below_the_anchor_differently, {
 
     assert_out_events<8>(
         {
-            "t=0.000 cmd=NOTE_ON ch=1 d1=0x00 d2=0x7f (v=1.000)",
-            "t=1.000 cmd=NOTE_ON ch=2 d1=0x24 d2=0x7f (v=1.000)",
-            "t=2.000 cmd=NOTE_ON ch=3 d1=0x48 d2=0x7f (v=1.000)",
-            "t=3.000 cmd=NOTE_ON ch=4 d1=0x7f d2=0x7f (v=1.000)",
-            "t=4.000 cmd=NOTE_OFF ch=1 d1=0x00 d2=0x40 (v=0.504)",
-            "t=5.000 cmd=NOTE_OFF ch=2 d1=0x24 d2=0x40 (v=0.504)",
-            "t=6.000 cmd=NOTE_OFF ch=3 d1=0x48 d2=0x40 (v=0.504)",
-            "t=7.000 cmd=NOTE_OFF ch=4 d1=0x7f d2=0x40 (v=0.504)",
+            "t=0.000 cmd=NOTE_ON c=1 d=[00 7f] (v=1.000)",
+            "t=1.000 cmd=NOTE_ON c=2 d=[24 7f] (v=1.000)",
+            "t=2.000 cmd=NOTE_ON c=3 d=[48 7f] (v=1.000)",
+            "t=3.000 cmd=NOTE_ON c=4 d=[7f 7f] (v=1.000)",
+            "t=4.000 cmd=NOTE_OFF c=1 d=[00 40] (v=0.504)",
+            "t=5.000 cmd=NOTE_OFF c=2 d=[24 40] (v=0.504)",
+            "t=6.000 cmd=NOTE_OFF c=3 d=[48 40] (v=0.504)",
+            "t=7.000 cmd=NOTE_OFF c=4 d=[7f 40] (v=0.504)",
         },
         proxy
     );
@@ -1889,9 +1915,9 @@ void assert_changing_transposition_settings_triggers_reset(
 
     assert_out_events<3>(
         {
-            "t=0.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=CONTROL_CHANGE ch=1 d1=0x40 d2=0x00 (v=0.000)",
-            "t=0.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x40 (v=0.504)",
+            "t=0.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
+            "t=0.000 cmd=CONTROL_CHANGE c=1 d=[40 00] (v=0.000)",
+            "t=0.000 cmd=NOTE_OFF c=1 d=[3c 40] (v=0.504)",
         },
         proxy
     );
@@ -1919,7 +1945,7 @@ TEST(changing_transposition_settings_triggers_reset, {
 })
 
 
-TEST(when_sustain_pedal_is_ignored_then_events_for_sustained_notes_are_swallowed_after_note_off, {
+TEST(when_sustain_pedal_is_ignored_then_events_are_swallowed_after_note_off, {
     Proxy proxy;
 
     proxy.sustain_pedal_handling.set_value(Proxy::Toggle::OFF);
@@ -1962,14 +1988,14 @@ TEST(when_sustain_pedal_is_ignored_then_events_for_sustained_notes_are_swallowed
 
     assert_out_events<1>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x0b d2=0x7b (v=0.969)",
+            "t=1.000 cmd=CONTROL_CHANGE c=0 d=[0b 7b] (v=0.969)",
         },
         proxy
     );
 })
 
 
-TEST(when_sustain_pedal_is_handled_then_events_for_sustained_notes_are_kept_being_sent_after_note_off, {
+TEST(when_sustain_pedal_is_handled_then_events_are_still_sent_after_note_off, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -2025,25 +2051,25 @@ TEST(when_sustain_pedal_is_handled_then_events_for_sustained_notes_are_kept_bein
 
     assert_out_events<12>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x7f (v=1.000)",
-            "t=6.000 cmd=CONTROL_CHANGE ch=0 d1=0x0b d2=0x7b (v=0.969)",
-            "t=7.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
-            "t=8.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
-            "t=9.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
-            "t=10.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
-            "t=11.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
-            "t=11.000 cmd=NOTE_OFF ch=4 d1=0x30 d2=0x40 (v=0.504)",
-            "t=11.000 cmd=NOTE_OFF ch=3 d1=0x20 d2=0x40 (v=0.504)",
-            "t=11.000 cmd=NOTE_OFF ch=2 d1=0x33 d2=0x40 (v=0.504)",
-            "t=11.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x40 (v=0.504)",
-            "t=12.000 cmd=CONTROL_CHANGE ch=0 d1=0x0b d2=0x00 (v=0.000)",
+            "t=1.000 cmd=CONTROL_CHANGE c=0 d=[40 7f] (v=1.000)",
+            "t=6.000 cmd=CONTROL_CHANGE c=0 d=[0b 7b] (v=0.969)",
+            "t=7.000 cmd=CONTROL_CHANGE c=1 d=[4a 6e] (v=0.866)",
+            "t=8.000 cmd=PITCH_BEND c=2 d=[10 4e] (v=0.610)",
+            "t=9.000 cmd=CONTROL_CHANGE c=3 d=[07 60] (v=0.756)",
+            "t=10.000 cmd=CH_PRESS c=4 d=[1e 00] (v=0.236)",
+            "t=11.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
+            "t=11.000 cmd=NOTE_OFF c=4 d=[30 40] (v=0.504)",
+            "t=11.000 cmd=NOTE_OFF c=3 d=[20 40] (v=0.504)",
+            "t=11.000 cmd=NOTE_OFF c=2 d=[33 40] (v=0.504)",
+            "t=11.000 cmd=NOTE_OFF c=1 d=[2c 40] (v=0.504)",
+            "t=12.000 cmd=CONTROL_CHANGE c=0 d=[0b 00] (v=0.000)",
         },
         proxy
     );
 })
 
 
-TEST(suspending_and_resuming_turns_off_the_sustain_pedal_and_clears_deferred_note_offs, {
+TEST(suspending_and_resuming_turns_off_the_sustain_pedal_and_clears_notes, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -2069,16 +2095,16 @@ TEST(suspending_and_resuming_turns_off_the_sustain_pedal_and_clears_deferred_not
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x3c (v=0.472)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+            "t=1.000 cmd=NOTE_ON c=1 d=[2c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_OFF c=1 d=[2c 3c] (v=0.472)",
+            "t=3.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
         },
         proxy
     );
 })
 
 
-TEST(zone_config_change_turns_off_the_sustain_pedal_and_clears_deferred_note_offs, {
+TEST(zone_config_change_turns_off_the_sustain_pedal_and_clears_notes, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -2103,9 +2129,9 @@ TEST(zone_config_change_turns_off_the_sustain_pedal_and_clears_deferred_note_off
 
     assert_out_events<3>(
         {
-            "t=1.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x60 (v=0.756)",
-            "t=2.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x3c (v=0.472)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+            "t=1.000 cmd=NOTE_ON c=1 d=[2c 60] (v=0.756)",
+            "t=2.000 cmd=NOTE_OFF c=1 d=[2c 3c] (v=0.472)",
+            "t=3.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
         },
         proxy
     );
@@ -2141,17 +2167,17 @@ TEST(sustain_pedal_may_be_both_interpreted_and_transformed_at_the_same_time, {
 
     assert_out_events<4>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=2 d1=0x40 d2=0x7f (v=1.000)",
-            "t=4.000 cmd=CONTROL_CHANGE ch=2 d1=0x40 d2=0x00 (v=0.000)",
-            "t=4.000 cmd=NOTE_OFF ch=2 d1=0x30 d2=0x40 (v=0.504)",
-            "t=4.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x40 (v=0.504)",
+            "t=1.000 cmd=CONTROL_CHANGE c=2 d=[40 7f] (v=1.000)",
+            "t=4.000 cmd=CONTROL_CHANGE c=2 d=[40 00] (v=0.000)",
+            "t=4.000 cmd=NOTE_OFF c=2 d=[30 40] (v=0.504)",
+            "t=4.000 cmd=NOTE_OFF c=1 d=[2c 40] (v=0.504)",
         },
         proxy
     );
 })
 
 
-TEST(when_a_sustained_note_is_retriggered_then_its_note_off_is_no_longer_deferred, {
+TEST(note_off_is_not_deferred_for_sustained_then_retriggered_note, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -2174,9 +2200,9 @@ TEST(when_a_sustained_note_is_retriggered_then_its_note_off_is_no_longer_deferre
 
     assert_out_events<3>(
         {
-            "t=3.000 cmd=NOTE_OFF ch=1 d1=0x2c d2=0x40 (v=0.504)",
-            "t=3.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x7f (v=1.000)",
-            "t=4.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+            "t=3.000 cmd=NOTE_OFF c=1 d=[2c 40] (v=0.504)",
+            "t=3.000 cmd=NOTE_ON c=1 d=[2c 7f] (v=1.000)",
+            "t=4.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
         },
         proxy
     );
@@ -2206,16 +2232,16 @@ TEST(when_a_sustained_note_is_stolen_then_its_note_off_is_no_longer_deferred, {
 
     assert_out_events<3>(
         {
-            "t=3.000 cmd=NOTE_OFF ch=1 d1=0x30 d2=0x40 (v=0.504)",
-            "t=3.000 cmd=NOTE_ON ch=1 d1=0x2c d2=0x7f (v=1.000)",
-            "t=4.000 cmd=CONTROL_CHANGE ch=0 d1=0x40 d2=0x00 (v=0.000)",
+            "t=3.000 cmd=NOTE_OFF c=1 d=[30 40] (v=0.504)",
+            "t=3.000 cmd=NOTE_ON c=1 d=[2c 7f] (v=1.000)",
+            "t=4.000 cmd=CONTROL_CHANGE c=0 d=[40 00] (v=0.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_a_rule_has_fallback_to_global_and_no_notes_are_playing_then_its_cc_is_sent_on_the_manager_channel, {
+TEST(global_fallback_sends_cc_on_manager_channel_when_no_notes_are_playing, {
     Proxy proxy;
 
     turn_off_reset_for_all_rules(proxy);
@@ -2264,25 +2290,25 @@ TEST(when_a_rule_has_fallback_to_global_and_no_notes_are_playing_then_its_cc_is_
 
     assert_out_events<12>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=3 d1=0x07 d2=0x60 (v=0.756)",
-            "t=4.000 cmd=CHANNEL_PRESSURE ch=4 d1=0x1e d2=0x00 (v=0.236)",
-            "t=5.000 cmd=NOTE_OFF ch=1 d1=0x3c d2=0x7f (v=1.000)",
-            "t=6.000 cmd=NOTE_OFF ch=2 d1=0x43 d2=0x7f (v=1.000)",
-            "t=7.000 cmd=NOTE_OFF ch=3 d1=0x30 d2=0x7f (v=1.000)",
-            "t=8.000 cmd=NOTE_OFF ch=4 d1=0x40 d2=0x7f (v=1.000)",
-            "t=9.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x30 (v=0.378)",
-            "t=10.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x68 d2=0x07 (v=0.061)",
-            "t=11.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x20 (v=0.252)",
-            "t=12.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x00 d2=0x00 (v=0.000)",
+            "t=1.000 cmd=CONTROL_CHANGE c=1 d=[4a 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=2 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE c=3 d=[07 60] (v=0.756)",
+            "t=4.000 cmd=CH_PRESS c=4 d=[1e 00] (v=0.236)",
+            "t=5.000 cmd=NOTE_OFF c=1 d=[3c 7f] (v=1.000)",
+            "t=6.000 cmd=NOTE_OFF c=2 d=[43 7f] (v=1.000)",
+            "t=7.000 cmd=NOTE_OFF c=3 d=[30 7f] (v=1.000)",
+            "t=8.000 cmd=NOTE_OFF c=4 d=[40 7f] (v=1.000)",
+            "t=9.000 cmd=CONTROL_CHANGE c=0 d=[4a 30] (v=0.378)",
+            "t=10.000 cmd=PITCH_BEND c=0 d=[68 07] (v=0.061)",
+            "t=11.000 cmd=CONTROL_CHANGE c=0 d=[07 20] (v=0.252)",
+            "t=12.000 cmd=CH_PRESS c=0 d=[00 00] (v=0.000)",
         },
         proxy
     );
 })
 
 
-TEST(when_a_rule_has_fallback_to_global_and_no_notes_are_playing_then_its_cc_is_reset_on_the_manager_channel_as_well, {
+TEST(global_fallback_resets_cc_on_manager_channel_when_no_notes_are_playing, {
     Proxy proxy;
 
     proxy.rules[0].in_cc.set_value(Proxy::ControllerId::PITCH_WHEEL);
@@ -2325,38 +2351,38 @@ TEST(when_a_rule_has_fallback_to_global_and_no_notes_are_playing_then_its_cc_is_
 
     assert_out_events<32>(
         {
-            "t=1.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x6e (v=0.866)",
-            "t=2.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x10 d2=0x4e (v=0.610)",
-            "t=3.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
-            "t=4.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236)",
-            "t=5.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=5.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=5.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236) pre-NOTE_ON setup",
-            "t=5.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x1e d2=0x00 (v=0.236) pre-NOTE_ON setup",
-            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x00 (v=0.000) pre-NOTE_ON setup",
-            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x00 (v=0.000) pre-NOTE_ON setup",
-            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756) pre-NOTE_ON setup",
-            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x07 d2=0x60 (v=0.756) pre-NOTE_ON setup",
-            "t=5.000 cmd=NOTE_ON ch=1 d1=0x3c d2=0x7f (v=1.000)",
-            "t=5.000 cmd=PITCH_BEND_CHANGE ch=0 d1=0x00 d2=0x40 (v=0.500)",
-            "t=5.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x00 d2=0x40 (v=0.500)",
-            "t=5.000 cmd=CHANNEL_PRESSURE ch=0 d1=0x1e d2=0x00 (v=0.236)",
-            "t=5.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x1e d2=0x00 (v=0.236)",
-            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x4a d2=0x00 (v=0.000)",
-            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x4a d2=0x00 (v=0.000)",
-            "t=5.000 cmd=CONTROL_CHANGE ch=0 d1=0x07 d2=0x60 (v=0.756)",
-            "t=5.000 cmd=CONTROL_CHANGE ch=1 d1=0x07 d2=0x60 (v=0.756)",
-            "t=6.000 cmd=PITCH_BEND_CHANGE ch=1 d1=0x00 d2=0x40 (v=0.500)",
-            "t=6.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x00 d2=0x40 (v=0.500) pre-NOTE_ON setup",
-            "t=6.000 cmd=CHANNEL_PRESSURE ch=1 d1=0x1e d2=0x00 (v=0.236)",
-            "t=6.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x1e d2=0x00 (v=0.236) pre-NOTE_ON setup",
-            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x00 (v=0.000) pre-NOTE_ON setup",
-            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x07 d2=0x60 (v=0.756) pre-NOTE_ON setup",
-            "t=6.000 cmd=NOTE_ON ch=2 d1=0x43 d2=0x7f (v=1.000)",
-            "t=6.000 cmd=PITCH_BEND_CHANGE ch=2 d1=0x00 d2=0x40 (v=0.500)",
-            "t=6.000 cmd=CHANNEL_PRESSURE ch=2 d1=0x1e d2=0x00 (v=0.236)",
-            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x4a d2=0x00 (v=0.000)",
-            "t=6.000 cmd=CONTROL_CHANGE ch=2 d1=0x07 d2=0x60 (v=0.756)",
+            "t=1.000 cmd=CONTROL_CHANGE c=0 d=[4a 6e] (v=0.866)",
+            "t=2.000 cmd=PITCH_BEND c=0 d=[10 4e] (v=0.610)",
+            "t=3.000 cmd=CONTROL_CHANGE c=0 d=[07 60] (v=0.756)",
+            "t=4.000 cmd=CH_PRESS c=0 d=[1e 00] (v=0.236)",
+            "t=5.000 cmd=PITCH_BEND c=0 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=5.000 cmd=PITCH_BEND c=1 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=5.000 cmd=CH_PRESS c=0 d=[1e 00] (v=0.236) pre-NOTE_ON",
+            "t=5.000 cmd=CH_PRESS c=1 d=[1e 00] (v=0.236) pre-NOTE_ON",
+            "t=5.000 cmd=CONTROL_CHANGE c=0 d=[4a 00] (v=0.000) pre-NOTE_ON",
+            "t=5.000 cmd=CONTROL_CHANGE c=1 d=[4a 00] (v=0.000) pre-NOTE_ON",
+            "t=5.000 cmd=CONTROL_CHANGE c=0 d=[07 60] (v=0.756) pre-NOTE_ON",
+            "t=5.000 cmd=CONTROL_CHANGE c=1 d=[07 60] (v=0.756) pre-NOTE_ON",
+            "t=5.000 cmd=NOTE_ON c=1 d=[3c 7f] (v=1.000)",
+            "t=5.000 cmd=PITCH_BEND c=0 d=[00 40] (v=0.500)",
+            "t=5.000 cmd=PITCH_BEND c=1 d=[00 40] (v=0.500)",
+            "t=5.000 cmd=CH_PRESS c=0 d=[1e 00] (v=0.236)",
+            "t=5.000 cmd=CH_PRESS c=1 d=[1e 00] (v=0.236)",
+            "t=5.000 cmd=CONTROL_CHANGE c=0 d=[4a 00] (v=0.000)",
+            "t=5.000 cmd=CONTROL_CHANGE c=1 d=[4a 00] (v=0.000)",
+            "t=5.000 cmd=CONTROL_CHANGE c=0 d=[07 60] (v=0.756)",
+            "t=5.000 cmd=CONTROL_CHANGE c=1 d=[07 60] (v=0.756)",
+            "t=6.000 cmd=PITCH_BEND c=1 d=[00 40] (v=0.500)",
+            "t=6.000 cmd=PITCH_BEND c=2 d=[00 40] (v=0.500) pre-NOTE_ON",
+            "t=6.000 cmd=CH_PRESS c=1 d=[1e 00] (v=0.236)",
+            "t=6.000 cmd=CH_PRESS c=2 d=[1e 00] (v=0.236) pre-NOTE_ON",
+            "t=6.000 cmd=CONTROL_CHANGE c=2 d=[4a 00] (v=0.000) pre-NOTE_ON",
+            "t=6.000 cmd=CONTROL_CHANGE c=2 d=[07 60] (v=0.756) pre-NOTE_ON",
+            "t=6.000 cmd=NOTE_ON c=2 d=[43 7f] (v=1.000)",
+            "t=6.000 cmd=PITCH_BEND c=2 d=[00 40] (v=0.500)",
+            "t=6.000 cmd=CH_PRESS c=2 d=[1e 00] (v=0.236)",
+            "t=6.000 cmd=CONTROL_CHANGE c=2 d=[4a 00] (v=0.000)",
+            "t=6.000 cmd=CONTROL_CHANGE c=2 d=[07 60] (v=0.756)",
         },
         proxy
     );

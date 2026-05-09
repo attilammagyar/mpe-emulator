@@ -36,8 +36,12 @@ TEST(long_program_names_are_trimmed_and_truncated, {
     constexpr char const* long_name = "a long program name, way over the limit";
     constexpr char const* truncated = "a long program name,..t";
     constexpr char const* truncated_short = "a lo..t";
-    constexpr char const* just_below_the_limit = "   just below length limit   ";
-    constexpr char const* just_below_the_limit_trimmed = "just below length limit";
+    constexpr char const* just_below_the_limit = (
+        "   just below length limit   "
+    );
+    constexpr char const* just_below_the_limit_trimmed = (
+        "just below length limit"
+    );
     constexpr char const* becomes_empty = "    [\\]   ";
 
     Bank::Program program(long_name, " [Default Name] ", "");
@@ -153,7 +157,7 @@ TEST(an_imported_program_may_be_empty, {
 })
 
 
-TEST(when_a_serialized_program_does_not_have_a_name_then_original_name_is_kept, {
+TEST(when_a_serialized_program_does_not_have_a_name_then_original_is_kept, {
     Bank::Program program("Name", "Default Name", "[mpeemulator]\nZ1C = 1.0");
 
     program.import(

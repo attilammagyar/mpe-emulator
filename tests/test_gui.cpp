@@ -89,8 +89,12 @@ TEST(gui_can_apply_size_constraints, {
 
     assert_applied_gui_size_constraints(gui, half_w, half_h, half_w, half_h);
 
-    assert_applied_gui_size_constraints(gui, half_w, half_h, half_w + 100, half_h);
-    assert_applied_gui_size_constraints(gui, half_w, half_h, half_w, half_h + 100);
+    assert_applied_gui_size_constraints(
+        gui, half_w, half_h, half_w + 100, half_h
+    );
+    assert_applied_gui_size_constraints(
+        gui, half_w, half_h, half_w, half_h + 100
+    );
 
     assert_applied_gui_size_constraints(gui, half_w, half_h, half_w, 999999);
     assert_applied_gui_size_constraints(gui, half_w, half_h, 999999, half_h);

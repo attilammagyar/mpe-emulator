@@ -42,7 +42,9 @@ TEST(can_convert_configuration_to_string_and_import_it, {
     double const a0_as_ratio = proxy_1.anchor.value_to_ratio(21);
 
     proxy_1.push_message(
-        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1CHN, five_channels_as_ratio
+        Proxy::MessageType::SET_PARAM,
+        Proxy::ParamId::Z1CHN,
+        five_channels_as_ratio
     );
     proxy_1.push_message(
         Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, c4_as_ratio
@@ -50,7 +52,9 @@ TEST(can_convert_configuration_to_string_and_import_it, {
     proxy_1.process_messages();
 
     proxy_2.push_message(
-        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1CHN, ten_channels_as_ratio
+        Proxy::MessageType::SET_PARAM,
+        Proxy::ParamId::Z1CHN,
+        ten_channels_as_ratio
     );
     proxy_2.push_message(
         Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, a0_as_ratio
@@ -247,7 +251,9 @@ TEST(param_names_are_parsed_case_insensitively_and_converted_to_upper_case, {
 
     Serializer::import_settings_in_audio_thread(proxy, settings);
 
-    assert_eq(0.5, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC), 0.000001);
+    assert_eq(
+        0.5, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC), 0.000001
+    );
 
     param_name[0] = 'x';
 
@@ -256,20 +262,26 @@ TEST(param_names_are_parsed_case_insensitively_and_converted_to_upper_case, {
 })
 
 
-TEST(params_which_are_missing_from_the_exported_settings_are_cleared_and_reset_to_default, {
+TEST(params_which_are_missing_are_cleared_and_reset_to_default, {
     Proxy proxy;
     std::string const settings = (
         "[mpeemulator]\n"
         "Z1CHN = 0.42\n"
     );
 
-    proxy.push_message(Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1CHN, 0.123);
-    proxy.push_message(Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, 0.123);
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1CHN, 0.123
+    );
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, 0.123
+    );
     proxy.process_messages();
 
     Serializer::import_settings_in_audio_thread(proxy, settings);
 
-    assert_eq(0.42, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1CHN), 0.000001);
+    assert_eq(
+        0.42, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1CHN), 0.000001
+    );
     assert_eq(
         proxy.get_param_default_ratio(Proxy::ParamId::Z1ANC),
         proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC),
@@ -285,11 +297,15 @@ TEST(message_queue_is_cleared_before_importing_settings_inside_audio_thread, {
         "Z1ANC = 0.42\n"
     );
 
-    proxy.push_message(Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, 0.123);
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, 0.123
+    );
     Serializer::import_settings_in_audio_thread(proxy, settings);
     proxy.process_messages();
 
-    assert_eq(0.42, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC), 0.000001);
+    assert_eq(
+        0.42, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC), 0.000001
+    );
 })
 
 
@@ -300,11 +316,15 @@ TEST(can_import_settings_inside_the_gui_thread, {
         "Z1ANC = 0.42\n"
     );
 
-    proxy.push_message(Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1CHN, 0.123);
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1CHN, 0.123
+    );
     Serializer::import_settings_in_gui_thread(proxy, settings);
     proxy.process_messages();
 
-    assert_eq(0.42, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC), 0.000001);
+    assert_eq(
+        0.42, proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC), 0.000001
+    );
     assert_eq(
         proxy.get_param_default_ratio(Proxy::ParamId::Z1CHN),
         proxy.get_param_ratio_atomic(Proxy::ParamId::Z1CHN),
@@ -320,20 +340,28 @@ void assert_trimmed(char const* const expected, char const* const raw_number)
     char buffer[buffer_size];
     int const length = snprintf(buffer, buffer_size, "%s", raw_number);
 
-    Serializer::trim_excess_zeros_from_end_after_snprintf(buffer, length, buffer_size);
+    Serializer::trim_excess_zeros_from_end_after_snprintf(
+        buffer, length, buffer_size
+    );
     assert_eq(expected, buffer);
 
     if (strncmp(expected, raw_number, buffer_size) != 0) {
         std::fill_n(buffer, buffer_size, '0');
-        int const terminating_zero = snprintf(buffer, buffer_size, "%s", expected);
+        int const terminating_zero = snprintf(
+            buffer, buffer_size, "%s", expected
+        );
         buffer[terminating_zero] = '0';
         buffer[buffer_size - 1] = '\x00';
-        Serializer::trim_excess_zeros_from_end_after_snprintf(buffer, 12345, buffer_size);
+        Serializer::trim_excess_zeros_from_end_after_snprintf(
+            buffer, 12345, buffer_size
+        );
         assert_eq(expected, buffer);
     }
 
     snprintf(buffer, buffer_size, "000");
-    Serializer::trim_excess_zeros_from_end_after_snprintf(buffer, -1, buffer_size);
+    Serializer::trim_excess_zeros_from_end_after_snprintf(
+        buffer, -1, buffer_size
+    );
     assert_eq("000", buffer);
 }
 
@@ -359,7 +387,7 @@ TEST(trimming_zeros_from_end_of_numbers, {
 })
 
 
-TEST(trailing_zeros_and_params_with_default_values_are_omitted_from_serialized_settings, {
+TEST(trailing_zeros_and_params_with_default_values_are_omitted, {
     Proxy proxy;
     std::string settings = "";
 
@@ -368,8 +396,12 @@ TEST(trailing_zeros_and_params_with_default_values_are_omitted_from_serialized_s
     settings += "Z1ANC = 0.50";
     settings += Serializer::LINE_END;
 
-    proxy.push_message(Proxy::MessageType::CLEAR, Proxy::ParamId::INVALID_PARAM_ID, 0.0);
-    proxy.push_message(Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, 0.5);
+    proxy.push_message(
+        Proxy::MessageType::CLEAR, Proxy::ParamId::INVALID_PARAM_ID, 0.0
+    );
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, 0.5
+    );
     proxy.process_messages();
 
     assert_eq(settings, Serializer::serialize(proxy));
