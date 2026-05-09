@@ -25,8 +25,9 @@
 extern "C"
 {
 
-__attribute__((visibility("default"))) AEffect* VSTPluginMain(audioMasterCallback host_callback)
-{
+__attribute__((visibility("default"))) AEffect* VSTPluginMain(
+        audioMasterCallback host_callback
+) {
     return MpeEmulator::FstPlugin::create_instance(host_callback, NULL, true);
 }
 

@@ -48,14 +48,19 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
                 Parameter(
                     char const* const short_name,
                     char const* const long_name,
-                    Proxy::ParamId const param_id = Proxy::ParamId::INVALID_PARAM_ID,
-                    Proxy::ControllerId const controller_id = Proxy::ControllerId::INVALID_CONTROLLER_ID
+                    Proxy::ParamId const param_id =
+                        Proxy::ParamId::INVALID_PARAM_ID,
+                    Proxy::ControllerId const controller_id =
+                        Proxy::ControllerId::INVALID_CONTROLLER_ID
                 );
 
                 Parameter(Parameter const& parameter) = default;
                 Parameter(Parameter&& parameter) = default;
 
-                Parameter& operator=(Parameter const& parameter) noexcept = default;
+                Parameter& operator=(
+                    Parameter const& parameter
+                ) noexcept = default;
+
                 Parameter& operator=(Parameter&& parameter) noexcept = default;
 
                 char const* get_short_name() const noexcept;
@@ -65,7 +70,8 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
                 bool is_midi_cc_helper() const noexcept;
                 bool is_exported_param() const noexcept;
 
-                // bool needs_host_update() const noexcept; /* See FstPlugin::generate_samples() */
+                /* See FstPlugin::generate_samples() */
+                // bool needs_host_update() const noexcept;
 
                 float get_value(Proxy const& proxy) const noexcept;
                 float get_last_set_value() const noexcept;
@@ -88,9 +94,17 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
             + 1                                         /* Dummy Parameter */
         );
 
-        static constexpr size_t PATCH_CHANGED_PARAMETER_INDEX = (size_t)Proxy::ParamId::Z1SUS;
-        static constexpr char const* PATCH_CHANGED_PARAMETER_SHORT_NAME = "Changed";
-        static constexpr char const* PATCH_CHANGED_PARAMETER_LONG_NAME = "Settings Changed";
+        static constexpr size_t PATCH_CHANGED_PARAMETER_INDEX = (
+            (size_t)Proxy::ParamId::Z1SUS
+        );
+
+        static constexpr char const* PATCH_CHANGED_PARAMETER_SHORT_NAME = (
+            "Changed"
+        );
+
+        static constexpr char const* PATCH_CHANGED_PARAMETER_LONG_NAME = (
+            "Settings Changed"
+        );
 
         typedef Parameter Parameters[NUMBER_OF_PARAMETERS];
 
@@ -101,7 +115,9 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
         static constexpr VstInt32 IN_CHANNELS = 2;
         static constexpr VstInt32 OUT_CHANNELS = 2;
 
-        static constexpr VstInt32 VERSION = MpeEmulator::Constants::PLUGIN_VERSION_INT;
+        static constexpr VstInt32 VERSION = (
+            MpeEmulator::Constants::PLUGIN_VERSION_INT
+        );
 
         static constexpr char const* FST_H_VERSION = (
             "FST "
@@ -197,7 +213,12 @@ class FstPlugin : public Midi::EventHandler, public GUI::EventHandler
         ) noexcept;
 
         VstIntPtr get_chunk(void** chunk, bool is_preset) noexcept;
-        void set_chunk(void const* const chunk, VstIntPtr const size, bool is_preset) noexcept;
+
+        void set_chunk(
+            void const* const chunk,
+            VstIntPtr const size,
+            bool is_preset
+        ) noexcept;
 
         void note_on(
             double const time_offset,

@@ -36,9 +36,9 @@ namespace MpeEmulator
 {
 
 #ifdef MPE_EMULATOR_FST_DEBUG
-static constexpr int FST_OP_CODE_NAMES_LEN = 78;
+static constexpr int FST_OP_NAMES_LEN = 78;
 
-static constexpr char const* FST_OP_CODE_NAMES[FST_OP_CODE_NAMES_LEN] = {
+static constexpr char const* FST_OP_NAMES[FST_OP_NAMES_LEN] = {
     "Open",                         /*    0 */
     "Close",                        /*    1 */
     "SetProgram",                   /*    2 */
@@ -169,13 +169,18 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
         void* pointer,
         float fvalue
 ) {
-    MpeEmulator::FstPlugin* const fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* const fst_plugin = (
+        (MpeEmulator::FstPlugin*)effect->object
+    );
 
 #ifdef MPE_EMULATOR_FST_DEBUG
     if (
             true
             && op_code != effEditIdle
-            && (op_code != effProcessEvents || fst_plugin->prev_logged_op_code != effProcessEvents)
+            && (
+                op_code != effProcessEvents
+                || fst_plugin->prev_logged_op_code != effProcessEvents
+            )
             && op_code != effIdle
             && op_code != effGetProgram
             && op_code != effGetProgramName
@@ -188,10 +193,13 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
         fst_plugin->prev_logged_op_code = op_code;
 
         MPE_EMULATOR_DEBUG(
-            "plugin=%p, op_code=%d, op_code_name=%s, index=%d, ivalue=%d, fvalue=%f",
+            (
+                "plugin=%p, op_code=%d, op_name=%s,"
+                " index=%d, ivalue=%d, fvalue=%f"
+            ),
             effect->object,
             (int)op_code,
-            ((op_code < FST_OP_CODE_NAMES_LEN) ? FST_OP_CODE_NAMES[op_code] : "???"),
+            op_code < FST_OP_NAMES_LEN ? FST_OP_NAMES[op_code] : "???",
             (int)index,
             (int)ivalue,
             fvalue
@@ -281,7 +289,9 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
             return fst_plugin->get_chunk((void**)pointer, index ? true : false);
 
         case effSetChunk:
-            fst_plugin->set_chunk((void const*)pointer, ivalue, index ? true : false);
+            fst_plugin->set_chunk(
+                (void const*)pointer, ivalue, index ? true : false
+            );
             return 0;
 
         case effGetPlugCategory:
@@ -326,9 +336,12 @@ VstIntPtr VSTCALLBACK FstPlugin::dispatch(
 
 #ifdef MPE_EMULATOR_FST_DEBUG
             MPE_EMULATOR_DEBUG(
-                "op_code=%d, op_code_name=%s, index=%d, ivalue=%d, fvalue=%f, pointer=%s",
+                (
+                    "op_code=%d, op_name=%s,"
+                    " index=%d, ivalue=%d, fvalue=%f, pointer=%s"
+                ),
                 (int)op_code,
-                ((op_code < FST_OP_CODE_NAMES_LEN) ? FST_OP_CODE_NAMES[op_code] : "???"),
+                op_code < FST_OP_NAMES_LEN ? FST_OP_NAMES[op_code] : "???",
                 (int)index,
                 (int)ivalue,
                 fvalue,
@@ -355,7 +368,9 @@ void VSTCALLBACK FstPlugin::process_accumulating(
         float** outdata,
         VstInt32 frames
 ) {
-    MpeEmulator::FstPlugin* const fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* const fst_plugin = (
+        (MpeEmulator::FstPlugin*)effect->object
+    );
 
     fst_plugin->generate_and_add_samples(frames, indata, outdata);
 }
@@ -367,7 +382,9 @@ void VSTCALLBACK FstPlugin::process_replacing(
         float** outdata,
         VstInt32 frames
 ) {
-    MpeEmulator::FstPlugin* const fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* const fst_plugin = (
+        (MpeEmulator::FstPlugin*)effect->object
+    );
 
     fst_plugin->generate_samples<float>(frames, outdata);
 }
@@ -379,7 +396,9 @@ void VSTCALLBACK FstPlugin::process_double_replacing(
         double** outdata,
         VstInt32 frames
 ) {
-    MpeEmulator::FstPlugin* const fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* const fst_plugin = (
+        (MpeEmulator::FstPlugin*)effect->object
+    );
 
     fst_plugin->generate_samples<double>(frames, outdata);
 }
@@ -387,7 +406,9 @@ void VSTCALLBACK FstPlugin::process_double_replacing(
 
 float VSTCALLBACK FstPlugin::get_parameter(AEffect* effect, VstInt32 index)
 {
-    MpeEmulator::FstPlugin* const fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* const fst_plugin = (
+        (MpeEmulator::FstPlugin*)effect->object
+    );
 
     return fst_plugin->get_parameter((size_t)index);
 }
@@ -398,7 +419,9 @@ void VSTCALLBACK FstPlugin::set_parameter(
         VstInt32 index,
         float fvalue
 ) {
-    MpeEmulator::FstPlugin* const fst_plugin = (MpeEmulator::FstPlugin*)effect->object;
+    MpeEmulator::FstPlugin* const fst_plugin = (
+        (MpeEmulator::FstPlugin*)effect->object
+    );
 
     fst_plugin->set_parameter((size_t)index, fvalue);
 }
@@ -414,7 +437,11 @@ void FstPlugin::populate_parameters(
     constexpr int midi_cc_end = (int)Proxy::ControllerId::MAX_MIDI_CC + 1;
     constexpr int cc_sound_5 = (int)Proxy::ControllerId::SOUND_5;
 
-    for (int controller_id = midi_cc_begin; controller_id != midi_cc_end; ++controller_id) {
+    for (
+            int controller_id = midi_cc_begin;
+            controller_id != midi_cc_end;
+            ++controller_id
+    ) {
         Parameter parameter(
             Strings::CONTROLLERS_SHORT[controller_id],
             Strings::CONTROLLERS_LONG[controller_id],
@@ -628,7 +655,10 @@ void FstPlugin::handle_change_param(
         size_t const index,
         double const new_value
 ) noexcept {
-    if (index >= NUMBER_OF_PARAMETERS || index == PATCH_CHANGED_PARAMETER_INDEX) {
+    if (
+            index >= NUMBER_OF_PARAMETERS
+            || index == PATCH_CHANGED_PARAMETER_INDEX
+    ) {
         return;
     }
 
@@ -840,12 +870,16 @@ void FstPlugin::set_sample_rate(double const new_sample_rate) noexcept
         min_samples_before_next_cc_ui_update = 1 + (VstInt32)(
             new_sample_rate * HOST_CC_UI_UPDATE_FREQUENCY_INV
         );
-        remaining_samples_before_next_cc_ui_update = min_samples_before_next_cc_ui_update;
+        remaining_samples_before_next_cc_ui_update = (
+            min_samples_before_next_cc_ui_update
+        );
 
         min_samples_before_next_bank_update = 1 + (VstInt32)(
             new_sample_rate * BANK_UPDATE_FREQUENCY_INV
         );
-        remaining_samples_before_next_bank_update = min_samples_before_next_bank_update;
+        remaining_samples_before_next_bank_update = (
+            min_samples_before_next_bank_update
+        );
     }
 
     proxy.running_status = 0;
@@ -897,7 +931,9 @@ void FstPlugin::process_vst_events(VstEvents const* const events) noexcept
 
     if (had_midi_cc_event && remaining_samples_before_next_cc_ui_update == 0) {
         had_midi_cc_event = false;
-        remaining_samples_before_next_cc_ui_update = min_samples_before_next_cc_ui_update;
+        remaining_samples_before_next_cc_ui_update = (
+            min_samples_before_next_cc_ui_update
+        );
         to_gui_messages.push(Message(MessageType::PARAMS_CHANGED));
     }
 }
@@ -1065,7 +1101,9 @@ void FstPlugin::finalize_processing(VstInt32 const sample_count) noexcept
         return;
     }
 
-    remaining_samples_before_next_bank_update = min_samples_before_next_bank_update;
+    remaining_samples_before_next_bank_update = (
+        min_samples_before_next_bank_update
+    );
     need_bank_update = false;
     proxy.clear_dirty_flag();
 
@@ -1079,7 +1117,9 @@ void FstPlugin::finalize_processing(VstInt32 const sample_count) noexcept
     to_gui_messages.push(
         Message(MessageType::PROGRAM_CHANGED, current_program, current_patch)
     );
-    to_gui_messages.push(Message(MessageType::BANK_CHANGED, 0, serialized_bank));
+    to_gui_messages.push(
+        Message(MessageType::BANK_CHANGED, 0, serialized_bank)
+    );
 
     if (is_dirty) {
         to_gui_messages.push(Message(MessageType::PROXY_WAS_DIRTY));
@@ -1095,9 +1135,13 @@ void FstPlugin::send_out_events(int const last_sample_offset) noexcept
 
     out_events.numEvents = 0;
 
-    for (Proxy::OutEvents::const_iterator it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
+    Proxy::OutEvents::const_iterator it;
+
+    for (it = proxy.out_events.begin(); it != proxy.out_events.end(); ++it) {
         Midi::Event const& midi_event(*it);
-        VstMidiEvent* const vst_midi_event = &out_event_buffer[next_vst_event_idx];
+        VstMidiEvent* const vst_midi_event = (
+            &out_event_buffer[next_vst_event_idx]
+        );
 
         memset(vst_midi_event, 0, sizeof(VstMidiEvent));
 
@@ -1174,8 +1218,11 @@ VstIntPtr FstPlugin::get_chunk(void** chunk, bool is_preset) noexcept
 }
 
 
-void FstPlugin::set_chunk(void const* const chunk, VstIntPtr const size, bool is_preset) noexcept
-{
+void FstPlugin::set_chunk(
+        void const* const chunk,
+        VstIntPtr const size,
+        bool is_preset
+) noexcept {
     process_internal_messages_in_gui_thread();
 
     std::string buffer((char const*)chunk, (std::string::size_type)size);
@@ -1311,7 +1358,9 @@ void FstPlugin::set_program_name(char const* const name)
 {
     process_internal_messages_in_gui_thread();
 
-    to_audio_string_messages.push(Message(MessageType::RENAME_PROGRAM, 0, name));
+    to_audio_string_messages.push(
+        Message(MessageType::RENAME_PROGRAM, 0, name)
+    );
     program_names[current_program_index].set_name(name);
 }
 
