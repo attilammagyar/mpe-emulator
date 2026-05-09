@@ -232,9 +232,27 @@ Proxy::Proxy() noexcept
     transpose_above_anchor("Z1TRA", 0, 96, 48),
     sustain_pedal_handling("Z1SUS", Toggle::OFF, Toggle::ON, Toggle::OFF),
     rules{
-        Rule("Z1R1", ControllerId::PITCH_WHEEL, ControllerId::PITCH_WHEEL, Target::TRG_NEWEST, 8192),
-        Rule("Z1R2", ControllerId::CHANNEL_PRESSURE, ControllerId::CHANNEL_PRESSURE, Target::TRG_NEWEST, 0),
-        Rule("Z1R3", ControllerId::SOUND_5, ControllerId::SOUND_5, Target::TRG_NEWEST, 8192),
+        Rule(
+            "Z1R1",
+            ControllerId::PITCH_WHEEL,
+            ControllerId::PITCH_WHEEL,
+            Target::TRG_NEWEST,
+            8192
+        ),
+        Rule(
+            "Z1R2",
+            ControllerId::CHANNEL_PRESSURE,
+            ControllerId::CHANNEL_PRESSURE,
+            Target::TRG_NEWEST,
+            0
+        ),
+        Rule(
+            "Z1R3",
+            ControllerId::SOUND_5,
+            ControllerId::SOUND_5,
+            Target::TRG_NEWEST,
+            8192
+        ),
         Rule("Z1R4"),
         Rule("Z1R5"),
         Rule("Z1R6"),
@@ -347,7 +365,11 @@ bool Proxy::is_lock_free() const noexcept
 {
     bool is_lock_free = true;
 
-    for (size_t i = 0; is_lock_free && i != (size_t)ParamId::PARAM_ID_COUNT; ++i) {
+    for (
+            size_t i = 0;
+            is_lock_free && i != (size_t)ParamId::PARAM_ID_COUNT;
+            ++i
+    ) {
         is_lock_free = param_ratios_atomic[i].is_lock_free();
     }
 
@@ -411,7 +433,10 @@ void Proxy::note_on(
     bool const already_on = note_stack.find(note);
 
     if (MPE_EMULATOR_UNLIKELY(already_on)) {
-        if ((ExcessNoteHandling)excess_note_handling.get_value() == ExcessNoteHandling::ENH_IGNORE) {
+        if (
+                (ExcessNoteHandling)excess_note_handling.get_value()
+                == ExcessNoteHandling::ENH_IGNORE
+        ) {
             return;
         }
 
@@ -663,7 +688,10 @@ void Proxy::reset_outdated_targets_if_changed(
             break;
 
         case Target::TRG_HIGHEST_BELOW_ANCHOR:
-            if (a_channel_stats_below.highest != b_channel_stats_below.highest) {
+            if (
+                    a_channel_stats_below.highest
+                    != b_channel_stats_below.highest
+            ) {
                 channel = a_channel_stats_below.highest;
             }
 
@@ -691,7 +719,10 @@ void Proxy::reset_outdated_targets_if_changed(
             break;
 
         case Target::TRG_HIGHEST_ABOVE_ANCHOR:
-            if (a_channel_stats_above.highest != b_channel_stats_above.highest) {
+            if (
+                    a_channel_stats_above.highest
+                    != b_channel_stats_above.highest
+            ) {
                 channel = a_channel_stats_above.highest;
             }
 
@@ -949,103 +980,134 @@ void Proxy::process_controller_event(
             (ControllerId)rule.out_cc.get_value()
         );
 
-        if (is_note_stack_empty && (Toggle)rule.fallback.get_value() == Toggle::ON) {
+        if (
+                is_note_stack_empty
+                && (Toggle)rule.fallback.get_value() == Toggle::ON
+        ) {
             target_channels[target_channels_count++] = manager_channel;
         } else {
             switch ((Target)rule.target.get_value()) {
                 case Target::TRG_ALL_BELOW_ANCHOR:
                     note_stack_below.collect_active_channels(
-                        channels_by_notes, target_channels, target_channels_count
+                        channels_by_notes,
+                        target_channels,
+                        target_channels_count
                     );
                     break;
 
                 case Target::TRG_ALL_ABOVE_ANCHOR:
                     note_stack_above.collect_active_channels(
-                        channels_by_notes, target_channels, target_channels_count
+                        channels_by_notes,
+                        target_channels,
+                        target_channels_count
                     );
                     break;
 
                 case Target::TRG_LOWEST:
                     if (!note_stack.is_empty()) {
                         Midi::Note note = note_stack.lowest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_HIGHEST:
                     if (!note_stack.is_empty()) {
                         Midi::Note note = note_stack.highest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_OLDEST:
                     if (!note_stack.is_empty()) {
                         Midi::Note note = note_stack.oldest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_NEWEST:
                     if (!note_stack.is_empty()) {
                         Midi::Note note = note_stack.top();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_LOWEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
                         Midi::Note note = note_stack_below.lowest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_HIGHEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
                         Midi::Note note = note_stack_below.highest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_OLDEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
                         Midi::Note note = note_stack_below.oldest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_NEWEST_BELOW_ANCHOR:
                     if (!note_stack_below.is_empty()) {
                         Midi::Note note = note_stack_below.top();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_LOWEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
                         Midi::Note note = note_stack_above.lowest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_HIGHEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
                         Midi::Note note = note_stack_above.highest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_OLDEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
                         Midi::Note note = note_stack_above.oldest();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
                 case Target::TRG_NEWEST_ABOVE_ANCHOR:
                     if (!note_stack_above.is_empty()) {
                         Midi::Note note = note_stack_above.top();
-                        target_channels[target_channels_count++] = channels_by_notes[note];
+                        target_channels[target_channels_count++] = (
+                            channels_by_notes[note]
+                        );
                     }
                     break;
 
@@ -1061,7 +1123,10 @@ void Proxy::process_controller_event(
 
             for (size_t c = 0; c != target_channels_count; ++c) {
                 push_controller_event(
-                    time_offset, target_channels[c], out_controller_id, out_value
+                    time_offset,
+                    target_channels[c],
+                    out_controller_id,
+                    out_value
                 );
             }
         }
@@ -1331,7 +1396,9 @@ void Proxy::process_message(Message const& message) noexcept
 {
     switch (message.type) {
         case MessageType::SET_PARAM:
-            is_dirty_ = handle_set_param(message.param_id, message.double_param);
+            is_dirty_ = handle_set_param(
+                message.param_id, message.double_param
+            );
             break;
 
         case MessageType::REFRESH_PARAM:
@@ -1352,8 +1419,10 @@ void Proxy::process_message(Message const& message) noexcept
 }
 
 
-bool Proxy::handle_set_param(ParamId const param_id, double const ratio) noexcept
-{
+bool Proxy::handle_set_param(
+        ParamId const param_id,
+        double const ratio
+) noexcept {
     Param& param = *(params[(size_t)param_id]);
 
     unsigned int const old_value = param.get_value();
@@ -1463,7 +1532,11 @@ void Proxy::stop_all_notes() noexcept
             0.0, manager_channel, ControllerId::SUSTAIN_PEDAL, 0.0
         );
 
-        for (Midi::Note i = 0; !note_stack.is_empty() && i != Midi::NOTE_MAX; ++i) {
+        for (
+                Midi::Note i = 0;
+                !note_stack.is_empty() && i != Midi::NOTE_MAX;
+                ++i
+        ) {
             Midi::Note const note = note_stack.pop();
             Midi::Channel const channel = channels_by_notes[note];
 
@@ -1506,7 +1579,11 @@ void Proxy::push_mcm(
     );
     push_out_event(
         Midi::Event(
-            0.0, Midi::CONTROL_CHANGE, channel, Midi::DATA_ENTRY_MSB, channel_count
+            0.0,
+            Midi::CONTROL_CHANGE,
+            channel,
+            Midi::DATA_ENTRY_MSB,
+            channel_count
         )
     );
 }
@@ -1583,8 +1660,10 @@ Proxy::ParamIdHashTable::~ParamIdHashTable() noexcept
 }
 
 
-void Proxy::ParamIdHashTable::add(std::string const& name, ParamId const param_id) noexcept
-{
+void Proxy::ParamIdHashTable::add(
+        std::string const& name,
+        ParamId const param_id
+) noexcept {
     Entry* root;
     Entry* parent;
     Entry* entry;
@@ -1784,7 +1863,9 @@ void Proxy::ParamIdHashTable::Entry::set(
 }
 
 
-Proxy::MidiControllerMessage::MidiControllerMessage() : time_offset(-999999.0), value(0)
+Proxy::MidiControllerMessage::MidiControllerMessage()
+    : time_offset(-999999.0),
+    value(0)
 {
 }
 

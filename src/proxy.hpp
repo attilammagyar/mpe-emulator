@@ -45,9 +45,10 @@ class Proxy : public Midi::EventHandler
             SET_PARAM = 1,          ///< Set the given parameter's ratio to
                                     ///< \c double_param.
 
-            REFRESH_PARAM = 2,      ///< Make sure that \c get_param_ratio_atomic()
-                                    ///< will return the most recent value of
-                                    ///< the given parameter.
+            REFRESH_PARAM = 2,      ///< Make sure that
+                                    ///< \c get_param_ratio_atomic() will return
+                                    ///< the most recent value of the given
+                                    ///< parameter.
 
             CLEAR = 3,              ///< Clear all buffers and reset all
                                     ///< parameters to their default values.
@@ -64,7 +65,8 @@ class Proxy : public Midi::EventHandler
             Z1CHN   = 2,            ///< Zone 1 channels
             Z1ENH   = 3,            ///< Zone 1 excess note handling
             Z1ANC   = 4,            ///< Zone 1 anchor
-            Z1ORV   = 5,            ///< Zone 1 override release velocity with triggered velocity
+            Z1ORV   = 5,            ///< Zone 1 override release velocity with
+                                    ///< triggered velocity
 
             Z1R1IN  = 6,            ///< Zone 1 Rule 1 input
             Z1R1OU  = 7,            ///< Zone 1 Rule 1 output
@@ -176,136 +178,136 @@ class Proxy : public Midi::EventHandler
         };
 
         enum ControllerId {
-            BANK_SELECT =               0,          ///< Bank Select (CC 0)
-            MODULATION_WHEEL =          1,          ///< Modulation Wheel (CC 1)
-            BREATH =                    2,          ///< Breath (CC 2)
-            UNDEFINED_1 =               3,          ///< Undefined 1 (CC 3)
-            FOOT_PEDAL =                4,          ///< Foot Pedal (CC 4)
-            PORTAMENTO_TIME =           5,          ///< Portamento Time (CC 5)
-            DATA_ENTRY =                6,          ///< Data Entry (CC 6)
-            VOLUME =                    7,          ///< Volume (CC 7)
-            BALANCE =                   8,          ///< Balance (CC 8)
-            UNDEFINED_2 =               9,          ///< Undefined 2 (CC 9)
-            PAN =                       10,         ///< Pan (CC 10)
-            EXPRESSION_PEDAL =          11,         ///< Expression Pedal (CC 11)
-            FX_CTL_1 =                  12,         ///< Effect Control 1 (CC 12)
-            FX_CTL_2 =                  13,         ///< Effect Control 2 (CC 13)
-            UNDEFINED_3 =               14,         ///< Undefined 3 (CC 14)
-            UNDEFINED_4 =               15,         ///< Undefined 4 (CC 15)
-            GENERAL_1 =                 16,         ///< General 1 (CC 16)
-            GENERAL_2 =                 17,         ///< General 2 (CC 17)
-            GENERAL_3 =                 18,         ///< General 3 (CC 18)
-            GENERAL_4 =                 19,         ///< General 4 (CC 19)
-            UNDEFINED_5 =               20,         ///< Undefined 5 (CC 20)
-            UNDEFINED_6 =               21,         ///< Undefined 6 (CC 21)
-            UNDEFINED_7 =               22,         ///< Undefined 7 (CC 22)
-            UNDEFINED_8 =               23,         ///< Undefined 8 (CC 23)
-            UNDEFINED_9 =               24,         ///< Undefined 9 (CC 24)
-            UNDEFINED_10 =              25,         ///< Undefined 10 (CC 25)
-            UNDEFINED_11 =              26,         ///< Undefined 11 (CC 26)
-            UNDEFINED_12 =              27,         ///< Undefined 12 (CC 27)
-            UNDEFINED_13 =              28,         ///< Undefined 13 (CC 28)
-            UNDEFINED_14 =              29,         ///< Undefined 14 (CC 29)
-            UNDEFINED_15 =              30,         ///< Undefined 15 (CC 30)
-            UNDEFINED_16 =              31,         ///< Undefined 16 (CC 31)
-            BANK_SELECT_LSB =           32,         ///< Bank Select LSB (14 bit) (CC 32)
-            MODULATION_WHEEL_LSB =      33,         ///< Modulation Wheel LSB (14 bit) (CC 33)
-            BREATH_LSB =                34,         ///< Breath LSB (14 bit) (CC 34)
-            UNDEFINED_1_LSB =           35,         ///< Undefined 1 LSB (14 bit) (CC 35)
-            FOOT_PEDAL_LSB =            36,         ///< Foot Pedal LSB (14 bit) (CC 36)
-            PORTAMENTO_TIME_LSB =       37,         ///< Portamento Time LSB (14 bit) (CC 37)
-            DATA_ENTRY_LSB =            38,         ///< Data Entry LSB (14 bit) (CC 38)
-            VOLUME_LSB =                39,         ///< Volume LSB (14 bit) (CC 39)
-            BALANCE_LSB =               40,         ///< Balance LSB (14 bit) (CC 40)
-            UNDEFINED_2_LSB =           41,         ///< Undefined 2 LSB (14 bit) (CC 41)
-            PAN_LSB =                   42,         ///< Pan LSB (14 bit) (CC 42)
-            EXPRESSION_PEDAL_LSB =      43,         ///< Expression Pedal LSB (14 bit) (CC 43)
-            FX_CTL_1_LSB =              44,         ///< Effect Control 1 LSB (14 bit) (CC 44)
-            FX_CTL_2_LSB =              45,         ///< Effect Control 2 LSB (14 bit) (CC 45)
-            UNDEFINED_3_LSB =           46,         ///< Undefined 3 LSB (14 bit) (CC 46)
-            UNDEFINED_4_LSB =           47,         ///< Undefined 4 LSB (14 bit) (CC 47)
-            GENERAL_1_LSB =             48,         ///< General 1 LSB (14 bit) (CC 48)
-            GENERAL_2_LSB =             49,         ///< General 2 LSB (14 bit) (CC 49)
-            GENERAL_3_LSB =             50,         ///< General 3 LSB (14 bit) (CC 50)
-            GENERAL_4_LSB =             51,         ///< General 4 LSB (14 bit) (CC 51)
-            UNDEFINED_5_LSB =           52,         ///< Undefined 5 LSB (14 bit) (CC 52)
-            UNDEFINED_6_LSB =           53,         ///< Undefined 6 LSB (14 bit) (CC 53)
-            UNDEFINED_7_LSB =           54,         ///< Undefined 7 LSB (14 bit) (CC 54)
-            UNDEFINED_8_LSB =           55,         ///< Undefined 8 LSB (14 bit) (CC 55)
-            UNDEFINED_9_LSB =           56,         ///< Undefined 9 LSB (14 bit) (CC 56)
-            UNDEFINED_10_LSB =          57,         ///< Undefined 10 LSB (14 bit) (CC 57)
-            UNDEFINED_11_LSB =          58,         ///< Undefined 11 LSB (14 bit) (CC 58)
-            UNDEFINED_12_LSB =          59,         ///< Undefined 12 LSB (14 bit) (CC 59)
-            UNDEFINED_13_LSB =          60,         ///< Undefined 13 LSB (14 bit) (CC 60)
-            UNDEFINED_14_LSB =          61,         ///< Undefined 14 LSB (14 bit) (CC 61)
-            UNDEFINED_15_LSB =          62,         ///< Undefined 15 LSB (14 bit) (CC 62)
-            UNDEFINED_16_LSB =          63,         ///< Undefined 16 LSB (14 bit) (CC 63)
-            SUSTAIN_PEDAL =             64,         ///< Sustain Pedal (CC 64)
-            PORTAMENTO_ON_OFF =         65,         ///< Portamento On/Off (CC 65)
-            SOSTENUTO =                 66,         ///< Sostenuto (CC 66)
-            SOFT_PEDAL =                67,         ///< Soft Pedal (CC 67)
-            LEGATO_FOOTSWITCH =         68,         ///< Legato Footswitch (CC 68)
-            HOLD_2 =                    69,         ///< Hold 2 (CC 69)
-            SOUND_1 =                   70,         ///< Sound 1 (CC 70)
-            SOUND_2 =                   71,         ///< Sound 2 (CC 71)
-            SOUND_3 =                   72,         ///< Sound 3 (CC 72)
-            SOUND_4 =                   73,         ///< Sound 4 (CC 73)
-            SOUND_5 =                   74,         ///< Sound 5 (CC 74)
-            SOUND_6 =                   75,         ///< Sound 6 (CC 75)
-            SOUND_7 =                   76,         ///< Sound 7 (CC 76)
-            SOUND_8 =                   77,         ///< Sound 8 (CC 77)
-            SOUND_9 =                   78,         ///< Sound 9 (CC 78)
-            SOUND_10 =                  79,         ///< Sound 10 (CC 79)
-            GENERAL_ON_OFF_1 =          80,         ///< General On/Off 1 (CC 80)
-            GENERAL_ON_OFF_2 =          81,         ///< General On/Off 2 (CC 81)
-            GENERAL_ON_OFF_3 =          82,         ///< General On/Off 3 (CC 82)
-            GENERAL_ON_OFF_4 =          83,         ///< General On/Off 4 (CC 83)
-            PORTAMENTO_CONTROL =        84,         ///< Portamento Control (CC 84)
-            UNDEFINED_17 =              85,         ///< Undefined 17 (CC 85)
-            UNDEFINED_18 =              86,         ///< Undefined 18 (CC 86)
-            UNDEFINED_19 =              87,         ///< Undefined 19 (CC 87)
-            UNDEFINED_20 =              88,         ///< Undefined 20 (CC 88)
-            UNDEFINED_21 =              89,         ///< Undefined 21 (CC 89)
-            UNDEFINED_22 =              90,         ///< Undefined 22 (CC 90)
-            FX_1 =                      91,         ///< Effect 1 (CC 91)
-            FX_2 =                      92,         ///< Effect 2 (CC 92)
-            FX_3 =                      93,         ///< Effect 3 (CC 93)
-            FX_4 =                      94,         ///< Effect 4 (CC 94)
-            FX_5 =                      95,         ///< Effect 5 (CC 95)
-            DATA_INCREMENT =            96,         ///< Data Increment (CC 96)
-            DATA_DECREMENT =            97,         ///< Data Decrement (CC 97)
-            NON_REG_PARAM_NUM_LSB =     98,         ///< Non-Registered Parameter Number LSB (CC 98)
-            NON_REG_PARAM_NUM_MSB =     99,         ///< Non-Registered Parameter Number MSB (CC 99)
-            REG_PARAM_NUM_LSB =         100,        ///< Registered Parameter Number LSB (CC 100)
-            REG_PARAM_NUM_MSB =         101,        ///< Registered Parameter Number MSB (CC 101)
-            UNDEFINED_23 =              102,        ///< Undefined 23 (CC 102)
-            UNDEFINED_24 =              103,        ///< Undefined 24 (CC 103)
-            UNDEFINED_25 =              104,        ///< Undefined 25 (CC 104)
-            UNDEFINED_26 =              105,        ///< Undefined 26 (CC 105)
-            UNDEFINED_27 =              106,        ///< Undefined 27 (CC 106)
-            UNDEFINED_28 =              107,        ///< Undefined 28 (CC 107)
-            UNDEFINED_29 =              108,        ///< Undefined 29 (CC 108)
-            UNDEFINED_30 =              109,        ///< Undefined 30 (CC 109)
-            UNDEFINED_31 =              110,        ///< Undefined 31 (CC 110)
-            UNDEFINED_32 =              111,        ///< Undefined 32 (CC 111)
-            UNDEFINED_33 =              112,        ///< Undefined 33 (CC 112)
-            UNDEFINED_34 =              113,        ///< Undefined 34 (CC 113)
-            UNDEFINED_35 =              114,        ///< Undefined 35 (CC 114)
-            UNDEFINED_36 =              115,        ///< Undefined 36 (CC 115)
-            UNDEFINED_37 =              116,        ///< Undefined 37 (CC 116)
-            UNDEFINED_38 =              117,        ///< Undefined 38 (CC 117)
-            UNDEFINED_39 =              118,        ///< Undefined 39 (CC 118)
-            UNDEFINED_40 =              119,        ///< Undefined 40 (CC 119)
+            BANK_SELECT =           0,   ///< Bank Select (CC 0)
+            MODULATION_WHEEL =      1,   ///< Modulation Wheel (CC 1)
+            BREATH =                2,   ///< Breath (CC 2)
+            UNDEFINED_1 =           3,   ///< Undefined 1 (CC 3)
+            FOOT_PEDAL =            4,   ///< Foot Pedal (CC 4)
+            PORTAMENTO_TIME =       5,   ///< Portamento Time (CC 5)
+            DATA_ENTRY =            6,   ///< Data Entry (CC 6)
+            VOLUME =                7,   ///< Volume (CC 7)
+            BALANCE =               8,   ///< Balance (CC 8)
+            UNDEFINED_2 =           9,   ///< Undefined 2 (CC 9)
+            PAN =                   10,  ///< Pan (CC 10)
+            EXPRESSION_PEDAL =      11,  ///< Expression Pedal (CC 11)
+            FX_CTL_1 =              12,  ///< Effect Control 1 (CC 12)
+            FX_CTL_2 =              13,  ///< Effect Control 2 (CC 13)
+            UNDEFINED_3 =           14,  ///< Undefined 3 (CC 14)
+            UNDEFINED_4 =           15,  ///< Undefined 4 (CC 15)
+            GENERAL_1 =             16,  ///< General 1 (CC 16)
+            GENERAL_2 =             17,  ///< General 2 (CC 17)
+            GENERAL_3 =             18,  ///< General 3 (CC 18)
+            GENERAL_4 =             19,  ///< General 4 (CC 19)
+            UNDEFINED_5 =           20,  ///< Undefined 5 (CC 20)
+            UNDEFINED_6 =           21,  ///< Undefined 6 (CC 21)
+            UNDEFINED_7 =           22,  ///< Undefined 7 (CC 22)
+            UNDEFINED_8 =           23,  ///< Undefined 8 (CC 23)
+            UNDEFINED_9 =           24,  ///< Undefined 9 (CC 24)
+            UNDEFINED_10 =          25,  ///< Undefined 10 (CC 25)
+            UNDEFINED_11 =          26,  ///< Undefined 11 (CC 26)
+            UNDEFINED_12 =          27,  ///< Undefined 12 (CC 27)
+            UNDEFINED_13 =          28,  ///< Undefined 13 (CC 28)
+            UNDEFINED_14 =          29,  ///< Undefined 14 (CC 29)
+            UNDEFINED_15 =          30,  ///< Undefined 15 (CC 30)
+            UNDEFINED_16 =          31,  ///< Undefined 16 (CC 31)
+            BANK_SELECT_LSB =       32,  ///< Bank Select LSB (14 bit) (CC 32)
+            MODULATION_WHEEL_LSB =  33,  ///< Mod Wheel LSB (14 bit) (CC 33)
+            BREATH_LSB =            34,  ///< Breath LSB (14 bit) (CC 34)
+            UNDEFINED_1_LSB =       35,  ///< Undefined 1 LSB (14 bit) (CC 35)
+            FOOT_PEDAL_LSB =        36,  ///< Foot Pedal LSB (14 bit) (CC 36)
+            PORTAMENTO_TIME_LSB =   37,  ///< Prtmnt Time LSB (14 bit) (CC 37)
+            DATA_ENTRY_LSB =        38,  ///< Data Entry LSB (14 bit) (CC 38)
+            VOLUME_LSB =            39,  ///< Volume LSB (14 bit) (CC 39)
+            BALANCE_LSB =           40,  ///< Balance LSB (14 bit) (CC 40)
+            UNDEFINED_2_LSB =       41,  ///< Undefined 2 LSB (14 bit) (CC 41)
+            PAN_LSB =               42,  ///< Pan LSB (14 bit) (CC 42)
+            EXPRESSION_PEDAL_LSB =  43,  ///< Expr Pedal LSB (14 bit) (CC 43)
+            FX_CTL_1_LSB =          44,  ///< FX Control 1 LSB (14 bit) (CC 44)
+            FX_CTL_2_LSB =          45,  ///< FX Control 2 LSB (14 bit) (CC 45)
+            UNDEFINED_3_LSB =       46,  ///< Undefined 3 LSB (14 bit) (CC 46)
+            UNDEFINED_4_LSB =       47,  ///< Undefined 4 LSB (14 bit) (CC 47)
+            GENERAL_1_LSB =         48,  ///< General 1 LSB (14 bit) (CC 48)
+            GENERAL_2_LSB =         49,  ///< General 2 LSB (14 bit) (CC 49)
+            GENERAL_3_LSB =         50,  ///< General 3 LSB (14 bit) (CC 50)
+            GENERAL_4_LSB =         51,  ///< General 4 LSB (14 bit) (CC 51)
+            UNDEFINED_5_LSB =       52,  ///< Undefined 5 LSB (14 bit) (CC 52)
+            UNDEFINED_6_LSB =       53,  ///< Undefined 6 LSB (14 bit) (CC 53)
+            UNDEFINED_7_LSB =       54,  ///< Undefined 7 LSB (14 bit) (CC 54)
+            UNDEFINED_8_LSB =       55,  ///< Undefined 8 LSB (14 bit) (CC 55)
+            UNDEFINED_9_LSB =       56,  ///< Undefined 9 LSB (14 bit) (CC 56)
+            UNDEFINED_10_LSB =      57,  ///< Undefined 10 LSB (14 bit) (CC 57)
+            UNDEFINED_11_LSB =      58,  ///< Undefined 11 LSB (14 bit) (CC 58)
+            UNDEFINED_12_LSB =      59,  ///< Undefined 12 LSB (14 bit) (CC 59)
+            UNDEFINED_13_LSB =      60,  ///< Undefined 13 LSB (14 bit) (CC 60)
+            UNDEFINED_14_LSB =      61,  ///< Undefined 14 LSB (14 bit) (CC 61)
+            UNDEFINED_15_LSB =      62,  ///< Undefined 15 LSB (14 bit) (CC 62)
+            UNDEFINED_16_LSB =      63,  ///< Undefined 16 LSB (14 bit) (CC 63)
+            SUSTAIN_PEDAL =         64,  ///< Sustain Pedal (CC 64)
+            PORTAMENTO_ON_OFF =     65,  ///< Portamento On/Off (CC 65)
+            SOSTENUTO =             66,  ///< Sostenuto (CC 66)
+            SOFT_PEDAL =            67,  ///< Soft Pedal (CC 67)
+            LEGATO_FOOTSWITCH =     68,  ///< Legato Footswitch (CC 68)
+            HOLD_2 =                69,  ///< Hold 2 (CC 69)
+            SOUND_1 =               70,  ///< Sound 1 (CC 70)
+            SOUND_2 =               71,  ///< Sound 2 (CC 71)
+            SOUND_3 =               72,  ///< Sound 3 (CC 72)
+            SOUND_4 =               73,  ///< Sound 4 (CC 73)
+            SOUND_5 =               74,  ///< Sound 5 (CC 74)
+            SOUND_6 =               75,  ///< Sound 6 (CC 75)
+            SOUND_7 =               76,  ///< Sound 7 (CC 76)
+            SOUND_8 =               77,  ///< Sound 8 (CC 77)
+            SOUND_9 =               78,  ///< Sound 9 (CC 78)
+            SOUND_10 =              79,  ///< Sound 10 (CC 79)
+            GENERAL_ON_OFF_1 =      80,  ///< General On/Off 1 (CC 80)
+            GENERAL_ON_OFF_2 =      81,  ///< General On/Off 2 (CC 81)
+            GENERAL_ON_OFF_3 =      82,  ///< General On/Off 3 (CC 82)
+            GENERAL_ON_OFF_4 =      83,  ///< General On/Off 4 (CC 83)
+            PORTAMENTO_CONTROL =    84,  ///< Portamento Control (CC 84)
+            UNDEFINED_17 =          85,  ///< Undefined 17 (CC 85)
+            UNDEFINED_18 =          86,  ///< Undefined 18 (CC 86)
+            UNDEFINED_19 =          87,  ///< Undefined 19 (CC 87)
+            UNDEFINED_20 =          88,  ///< Undefined 20 (CC 88)
+            UNDEFINED_21 =          89,  ///< Undefined 21 (CC 89)
+            UNDEFINED_22 =          90,  ///< Undefined 22 (CC 90)
+            FX_1 =                  91,  ///< Effect 1 (CC 91)
+            FX_2 =                  92,  ///< Effect 2 (CC 92)
+            FX_3 =                  93,  ///< Effect 3 (CC 93)
+            FX_4 =                  94,  ///< Effect 4 (CC 94)
+            FX_5 =                  95,  ///< Effect 5 (CC 95)
+            DATA_INCREMENT =        96,  ///< Data Increment (CC 96)
+            DATA_DECREMENT =        97,  ///< Data Decrement (CC 97)
+            NON_REG_PARAM_NUM_LSB = 98,  ///< Non-Reg Param Num LSB (CC 98)
+            NON_REG_PARAM_NUM_MSB = 99,  ///< Non-Reg Param Num MSB (CC 99)
+            REG_PARAM_NUM_LSB =     100, ///< Registered Param Num LSB (CC 100)
+            REG_PARAM_NUM_MSB =     101, ///< Registered Param Num MSB (CC 101)
+            UNDEFINED_23 =          102, ///< Undefined 23 (CC 102)
+            UNDEFINED_24 =          103, ///< Undefined 24 (CC 103)
+            UNDEFINED_25 =          104, ///< Undefined 25 (CC 104)
+            UNDEFINED_26 =          105, ///< Undefined 26 (CC 105)
+            UNDEFINED_27 =          106, ///< Undefined 27 (CC 106)
+            UNDEFINED_28 =          107, ///< Undefined 28 (CC 107)
+            UNDEFINED_29 =          108, ///< Undefined 29 (CC 108)
+            UNDEFINED_30 =          109, ///< Undefined 30 (CC 109)
+            UNDEFINED_31 =          110, ///< Undefined 31 (CC 110)
+            UNDEFINED_32 =          111, ///< Undefined 32 (CC 111)
+            UNDEFINED_33 =          112, ///< Undefined 33 (CC 112)
+            UNDEFINED_34 =          113, ///< Undefined 34 (CC 113)
+            UNDEFINED_35 =          114, ///< Undefined 35 (CC 114)
+            UNDEFINED_36 =          115, ///< Undefined 36 (CC 115)
+            UNDEFINED_37 =          116, ///< Undefined 37 (CC 116)
+            UNDEFINED_38 =          117, ///< Undefined 38 (CC 117)
+            UNDEFINED_39 =          118, ///< Undefined 39 (CC 118)
+            UNDEFINED_40 =          119, ///< Undefined 40 (CC 119)
 
-            MAX_MIDI_CC =               119,
+            MAX_MIDI_CC =           119,
 
-            PITCH_WHEEL =               120,        ///< Pitch Wheel
-            CHANNEL_PRESSURE =          121,        ///< Channel Pressure
-            MIDI_LEARN =                122,        ///< MIDI Learn
-            NONE =                      123,        ///< None
+            PITCH_WHEEL =           120, ///< Pitch Wheel
+            CHANNEL_PRESSURE =      121, ///< Channel Pressure
+            MIDI_LEARN =            122, ///< MIDI Learn
+            NONE =                  123, ///< None
 
-            CONTROLLER_ID_COUNT =       124,
-            INVALID_CONTROLLER_ID =     CONTROLLER_ID_COUNT,
+            CONTROLLER_ID_COUNT =   124,
+            INVALID_CONTROLLER_ID = CONTROLLER_ID_COUNT,
         };
 
         enum Toggle {
@@ -376,7 +378,10 @@ class Proxy : public Midi::EventHandler
                 void set_ratio(double const new_ratio) noexcept;
 
             private:
-                unsigned int clamp_value(unsigned int const value) const noexcept;
+                unsigned int clamp_value(
+                    unsigned int const value
+                ) const noexcept;
+
                 double clamp_ratio(double const ratio) const noexcept;
 
                 std::string const name;
@@ -501,7 +506,10 @@ class Proxy : public Midi::EventHandler
          */
         void process_message(Message const& message) noexcept;
 
-        std::string const& get_param_name(ParamId const param_id) const noexcept;
+        std::string const& get_param_name(
+            ParamId const param_id
+        ) const noexcept;
+
         ParamId get_param_id(std::string const& name) const noexcept;
 
         unsigned int get_active_voices_count() const noexcept;
@@ -602,7 +610,11 @@ class Proxy : public Midi::EventHandler
                 ParamIdHashTable() noexcept;
                 ~ParamIdHashTable() noexcept;
 
-                void add(std::string const& name, ParamId const param_id) noexcept;
+                void add(
+                    std::string const& name,
+                    ParamId const param_id
+                ) noexcept;
+
                 ParamId lookup(std::string const& name) noexcept;
 
 #ifdef MPE_EMULATOR_ASSERTIONS
@@ -660,14 +672,31 @@ class Proxy : public Midi::EventHandler
         {
             public:
                 MidiControllerMessage();
-                MidiControllerMessage(MidiControllerMessage const& message) = default;
-                MidiControllerMessage(MidiControllerMessage&& message) = default;
 
-                MidiControllerMessage(double const time_offset, Midi::Word const value);
+                MidiControllerMessage(
+                    MidiControllerMessage const& message
+                ) = default;
 
-                bool operator==(MidiControllerMessage const& message) const noexcept;
-                MidiControllerMessage& operator=(MidiControllerMessage const& message) noexcept = default;
-                MidiControllerMessage& operator=(MidiControllerMessage&& message) noexcept = default;
+                MidiControllerMessage(
+                    MidiControllerMessage&& message
+                ) = default;
+
+                MidiControllerMessage(
+                    double const time_offset,
+                    Midi::Word const value
+                );
+
+                bool operator==(
+                    MidiControllerMessage const& message
+                ) const noexcept;
+
+                MidiControllerMessage& operator=(
+                    MidiControllerMessage const& message
+                ) noexcept = default;
+
+                MidiControllerMessage& operator=(
+                    MidiControllerMessage&& message
+                ) noexcept = default;
 
             private:
                 double time_offset;
@@ -817,7 +846,8 @@ class Proxy : public Midi::EventHandler
         ) const noexcept;
 
         OutEvents out_events_rw;
-        MidiControllerMessage previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
+        MidiControllerMessage
+            previous_controller_message[ControllerId::CONTROLLER_ID_COUNT];
         Param* params[ParamId::PARAM_ID_COUNT];
         Queue<Midi::Channel, MPE_MEMBER_CHANNELS_MAX> available_channels;
         NoteStack::ChannelsByNotes channels_by_notes;
