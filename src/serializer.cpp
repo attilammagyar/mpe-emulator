@@ -53,7 +53,9 @@ std::string Serializer::serialize(Proxy const& proxy) noexcept
 
         if (param_name.length() > 0) {
             double const set_ratio = proxy.get_param_ratio_atomic(param_id);
-            double const default_ratio = proxy.get_param_default_ratio(param_id);
+            double const default_ratio = (
+                proxy.get_param_default_ratio(param_id)
+            );
 
             if (std::fabs(default_ratio - set_ratio) > 0.000001) {
                 int const length = snprintf(
@@ -63,7 +65,9 @@ std::string Serializer::serialize(Proxy const& proxy) noexcept
                     param_name.c_str(),
                     set_ratio
                 );
-                trim_excess_zeros_from_end_after_snprintf(line, length, line_size);
+                trim_excess_zeros_from_end_after_snprintf(
+                    line, length, line_size
+                );
                 serialized += line;
                 serialized += LINE_END;
             }
@@ -137,8 +141,10 @@ void Serializer::import_settings_in_audio_thread(
 
 
 template<Serializer::Thread thread>
-void Serializer::import_settings(Proxy& proxy, std::string const& serialized) noexcept
-{
+void Serializer::import_settings(
+        Proxy& proxy,
+        std::string const& serialized
+) noexcept {
     Lines* const lines = parse_lines(serialized);
     process_lines<thread>(proxy, lines);
 
@@ -146,8 +152,9 @@ void Serializer::import_settings(Proxy& proxy, std::string const& serialized) no
 }
 
 
-Serializer::Lines* Serializer::parse_lines(std::string const& serialized) noexcept
-{
+Serializer::Lines* Serializer::parse_lines(
+        std::string const& serialized
+) noexcept {
     constexpr size_t max_line_pos = MAX_SIZE - 1;
     Lines* const lines = new Lines();
     char* const line = new char[MAX_SIZE];
@@ -267,15 +274,19 @@ void Serializer::process_lines(Proxy& proxy, Lines* const lines) noexcept
         )
     );
 
-    for (Messages::const_iterator it = messages.begin(); it != messages.end(); ++it) {
+    Messages::const_iterator it;
+
+    for (it = messages.begin(); it != messages.end(); ++it) {
         send_message<thread>(proxy, *it);
     }
 }
 
 
 template<Serializer::Thread thread>
-void Serializer::send_message(Proxy& proxy, Proxy::Message const& message) noexcept
-{
+void Serializer::send_message(
+        Proxy& proxy,
+        Proxy::Message const& message
+) noexcept {
     if constexpr (thread == Thread::AUDIO) {
         proxy.process_message(message);
     } else {
@@ -284,9 +295,14 @@ void Serializer::send_message(Proxy& proxy, Proxy::Message const& message) noexc
 }
 
 
-bool Serializer::is_mpe_emulator_section_start(SectionName const& section_name) noexcept
-{
-    return strncmp(section_name, MPE_EMULATOR_SECTION_NAME, SECTION_NAME_MAX_LENGTH) == 0;
+bool Serializer::is_mpe_emulator_section_start(
+        SectionName const& section_name
+) noexcept {
+    int const cmp = strncmp(
+        section_name, MPE_EMULATOR_SECTION_NAME, SECTION_NAME_MAX_LENGTH
+    );
+
+    return cmp == 0;
 }
 
 
@@ -368,7 +384,9 @@ void Serializer::process_line(
             !parse_line_until_value(it, end, param_name)
             || skipping_remaining_whitespace_or_comment_reaches_the_end(it, end)
             || !parse_number(it, end, number)
-            || !skipping_remaining_whitespace_or_comment_reaches_the_end(it, end)
+            || !skipping_remaining_whitespace_or_comment_reaches_the_end(
+                it, end
+            )
     ) {
         return;
     }
@@ -423,7 +441,9 @@ bool Serializer::parse_param_name(
 
     std::fill_n(param_name, PARAM_NAME_MAX_LENGTH, '\x00');
 
-    while (is_capital_letter(*it) || is_digit(*it) || is_lowercase_letter(*it)) {
+    while (
+            is_capital_letter(*it) || is_digit(*it) || is_lowercase_letter(*it)
+    ) {
         param_name[param_name_pos++] = toupper(*(it++));
 
         if (param_name_pos == param_name_pos_max || it == end) {
