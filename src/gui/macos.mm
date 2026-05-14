@@ -27,13 +27,31 @@
 #include "gui/macos.hpp"
 
 
-@interface MPEEmulatorCocoaWidget : NSView
+/*
+The name of the NSView class must be prefixed in a way that avoids collision
+between different plugins and plugin types, so that e.g. both the VST 3 and the
+FST version can be loaded into the same DAW project without the Objective-C
+runtime complaining.
+*/
+#define MPE_EMULATOR_COCOA_WIDGET_CLASS             \
+    _MPE_EMULATOR_OBJC_CLASS_NAME_RESOLVE_CONCAT(   \
+        MPE_EMULATOR_OBJC_CLASS_NAME_INFIX          \
+    )
+
+#define _MPE_EMULATOR_OBJC_CLASS_NAME_RESOLVE_CONCAT(infix) \
+    _MPE_EMULATOR_OBJC_CLASS_NAME_CONCAT(infix)
+
+#define _MPE_EMULATOR_OBJC_CLASS_NAME_CONCAT(infix) \
+    MPEEmulator_ ## infix ## _CocoaWidget
+
+
+@interface MPE_EMULATOR_COCOA_WIDGET_CLASS : NSView
     @property (assign) MpeEmulator::Widget* cpp_widget;
     @property (strong) NSTimer* gui_idle_timer;
 @end
 
 
-@implementation MPEEmulatorCocoaWidget
+@implementation MPE_EMULATOR_COCOA_WIDGET_CLASS
     - (id) initWithFrame:(NSRect)frameRect
     {
         if (!(self = [super initWithFrame:frameRect])) {
@@ -221,8 +239,8 @@ MpeEmulator::GUI::PlatformWidget mpe_emulator_create_platform_widget(
         (CGFloat)left, (CGFloat)top, (CGFloat)width, (CGFloat)height
     );
 
-    MPEEmulatorCocoaWidget* cocoa_widget = [
-        [MPEEmulatorCocoaWidget alloc] initWithFrame:frame
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = [
+        [MPE_EMULATOR_COCOA_WIDGET_CLASS alloc] initWithFrame:frame
     ];
     cocoa_widget.cpp_widget = cpp_widget;
 
@@ -242,8 +260,8 @@ MpeEmulator::GUI::PlatformWidget mpe_emulator_create_platform_widget(
 void mpe_emulator_destroy_platform_widget(
         MpeEmulator::GUI::PlatformWidget platform_widget
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge_transfer MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge_transfer MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -265,8 +283,8 @@ void mpe_emulator_widget_resize(
         int const width,
         int const height
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -283,8 +301,8 @@ void mpe_emulator_widget_resize(
 
 void mpe_emulator_widget_show(MpeEmulator::GUI::PlatformWidget platform_widget)
 {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -297,8 +315,8 @@ void mpe_emulator_widget_show(MpeEmulator::GUI::PlatformWidget platform_widget)
 
 void mpe_emulator_widget_hide(MpeEmulator::GUI::PlatformWidget platform_widget)
 {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -311,8 +329,8 @@ void mpe_emulator_widget_hide(MpeEmulator::GUI::PlatformWidget platform_widget)
 
 void mpe_emulator_widget_focus(MpeEmulator::GUI::PlatformWidget platform_widget)
 {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -326,8 +344,8 @@ void mpe_emulator_widget_focus(MpeEmulator::GUI::PlatformWidget platform_widget)
 void mpe_emulator_widget_bring_to_top(
         MpeEmulator::GUI::PlatformWidget platform_widget
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -344,8 +362,8 @@ void mpe_emulator_widget_bring_to_top(
 void mpe_emulator_widget_redraw(
         MpeEmulator::GUI::PlatformWidget platform_widget
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -389,8 +407,8 @@ void mpe_emulator_widget_draw_text(
         MpeEmulator::WidgetBase::FontWeight const font_weight,
         MpeEmulator::WidgetBase::TextAlignment const alignment
 ) {
-    MPEEmulatorCocoaWidget* cocoa_widget = (
-        (__bridge MPEEmulatorCocoaWidget*)platform_widget
+    MPE_EMULATOR_COCOA_WIDGET_CLASS* cocoa_widget = (
+        (__bridge MPE_EMULATOR_COCOA_WIDGET_CLASS*)platform_widget
     );
 
     if (!cocoa_widget) {
@@ -475,7 +493,7 @@ MpeEmulator::GUI::Image mpe_emulator_widget_load_image(char const* const name)
 {
     NSString* ns_name = [NSString stringWithUTF8String:name];
     NSString* path = [
-        [NSBundle bundleForClass:[MPEEmulatorCocoaWidget class]]
+        [NSBundle bundleForClass:[MPE_EMULATOR_COCOA_WIDGET_CLASS class]]
         pathForResource:ns_name
         ofType:@"png"
         inDirectory:@"img"
