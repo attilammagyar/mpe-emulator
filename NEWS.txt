@@ -1,3 +1,13 @@
+v1.2.3 (2026-05-18)
+ * Bugfix: when both the VST 3 and the FST version of MPE Emulator were loaded
+   in a host application on macOS, or when JS80P and MPE Emulator were both
+   loaded on macOS, then a name collision of an internal resource could occur
+   between these plugins, resulting in various warnings or error messages,
+   depending on the host application. This collision has been resolved so that
+   now any combination of the latest versions of these plugins can be loaded on
+   macOS into the same process without any warnings and error messages.
+   (https://github.com/attilammagyar/mpe-emulator/issues/3)
+
 v1.2.2 (2026-03-27)
  * Bugfix: when the VST 3 plugin received a Note On and a subsequent Note Off
    event with the exact same timestamp (e.g. while editing MIDI in a piano
