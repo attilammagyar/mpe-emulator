@@ -17,6 +17,7 @@
  */
 
 #include <algorithm>
+#include <clocale>
 #include <cstddef>
 #include <cstdio>
 #include <string>
@@ -399,4 +400,107 @@ TEST(trailing_zeros_and_params_with_default_values_are_omitted, {
     proxy.process_messages();
 
     assert_eq(settings, Serializer::serialize(proxy));
+})
+
+
+TEST(serialization_is_independent_of_locale, {
+    constexpr char const* decimal_comma_locales[] = {
+        "da_DK.UTF-8",
+        "da_DK.utf8",
+        "da_DK",
+        "da-DK.UTF-8",
+        "da-DK",
+        "Danish_Denmark.1252",
+        "Danish_Denmark.UTF8",
+        "Danish_Denmark",
+        "de_DE.UTF-8",
+        "de_DE.utf8",
+        "de_DE",
+        "de-DE.UTF-8",
+        "de-DE",
+        "en_DK.UTF-8",
+        "en_DK.utf8",
+        "en_DK",
+        "en-DK.UTF-8",
+        "en-DK",
+        "fr_FR.UTF-8",
+        "fr_FR.utf8",
+        "fr_FR",
+        "fr-FR.UTF-8",
+        "fr-FR",
+        "French_France.1252",
+        "French_France.UTF8",
+        "French_France",
+        "German_Germany.1252",
+        "German_Germany.UTF8",
+        "German_Germany",
+        "hu_HU.UTF-8",
+        "hu_HU.utf8",
+        "hu_HU",
+        "hu-HU.UTF-8",
+        "hu-HU",
+        "Hungarian_Hungary.1250",
+        "Hungarian_Hungary",
+        NULL,
+    };
+    Proxy proxy_1;
+    Proxy proxy_2;
+    std::string serialized;
+    char const* locale = NULL;
+    double const five_channels_as_ratio = proxy_1.channels.value_to_ratio(5);
+    double const ten_channels_as_ratio = proxy_1.channels.value_to_ratio(10);
+    double const c4_as_ratio = proxy_1.anchor.value_to_ratio(60);
+    double const a0_as_ratio = proxy_1.anchor.value_to_ratio(21);
+
+    for (
+            size_t i = 0;
+            decimal_comma_locales[i] != NULL && locale == NULL;
+            ++i
+    ) {
+        locale = setlocale(LC_NUMERIC, decimal_comma_locales[i]);
+    }
+
+    assert_neq(
+        (void const*)locale,
+        NULL,
+        "Unable to find a decimal comma using locale for testing"
+    );
+
+    proxy_1.push_message(
+        Proxy::MessageType::SET_PARAM,
+        Proxy::ParamId::Z1CHN,
+        five_channels_as_ratio
+    );
+    proxy_1.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, c4_as_ratio
+    );
+    proxy_1.process_messages();
+
+    proxy_2.push_message(
+        Proxy::MessageType::SET_PARAM,
+        Proxy::ParamId::Z1CHN,
+        ten_channels_as_ratio
+    );
+    proxy_2.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, a0_as_ratio
+    );
+    proxy_2.process_messages();
+
+    serialized = Serializer::serialize(proxy_1);
+    Serializer::import_settings_in_audio_thread(proxy_2, serialized);
+
+    assert_eq(
+        five_channels_as_ratio,
+        proxy_2.get_param_ratio_atomic(Proxy::ParamId::Z1CHN),
+        0.000001,
+        "locale=\"%s\"",
+        locale
+    );
+    assert_eq(
+        c4_as_ratio,
+        proxy_2.get_param_ratio_atomic(Proxy::ParamId::Z1ANC),
+        0.000001,
+        "locale=\"%s\"",
+        locale
+    );
 })

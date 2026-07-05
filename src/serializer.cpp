@@ -22,8 +22,9 @@
 #include <algorithm>
 #include <cmath>
 #include <cctype>
-#include <cstdio>
 #include <cstring>
+#include <ios>
+#include <locale>
 #include <sstream>
 
 #include "serializer.hpp"
@@ -40,12 +41,17 @@ std::string Serializer::serialize(Proxy const& proxy) noexcept
     constexpr size_t line_size = 127;
     char line[line_size + 1];
     std::string serialized("");
+    std::ostringstream oss;
 
     serialized.reserve(MAX_SIZE);
     serialized += "[";
     serialized += MPE_EMULATOR_SECTION_NAME;
     serialized += "]";
     serialized += LINE_END;
+
+    oss.imbue(std::locale::classic());
+    oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    oss.precision(15);
 
     for (int i = 0; i != Proxy::ParamId::PARAM_ID_COUNT; ++i) {
         Proxy::ParamId const param_id = (Proxy::ParamId)i;
@@ -64,17 +70,21 @@ std::string Serializer::serialize(Proxy const& proxy) noexcept
             continue;
         }
 
+        oss << set_ratio;
         int const length = snprintf(
             line,
             line_size,
-            "%s = %.15f",
+            "%s = %s",
             param_name.c_str(),
-            set_ratio
+            oss.str().c_str()
         );
         trim_excess_zeros_from_end(line, length, line_size);
         line[line_size] = '\x00';
         serialized += line;
         serialized += LINE_END;
+
+        oss.str("");
+        oss.clear();
     }
 
     return serialized;
@@ -511,6 +521,7 @@ double Serializer::to_number(std::string const& text) noexcept
     std::istringstream s(text);
     double n;
 
+    s.imbue(std::locale::classic());
     s >> n;
 
     return n;
