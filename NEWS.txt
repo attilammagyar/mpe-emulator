@@ -1,3 +1,9 @@
+v1.2.4 (2026-07-05)
+ * Bugfix: resolved an issue that broke state persistence and saving settings
+   in certain DAWs (including Ardour, FL Studio, etc.) when the plugin was used
+   on a system with a non-English locale.
+   (https://github.com/attilammagyar/mpe-emulator/issues/4)
+
 v1.2.3 (2026-05-18)
  * Bugfix: when both the VST 3 and the FST version of MPE Emulator were loaded
    in a host application on macOS, or when JS80P and MPE Emulator were both
