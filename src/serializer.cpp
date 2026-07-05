@@ -37,8 +37,8 @@ std::string const Serializer::LINE_END = "\r\n";
 
 std::string Serializer::serialize(Proxy const& proxy) noexcept
 {
-    constexpr size_t line_size = 128;
-    char line[line_size];
+    constexpr size_t line_size = 127;
+    char line[line_size + 1];
     std::string serialized("");
 
     serialized.reserve(MAX_SIZE);
@@ -51,34 +51,37 @@ std::string Serializer::serialize(Proxy const& proxy) noexcept
         Proxy::ParamId const param_id = (Proxy::ParamId)i;
         std::string const param_name = proxy.get_param_name(param_id);
 
-        if (param_name.length() > 0) {
-            double const set_ratio = proxy.get_param_ratio_atomic(param_id);
-            double const default_ratio = (
-                proxy.get_param_default_ratio(param_id)
-            );
-
-            if (std::fabs(default_ratio - set_ratio) > 0.000001) {
-                int const length = snprintf(
-                    line,
-                    line_size,
-                    "%s = %.15f",
-                    param_name.c_str(),
-                    set_ratio
-                );
-                trim_excess_zeros_from_end_after_snprintf(
-                    line, length, line_size
-                );
-                serialized += line;
-                serialized += LINE_END;
-            }
+        if (param_name.length() < 1) {
+            continue;
         }
+
+        double const set_ratio = proxy.get_param_ratio_atomic(param_id);
+        double const default_ratio = (
+            proxy.get_param_default_ratio(param_id)
+        );
+
+        if (std::fabs(default_ratio - set_ratio) <= 0.000001) {
+            continue;
+        }
+
+        int const length = snprintf(
+            line,
+            line_size,
+            "%s = %.15f",
+            param_name.c_str(),
+            set_ratio
+        );
+        trim_excess_zeros_from_end(line, length, line_size);
+        line[line_size] = '\x00';
+        serialized += line;
+        serialized += LINE_END;
     }
 
     return serialized;
 }
 
 
-void Serializer::trim_excess_zeros_from_end_after_snprintf(
+void Serializer::trim_excess_zeros_from_end(
         char* const number,
         int const length,
         size_t const max_length
