@@ -504,3 +504,44 @@ TEST(serialization_is_independent_of_locale, {
         locale
     );
 })
+
+
+TEST(can_load_buggy_locale_dependent_serialization, {
+    Proxy proxy;
+    double const five_channels_as_ratio = proxy.channels.value_to_ratio(5);
+    double const ten_channels_as_ratio = proxy.channels.value_to_ratio(10);
+    double const c4_as_ratio = proxy.anchor.value_to_ratio(60);
+    double const a0_as_ratio = proxy.anchor.value_to_ratio(21);
+
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM,
+        Proxy::ParamId::Z1CHN,
+        ten_channels_as_ratio
+    );
+    proxy.push_message(
+        Proxy::MessageType::SET_PARAM, Proxy::ParamId::Z1ANC, a0_as_ratio
+    );
+    proxy.process_messages();
+
+    Serializer::import_settings_in_audio_thread(
+        proxy,
+        (
+            "[mpeemulator]\n"
+            "Z1CHN = 0,28.5714285714286\n"  /* ignored due to being invalid */
+            "Z1CHN = 0,285714285714286\n"
+            "Z1CHN = 0.28 5714285714286\n"  /* ignored due to being invalid */
+            "Z1CHN = 0,28,5714285714286\n"  /* ignored due to being invalid */
+        )
+    );
+
+    assert_eq(
+        five_channels_as_ratio,
+        proxy.get_param_ratio_atomic(Proxy::ParamId::Z1CHN),
+        0.000001
+    );
+    assert_eq(
+        c4_as_ratio,
+        proxy.get_param_ratio_atomic(Proxy::ParamId::Z1ANC),
+        0.000001
+    );
+})

@@ -485,11 +485,17 @@ bool Serializer::parse_number(
         std::string::const_iterator const& end,
         double& number
 ) noexcept {
-    std::string number_text;
+    std::string number_text("");
     bool has_dot = false;
 
     while (it != end) {
-        if (*it == '.') {
+        /*
+        Decimal separator was locale-dependent before v1.2.4 - let's try loading
+        those broken serializations as well.
+        */
+        bool const is_comma = *it == ',';
+
+        if (is_comma || *it == '.') {
             if (has_dot) {
                 return false;
             }
@@ -499,7 +505,8 @@ bool Serializer::parse_number(
             break;
         }
 
-        number_text += *(it++);
+        number_text += is_comma ? '.' : *it;
+        ++it;
     }
 
     if (number_text.length() == 0) {
